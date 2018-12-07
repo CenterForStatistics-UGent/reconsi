@@ -1,4 +1,5 @@
-#' A function to calculate tail-area (Fdr) and local (fdr) false discovery rates, based on a certail null distribution
+#' Calculate tail-area (Fdr) and local (fdr) false discovery rates,
+#'    based on a certain null distribution
 #'
 #' @param zValObs Vector of observed z-values
 #' @param G0 null distribution function
@@ -8,6 +9,8 @@
 #' @param p0
 #' @param ... more arguments, ignored
 #'
+#' @importFrom stats ecdf
+#'
 #' @return A list with components
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
@@ -16,7 +19,9 @@ getFdr = function(zValObs, G0, g0, zSeq, fdr, p, p0,...)
 {
   g0 = g0/(sum(g0))
   #Null
-  G0cumDef = sapply(seq_along(G0), function(yy){if(G0[yy]<0.5) {G0[yy]} else {1-G0[yy]+g0[yy]}})
+  G0cumDef = sapply(seq_along(G0), function(yy){
+    if(G0[yy]<0.5) {G0[yy]} else {1-G0[yy]+g0[yy]}
+    })
 
   #Observed
   zcum = ecdf(zValObs)(zValObs)
