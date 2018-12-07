@@ -1,0 +1,13 @@
+Package: corTests
+Type: Package
+Title: Powerful simultaneous inference for correlated tests
+Version: 0.1.0
+Author: Stijn Hawinkel <stijn.hawinkel@ugent.be>
+Maintainer: Joris Meys <joris.meys@ugent.be>
+Description: Improves simultaneous inference under dependence of tests by
+    estimating a random null distribution through permuations. Accounting for 
+    the dependence between tests increases the power while reducing the
+    variability of the false discovery proportion.
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
