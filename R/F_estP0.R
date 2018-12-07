@@ -1,4 +1,5 @@
-#' A function to estimate the number of true null hypotheses. Based on the qvalue::qvalue() function and Storey and Tibshirani, 2003
+#'Estimate the fraction of true null hypotheses.
+#'
 #' @param zValObs A vector of observed z-values
 #' @param nullDensCum A smoothed cumulative distribution function of the observed z-values
 #' @param zSeq The support of the kernel smoother
@@ -7,7 +8,11 @@
 #'
 #' @return The estimated null fraction, the value of the spline evaluated at the first element of z0quantRange
 #'
-#' @details A natural spline is used over a range of intervals
+#' @details A natural spline is used over a range of intervals.
+#' Based on the qvalue::qvalue() function and
+#'Storey and Tibshirani, 2003
+#'
+#'@importFrom stats smooth.spline predict.smooth.spline
 estP0 = function(zValObs, nullDensCum, zSeq, z0quantRange, smooth.df){
   pi0 = sapply(z0quantRange, function(z0Quant) {
     z0Quant = c(z0Quant, 1-z0Quant)

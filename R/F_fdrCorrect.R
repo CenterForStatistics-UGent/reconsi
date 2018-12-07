@@ -1,24 +1,38 @@
-#' A function to estimate the correlation matrix of the bin counts based on permutations
+#' Perform simultaneous inference, correcting for correlation between tests.
 #' @param Y the matrix of sequencing counts
 #' @param x a grouping factor
 #' @param B the number of permutations
-#' @param test Character string, giving the name of the function to test for differential absolute abundance.
+#' @param test Character string, giving the name of the function
+#'  to test for differential absolute abundance.
 #' @param argList A list of arguments, passed on to the testing function
 #' @param testPfun the name of the distribution function of the test statistic
 #' @param testPargs A list of arguments passed on to testPfun
-#' @param z0Quant A vector of length 2 of quantiles of the null distribution, in between which only null values are expected
+#' @param z0Quant A vector of length 2 of quantiles of the null distribution,
+#'    in between which only null values are expected
 #' @param gridsize The number of bins for the kernel density estimates
-#' @param weightStrat A character vector, indicating the weighting strategy. Either "LH" for likelihoods based on the central region, or "LHw" for weighted likelihoods
-#' @param maxIter An integer, the maximum number of iterations in the estimation of the null distribution
-#' @param tol The tolerance for the infinity norm of the central borders in the iterative procedure
-#' @param cPerm A boolean, should the covariance matrix of the binned counts be returned?
-#' @param nBins The number of bins for the binning of the test statistic in the calculation of the correlation matrix
+#' @param weightStrat A character vector, indicating the weighting strategy.
+#'    Either "LH" for likelihoods based on the central region, or "LHw" for weighted likelihoods
+#' @param maxIter An integer, the maximum number of iterations in the estimation
+#'    of the null distribution
+#' @param tol The tolerance for the infinity norm of the central borders
+#'    in the iterative procedure
+#' @param cPerm A boolean, should the covariance matrix
+#'    of the binned counts be returned?
+#' @param nBins The number of bins for the binning of the test statistic
+#'    in the calculation of the correlation matrix
 #' @param binEdges The edges of the furthest bins
-#' @param center A boolean, should observations be centered in each group prior to permuations? See details.
-#' @param zVals An optional list of observed (zValObs) and permutation (zValsPerm) z-values. If supplied, the calculation of the observed and permutation test statistics is skipped and the algorithm proceeds with calculation of the consensus null distribution
+#' @param center A boolean, should observations be centered
+#'    in each group prior to permuations? See details.
+#' @param zVals An optional list of observed (zValObs) and
+#' permutation (zValsPerm) z-values. If supplied, the calculation
+#'    of the observed and permutation test statistics is skipped
+#'    and the algorithm proceeds with calculation
+#'    of the consensus null distribution
 #' @param estP0args A list of arguments passed on to the estP0 function
 #'
-#' @details Efron (2007) centers the observations in each group prior to permutation. As permutations will remove any genuine group differences anyway, we skip this step by default.
+#' @details Efron (2007) centers the observations in each group prior
+#'  to permutation. As permutations will remove any genuine group differences
+#'   anyway, we skip this step by default.
 #'
 #' @return
 #' @export
@@ -58,6 +72,10 @@ FdrList = do.call(getFdr, c(list(zValObs = zValObs, p = p), consensus))
 names(zValObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(zValsMat = zValsMat, zValObs = zValObs, Cperm = Cperm, weightStrat = weightStrat), FdrList, consensus)
 }
+#' Correct quantiles by not returning 0 or 1
+#' @param quants A vector of quantiles
+#'
+#' @return The same vector of quantiles but without 0 or 1 values
 quantCorrect = function(quants){
   quants[quants==1] = 1-.Machine$double.eps
   quants[quants==0] = .Machine$double.eps
