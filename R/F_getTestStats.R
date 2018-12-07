@@ -1,0 +1,61 @@
+#' A function to calculate observed and permuation z-statistics on a n-by-p matrix of observations
+#'
+#' @param Y The nxp data matrix
+#' @param center a boolean, should data be centered prior to permuation
+#' @param test A function name, possibly user defined. See details.
+#' @param x A vector defining the groups. Will be coerced to factor.
+#' @param B an integer, the number of permuations
+#' @param argList A list of further arguments passed on to the test function
+#'
+#' @return A list with components
+#' \item{statObs}{A vector of length p of observed test statistics}
+#' \item{statsPerm}{A p-by-B matrix of permutation test statistics}
+#'
+#' @details For test "wilcox.test" and "t.test", fast custom implementations are used. Other functions can be supplied but must accept the formula argument, an list of other arguments and return solely a test statistic.
+getTestStats = function(Y, center, test = "wilcox.test", x, B, argList = list()){
+  x = factor(x)
+  Ycenter = Y
+  if(center) {
+    for (ii in unique(x)){Ycenter[x==ii,] = scale(Ycenter[x==ii,], center = TRUE, scale = FALSE)}
+  }
+  if(test %in% c("wilcox.test","t.test")){
+    if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply to two groups! \n Try 'kruskal.test' or 'lm()'.")}
+    xLog = x==names(table(x))[1]
+    mm = table(x)[1]
+    nn = table(x)[2]
+  }
+
+  if(test=="wilcox.test"){ #Shortcuts possbile in case of Wilcoxon test
+    nFac = mm*(mm + 1)/2
+    YRanked = apply(Y, 2, rank)
+    #Observed test statistic
+    statObs = colSums(YRanked[xLog,]) - nFac
+
+    #Permuation test statistics
+    YRankedCenter = if(center) apply(Ycenter, 2, rank) else YRanked
+    statsPerm = - nFac + sapply(integer(B), function(ii){
+      colSums(YRankedCenter[sample(xLog),])
+    })
+  } else if(test=="t.test"){
+    statObs = apply(Y, 2, function(dat){
+getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
+    })
+    statsPerm = vapply(integer(B), FUN.VALUE = matrix(0, 2, ncol(Y)),function(ii){
+      xSam = sample(xLog)
+      apply(Ycenter, 2, function(dat){
+        getTstat(y1 = dat[xSam],y2 = dat[!xSam], mm = mm, nn = nn)
+      })
+    })
+  } else {
+  testFun = match.fun(test)
+  statObs = apply(Y,2, function(y){
+    testFun(y~x, argList)
+  })
+  statsPerm = sapply(integer(B), function(ii){
+    apply(Ycenter[sample(rownames(Y)),],2, function(y){
+    testFun(y~x, argList)
+  })})
+  }
+
+  return(list(statObs = statObs, statsPerm = statsPerm))
+}

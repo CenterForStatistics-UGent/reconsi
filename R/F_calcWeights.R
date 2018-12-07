@@ -1,0 +1,16 @@
+#' A function to obtain weights to calculate the consensus null
+#'
+#' @param densPerm A matrix with B rows of density estimates of the B permutation distributions
+#' @param weightStrat A character string, either "LH" for likelihoods based on the central region, or "LHw" for weighted likelihoods
+#' @param zIndObs An indicator vector of the observed z-values in the support of the kernel
+#' @param fdr A vector of local false discovery rates along the support of the kernel
+#' @param zIndR An indicator vector indicating the z-values within the central region
+#'
+#' @return A vector of weights of length B
+calcWeights = function(densPerm, weightStrat, zIndObs, fdr, zIndR){
+  weights = switch(weightStrat,
+                   "LH" = exp(stabExp(colSums(log(densPerm[zIndObs[zIndR],])))),
+                   "LHw" = exp(stabExp(colSums(log(densPerm[zIndObs,])*fdr[zIndObs]))),
+                    stop("Weighting strategy unknown! \n"))
+  weights/sum(weights)
+}
