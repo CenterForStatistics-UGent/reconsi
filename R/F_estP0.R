@@ -20,8 +20,8 @@ estP0 = function(zValObs, nullDensCum, zSeq, z0quantRange, smooth.df){
     z0Quant = c(z0Quant, 1-z0Quant)
     centralBorders = zSeq[c(which.max(nullDensCum > z0Quant[1]),
                             which.max(nullDensCum > z0Quant[2]))]
-    mean(zValObs <= centralBorders[2] & z
-         ValObs >= centralBorders[1])/diff(z0Quant)
+    mean(zValObs <= centralBorders[2] &
+         zValObs >= centralBorders[1])/diff(z0Quant)
   })
   smoothPi0 = smooth.spline(z0quantRange, pi0, df = smooth.df)
   pi0Smooth = predict(smoothPi0, x = z0quantRange)$y

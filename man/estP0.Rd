@@ -9,7 +9,8 @@ estP0(zValObs, nullDensCum, zSeq, z0quantRange, smooth.df)
 \arguments{
 \item{zValObs}{A vector of observed z-values}
 
-\item{nullDensCum}{A smoothed cumulative distribution function of the observed z-values}
+\item{nullDensCum}{A smoothed cumulative distribution function
+of the observed z-values}
 
 \item{zSeq}{The support of the kernel smoother}
 
@@ -18,7 +19,8 @@ estP0(zValObs, nullDensCum, zSeq, z0quantRange, smooth.df)
 \item{smooth.df}{degrees of freedom for the spline smoother}
 }
 \value{
-The estimated null fraction, the value of the spline evaluated at the first element of z0quantRange
+The estimated null fraction, the value of the spline evaluated
+ at the first element of z0quantRange
 }
 \description{
 Estimate the fraction of true null hypotheses.
