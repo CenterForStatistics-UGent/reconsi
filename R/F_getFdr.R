@@ -6,7 +6,7 @@
 #' @param g0 Null density function
 #' @param zSeq Support of the density estimation
 #' @param p the number of hypotheses
-#' @param p0
+#' @param p0 The estimated fraction of null hypotheses
 #' @param ... more arguments, ignored
 #'
 #' @importFrom stats ecdf

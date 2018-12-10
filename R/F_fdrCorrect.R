@@ -11,7 +11,8 @@
 #'    in between which only null values are expected
 #' @param gridsize The number of bins for the kernel density estimates
 #' @param weightStrat A character vector, indicating the weighting strategy.
-#'    Either "LH" for likelihoods based on the central region, or "LHw" for weighted likelihoods
+#'    Either "LH" for likelihoods based on the central region,
+#'    or "LHw" for weighted likelihoods
 #' @param maxIter An integer, the maximum number of iterations in the estimation
 #'    of the null distribution
 #' @param tol The tolerance for the infinity norm of the central borders
@@ -34,11 +35,27 @@
 #'  to permutation. As permutations will remove any genuine group differences
 #'   anyway, we skip this step by default.
 #'
-#' @return
+#' @return A list with entries
+#' \item{zValsMat}{Permutation Z-values}
+#' \item{zValObs}{Observed Z-values}
+#' \item{Cperm}{(optional) An estimated covariance matrix
+#'  of binned test statistics}
+#' \item{weightStrat}{The weighting strategy }
+#' \item{Fdr, fdr}{The estimated tail-area and local false discovery rates}
+#' \item{consensus}{The consensus null distribution}
 #' @export
 #' @import KernSmooth
 #' @examples
-fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(), testPfun = "pwilcox", testPargs = list(m = table(x)[1], n = table(x)[2]), z0Quant = pnorm(c(-1,1)), gridsize = 801L, weightStrat = "LHw", maxIter = 1000L, tol = 1e-4, cPerm = FALSE, nBins = 82L, binEdges = c(-4.1,4.1), center = FALSE, zVals = NULL, estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125), smooth.df = 3)){
+fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),
+                      testPfun = "pwilcox",
+                      testPargs = list(m = table(x)[1],
+                                       n = table(x)[2]),
+                      z0Quant = pnorm(c(-1,1)), gridsize = 801L,
+                      weightStrat = "LH", maxIter = 1000L, tol = 1e-4,
+                      cPerm = FALSE, nBins = 82L, binEdges = c(-4.1,4.1),
+                      center = FALSE, zVals = NULL,
+                      estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
+                                       smooth.df = 3)){
   if(test == "t.test"){
   testPargs = list()
   testPfun = "pt.edit"
@@ -46,10 +63,13 @@ fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(), te
   p = ncol(Y)
 if(is.null(zVals)){
 #Test statistics
-testStats = getTestStats(Y = Y, center = center, test = test, x = x, B = B, argList = argList)
+testStats = getTestStats(Y = Y, center = center, test = test,
+                         x = x, B = B, argList = argList)
 
 #Permuation z-values
-zValsMat = apply(testStats$statsPerm, MARGIN = switch(test, "t.test" = c(3,2), 2), function(stats){
+zValsMat = apply(testStats$statsPerm,
+                 MARGIN = switch(test, "t.test" = c(3,2), 2),
+                 function(stats){
   qnorm(quantCorrect(do.call(testPfun,c(list(q = stats), testPargs))))
 })
 #Observed z-values
@@ -61,16 +81,22 @@ zValObs = qnorm(apply(matrix(testStats$statObs, ncol = p),2, function(stats){
 }
 
 #Permuation correlation matrix
-Cperm = if(cPerm){getCperm(zValsMat, nBins = nBins, binEdges = binEdges)} else {NULL}
+Cperm = if(cPerm){getCperm(zValsMat, nBins = nBins, binEdges = binEdges)
+} else {
+        NULL
+    }
 
 #Consensus distribution estimation
-consensus = getG0(zValObs = zValObs, zValsMat = zValsMat, z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter, tol = tol, weightStrat = weightStrat, estP0args = estP0args)
+consensus = getG0(zValObs = zValObs, zValsMat = zValsMat, z0Quant = z0Quant,
+                  gridsize = gridsize, maxIter = maxIter, tol = tol,
+                  weightStrat = weightStrat, estP0args = estP0args)
 
 #False discovery Rates
 FdrList = do.call(getFdr, c(list(zValObs = zValObs, p = p), consensus))
 
 names(zValObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
-c(list(zValsMat = zValsMat, zValObs = zValObs, Cperm = Cperm, weightStrat = weightStrat), FdrList, consensus)
+c(list(zValsMat = zValsMat, zValObs = zValObs, Cperm = Cperm,
+       weightStrat = weightStrat), FdrList, consensus)
 }
 #' Correct quantiles by not returning 0 or 1
 #' @param quants A vector of quantiles
