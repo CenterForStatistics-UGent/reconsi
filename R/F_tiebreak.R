@@ -1,10 +1,13 @@
-#' A function to break the ties because of zeroes in the sequencing counts, and prepare the final matrix
+#' A function to break the ties because of zeroes in the sequencing counts,
+#' and prepare the final matrix
 #' @param Y the sequence count matrix
 #' @param FC the vector of total cell counts
 #' @param S the library sizes. By default calculated from Y
 #' @param tieBreak the tiebreaking protocol
 #'
-tiebreak = function(Y, FC, S = rowSums(Y), tieBreak ="none", tol = 1e-4, maxIter = 1L){
+#' @return The matrix to analyze
+tiebreak = function(Y, FC, S = rowSums(Y), tieBreak ="none", tol = 1e-4,
+                    maxIter = 1L){
   if(tieBreak=="none"){
     anaMat = Y/S*FC
   } else {

@@ -14,7 +14,7 @@
 #'
 #' @details For test "wilcox.test" and "t.test",
 #' fast custom implementations are used. Other functions can be supplied
-#' but must accept the formula argument, an list of other arguments and
+#' but must accept the formula argument, a list of other arguments and
 #' return solely a test statistic.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
                         argList = list()){
@@ -27,7 +27,7 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
   }
   if(test %in% c("wilcox.test","t.test")){
     if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply
-                          to two groups! \n Try 'kruskal.test' or 'lm()'.")}
+                          to two groups! \n Try 'kruskal.test()' or 'lm()'.")}
     xLog = x==names(table(x))[1]
     mm = table(x)[1]
     nn = table(x)[2]
