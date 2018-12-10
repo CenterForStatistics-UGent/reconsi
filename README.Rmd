@@ -1,0 +1,5 @@
+---
+output: github_document
+---
+
+# Manual for the use of the corTest functions

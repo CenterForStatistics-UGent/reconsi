@@ -59,6 +59,8 @@
 #' fdrRes = fdrCorrect(mat, x)
 #' fdrRes$p0
 #' #Indeed close to 0.9
+#' estFdr = fdrRes$Fdr
+#' #The estimated tail-area false discovery rates.
 #'
 #' #With another type of test
 #' fdrResLm = fdrCorrect(mat, x, test = "lm", B = 5e1,
