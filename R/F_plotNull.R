@@ -4,6 +4,8 @@
 #'
 #' @return a ggplot2 plot object
 #' @import ggplot2
+#' @importFrom reshape2 melt
+#' @export
 plotNull = function(fit){
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
