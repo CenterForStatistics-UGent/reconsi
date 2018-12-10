@@ -15,9 +15,10 @@ testDAA(Y, ...)
   ...)
 }
 \arguments{
-\item{Y}{a n-by-p sequence count tabel with taxa in the columns}
+\item{Y}{A phyloseq object, or a data matrix with samples in the rows and
+OTUs in the columns}
 
-\item{...}{passed on to the testDAA() function}
+\item{...}{passed on to the fdrCorrect() function}
 
 \item{groupName}{A character string, the name of a variable in physeq
 indicating the grouping factor}
@@ -32,28 +33,19 @@ containing the total cell count}
 \item{S}{a vector of library sizes. Will be calculated f}
 
 \item{tieBreak}{A character string, specifying the tie break doctrine to use.}
-
-\item{physeq}{A phyloseq object}
-
-\item{...}{other arguments passed on to the fdrCorrect function}
 }
 \value{
 See the fdrCorrect() function
-
-see ?fdrCorrect()
 }
 \description{
 A function to test for differential absolute abundance on a phyloseq object
-
-Perform the complete differential absolute abundance analysis
-}
-\details{
-This function breaks ties, and filters empty rows and columns
-prior to statistical testing
 }
 \examples{
+#Test for phyloseq object
 testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen")
-testMat = testDAA(as.matrix(otu_table(Vandeputte)),
+#Test for matrix
+library(phyloseq)
+testMat = testDAA(as(otu_table(Vandeputte), "matrix"),
 get_variable(Vandeputte, "Health.status"),
 get_variable(Vandeputte,"absCountFrozen"))
 }

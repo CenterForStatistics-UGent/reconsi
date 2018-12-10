@@ -5,7 +5,7 @@
 \title{A function to calculate observed and permuation z-statistics
 on a n-by-p matrix of observations}
 \usage{
-getTestStats(Y, center, test = "wilcox.test", x, B, argList = list())
+getTestStats(Y, center, test = "wilcox.test", x, B, argList, extractFun)
 }
 \arguments{
 \item{Y}{The nxp data matrix}
@@ -19,6 +19,9 @@ getTestStats(Y, center, test = "wilcox.test", x, B, argList = list())
 \item{B}{an integer, the number of permuations}
 
 \item{argList}{A list of further arguments passed on to the test function}
+
+\item{extractFun}{a function to extract the test statistic
+from the fit object}
 }
 \value{
 A list with components

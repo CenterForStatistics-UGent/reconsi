@@ -4,9 +4,13 @@
 #' @param B the number of permutations
 #' @param test Character string, giving the name of the function
 #'  to test for differential absolute abundance.
+#'  Must accept the formula interface
 #' @param argList A list of arguments, passed on to the testing function
 #' @param testPfun the name of the distribution function of the test statistic
 #' @param testPargs A list of arguments passed on to testPfun
+#' @param extractFun A function to extract the test statistics
+#'  from the fit object. Defaults to the identity() function, i.e. assuming that
+#'the test function immediately returns the test statistic
 #' @param z0Quant A vector of length 2 of quantiles of the null distribution,
 #'    in between which only null values are expected
 #' @param gridsize The number of bins for the kernel density estimates
@@ -52,13 +56,18 @@
 #' matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
 #' matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 #' )
-#' fdrMat = fdrCorrect(mat, x)
-#' fdrMat$p0
+#' fdrRes = fdrCorrect(mat, x)
+#' fdrRes$p0
 #' #Indeed close to 0.9
+#'
+#' #With another type of test
+#' fdrResLm = fdrCorrect(mat, x, test = "lm", B = 5e1,
+#' extractFun = function(x){summary(x)$coef["x1","t value"]})
 fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),
                       testPfun = "pwilcox",
                       testPargs = list(m = table(x)[1],
                                        n = table(x)[2]),
+                      extractFun = "identity",
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       weightStrat = "LH", maxIter = 1000L, tol = 1e-4,
                       cPerm = FALSE, nBins = 82L, binEdges = c(-4.1,4.1),
@@ -73,7 +82,8 @@ fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),
 if(is.null(zVals)){
 #Test statistics
 testStats = getTestStats(Y = Y, center = center, test = test,
-                         x = x, B = B, argList = argList)
+                         x = x, B = B, argList = argList,
+                         extractFun = extractFun)
 
 #Permuation z-values
 zValsMat = apply(testStats$statsPerm,

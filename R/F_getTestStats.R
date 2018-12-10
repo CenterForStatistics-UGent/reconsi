@@ -7,6 +7,8 @@
 #' @param x A vector defining the groups. Will be coerced to factor.
 #' @param B an integer, the number of permuations
 #' @param argList A list of further arguments passed on to the test function
+#' @param extractFun a function to extract the test statistic
+#'  from the fit object
 #'
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
@@ -17,7 +19,7 @@
 #' but must accept the formula argument, a list of other arguments and
 #' return solely a test statistic.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
-                        argList = list()){
+                        argList, extractFun){
   x = factor(x)
   Ycenter = Y
   if(center) {
@@ -57,12 +59,14 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     })
   } else {
   testFun = match.fun(test)
+  extractFun = match.fun(extractFun)
   statObs = apply(Y,2, function(y){
-    testFun(y~x, argList)
+    extractFun(testFun(y~x, argList))
   })
+  n = nrow(Y)
   statsPerm = sapply(integer(B), function(ii){
-    apply(Ycenter[sample(rownames(Y)),],2, function(y){
-    testFun(y~x, argList)
+    apply(Ycenter[sample(seq_len(n)),],2, function(y){
+    extractFun(testFun(y~x, argList))
   })})
   }
 

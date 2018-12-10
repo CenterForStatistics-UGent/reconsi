@@ -12,6 +12,10 @@ getG0(zValObs, zValsMat, z0Quant, weightStrat, gridsize, maxIter, tol,
 
 \item{zValsMat}{A pxB matrix with permuation z-values}
 
+\item{z0Quant}{a vector of length of quantiles defining the central part R
+of the distribution. If a single number is supplied, then
+(z0quant, 1-z0quant) will be used}
+
 \item{weightStrat}{A character vector, indicating the weighting strategy}
 
 \item{gridsize}{An integer, the gridsize for the density estimation}
@@ -23,10 +27,6 @@ getG0(zValObs, zValsMat, z0Quant, weightStrat, gridsize, maxIter, tol,
 \item{estP0args}{A list of arguments passed on to the estP0args() function}
 
 \item{...}{further arguments passed on to the KernSmooth::bkde() function}
-
-\item{z0quant}{a vector of length of quantiles defining the central part R
-of the distribution. If a single number is supplied, then
-(z0quant, 1-z0quant) will be used}
 }
 \value{
 A list with following entries

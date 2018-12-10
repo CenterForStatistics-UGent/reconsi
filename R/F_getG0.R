@@ -2,7 +2,7 @@
 #'
 #' @param zValObs A vector of lenght p with observed test statistics
 #' @param zValsMat  A pxB matrix with permuation z-values
-#' @param z0quant a vector of length of quantiles defining the central part R
+#' @param z0Quant a vector of length of quantiles defining the central part R
 #'    of the distribution. If a single number is supplied, then
 #'    (z0quant, 1-z0quant) will be used
 #' @param weightStrat A character vector, indicating the weighting strategy

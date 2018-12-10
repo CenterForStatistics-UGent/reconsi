@@ -4,6 +4,7 @@
 #' @param zValObs Vector of observed z-values
 #' @param G0 null distribution function
 #' @param g0 Null density function
+#' @param fdr local false discovery rate, already estimated
 #' @param zSeq Support of the density estimation
 #' @param p the number of hypotheses
 #' @param p0 The estimated fraction of null hypotheses
@@ -15,7 +16,7 @@
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
 #' \item{p0}{The proportion of true null hypotheses}
-getFdr = function(zValObs, G0, g0, zSeq, fdr, p, p0,...)
+getFdr = function(zValObs, G0, g0, fdr, zSeq, p, p0,...)
 {
   g0 = g0/(sum(g0))
   #Null

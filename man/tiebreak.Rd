@@ -16,6 +16,10 @@ tiebreak(Y, FC, S = rowSums(Y), tieBreak = "none", tol = 1e-04,
 \item{S}{the library sizes. By default calculated from Y}
 
 \item{tieBreak}{the tiebreaking protocol}
+
+\item{tol}{a convergence tolerance}
+
+\item{maxIter}{Maximum number of iterations}
 }
 \value{
 The matrix to analyze

@@ -6,11 +6,11 @@
 \usage{
 fdrCorrect(Y, x, B = 500L, test = "wilcox.test", argList = list(),
   testPfun = "pwilcox", testPargs = list(m = table(x)[1], n =
-  table(x)[2]), z0Quant = pnorm(c(-1, 1)), gridsize = 801L,
-  weightStrat = "LH", maxIter = 1000L, tol = 1e-04, cPerm = FALSE,
-  nBins = 82L, binEdges = c(-4.1, 4.1), center = FALSE,
-  zVals = NULL, estP0args = list(z0quantRange = seq(0.05, 0.45,
-  0.0125), smooth.df = 3))
+  table(x)[2]), extractFun = "identity", z0Quant = pnorm(c(-1, 1)),
+  gridsize = 801L, weightStrat = "LH", maxIter = 1000L,
+  tol = 1e-04, cPerm = FALSE, nBins = 82L, binEdges = c(-4.1, 4.1),
+  center = FALSE, zVals = NULL, estP0args = list(z0quantRange =
+  seq(0.05, 0.45, 0.0125), smooth.df = 3))
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -20,13 +20,18 @@ fdrCorrect(Y, x, B = 500L, test = "wilcox.test", argList = list(),
 \item{B}{the number of permutations}
 
 \item{test}{Character string, giving the name of the function
-to test for differential absolute abundance.}
+to test for differential absolute abundance.
+Must accept the formula interface}
 
 \item{argList}{A list of arguments, passed on to the testing function}
 
 \item{testPfun}{the name of the distribution function of the test statistic}
 
 \item{testPargs}{A list of arguments passed on to testPfun}
+
+\item{extractFun}{A function to extract the test statistics
+ from the fit object. Defaults to the identity() function, i.e. assuming that
+the test function immediately returns the test statistic}
 
 \item{z0Quant}{A vector of length 2 of quantiles of the null distribution,
 in between which only null values are expected}
@@ -87,7 +92,11 @@ mat = cbind(
 matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
 matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 )
-fdrMat = fdrCorrect(mat, x)
-fdrMat$p0
+fdrRes = fdrCorrect(mat, x)
+fdrRes$p0
 #Indeed close to 0.9
+
+#With another type of test
+fdrResLm = fdrCorrect(mat, x, test = "lm", B = 5e1,
+extractFun = function(x){summary(x)$coef["x1","t value"]})
 }

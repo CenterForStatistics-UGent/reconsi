@@ -4,6 +4,8 @@
 #' @param FC the vector of total cell counts
 #' @param S the library sizes. By default calculated from Y
 #' @param tieBreak the tiebreaking protocol
+#' @param tol a convergence tolerance
+#' @param maxIter Maximum number of iterations
 #'
 #' @return The matrix to analyze
 tiebreak = function(Y, FC, S = rowSums(Y), tieBreak ="none", tol = 1e-4,

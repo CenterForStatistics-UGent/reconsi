@@ -7,6 +7,12 @@
 \usage{
 pt.edit(q)
 }
+\arguments{
+\item{q}{vector with t-statistic and degrees of freedom}
+}
+\value{
+corresponding quantile
+}
 \description{
 A custom function to calculate the distribution function of the t-test
  statistic. For internal use only
