@@ -52,6 +52,20 @@ Note that the helper function must accept the formula interface.
  extractFun = function(x){summary(x)$coef["x1","t value"]})
 ```
 
+This framework also accepts more than 2 groups.
+
+```{r customFunction2}
+ #3 groups
+ p = 100; n = 60
+x = rep(c(0,1,2), each = n/3)
+ mat = cbind(
+ matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
+ matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+ )
+ fdrResLm = fdrCorrect(mat, x, test = "lm", B = 5e1,
+ extractFun = function(x){anova(x)[["F value"]]}) #FIX ME!!
+```
+
 ## Case study
 
 We illustrate the package using an application from microbiology. The species

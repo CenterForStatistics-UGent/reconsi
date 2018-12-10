@@ -17,22 +17,30 @@ plotNull = function(fit){
     lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
     lfdr[lfdr>1] = 1
     dfDens = data.frame(zSeq = zSeq, Observed = zValsDensObs, g0 = g0,
-                        Theoretical = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)), fdr = lfdr)
+                        Theoretical = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
+                        fdr = lfdr)
     dfDensMolt = melt(dfDens, id.vars ="zSeq", value.name = "density",
                       variable.name = "type")
     dfFdr = data.frame(zValObs = zValObs, Fdr = Fdr)
-    ggplot(data = dfMerged, aes(x =zSeq, group = curve, y = Density,
+    plot = ggplot(data = dfMerged, aes(x =zSeq, group = curve, y = Density,
                                 col = weight, alpha = weight)) +
         geom_line(linetype = "dashed", size = 0.5) +
         scale_colour_continuous(high = "blue",
                                 low = "yellow", name = "Weights") +
         scale_alpha_continuous(guide = FALSE, range = c(0.5,1)) +
-        xlab("z-value") + ylab("Density/Fdr") +
-        geom_line(inherit.aes = FALSE, data = dfDensMolt,
-                  aes(x = zSeq, y = density, group = type, linetype = type)) +
-        scale_linetype_discrete(name = "Density type") +
-        geom_point(inherit.aes = FALSE, data = dfFdr,
-                   aes(x = zValObs, y = Fdr), col = "red", size = 0.75) +
+        xlab("z-value") +
+        ylab("Density/Fdr")  +
         theme_bw()
+
+    # Add permutation densities
+    plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
+                  aes(x = zSeq, y = density, group = type, linetype = type)) +
+        scale_linetype_discrete(name = "Density type")
+
+    # Add red dots for Fdr estimates
+    plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
+                   aes(x = zValObs, y = Fdr), col = "red", size = 0.75)
+
+    return(plot)
 })
 }
