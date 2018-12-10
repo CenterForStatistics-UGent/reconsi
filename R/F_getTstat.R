@@ -5,7 +5,9 @@
 #'
 #' @return A list with items
 #' \item{tstat}{The t-test statistic}
-#' \item{df}{The degrees of freedom (Welch approximation)}#'
+#' \item{df}{The degrees of freedom (Welch approximation)}
+#'
+#' @importFrom stats var
 getTstat = function(y1, y2, mm, nn){
   var1 = var(y1)
   var2 = var(y2)

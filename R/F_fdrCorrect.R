@@ -44,8 +44,17 @@
 #' \item{Fdr, fdr}{The estimated tail-area and local false discovery rates}
 #' \item{consensus}{The consensus null distribution}
 #' @export
-#' @import KernSmooth
+#' @importFrom stats pnorm qnorm
 #' @examples
+#' p = 100; n = 50
+#' x = rep(c(0,1), each = n/2)
+#' mat = cbind(
+#' matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
+#' matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+#' )
+#' fdrMat = fdrCorrect(mat, x)
+#' fdrMat$p0
+#' #Indeed close to 0.9
 fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),
                       testPfun = "pwilcox",
                       testPargs = list(m = table(x)[1],
@@ -80,7 +89,7 @@ zValObs = qnorm(apply(matrix(testStats$statObs, ncol = p),2, function(stats){
   zValObs = zVals$zValObs; zValsMat = zVals$zValsMat
 }
 
-#Permuation correlation matrix
+#Permuation correlation matrix of binned test statistics
 Cperm = if(cPerm){getCperm(zValsMat, nBins = nBins, binEdges = binEdges)
 } else {
         NULL

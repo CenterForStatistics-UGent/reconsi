@@ -12,7 +12,7 @@
 #' Based on the qvalue::qvalue() function and
 #'Storey and Tibshirani, 2003
 #'
-#'@importFrom stats smooth.spline
+#'@importFrom stats smooth.spline predict
 estP0 = function(zValObs, nullDensCum, zSeq, z0quantRange, smooth.df){
   pi0 = sapply(z0quantRange, function(z0Quant) {
     z0Quant = c(z0Quant, 1-z0Quant)

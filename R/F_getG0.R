@@ -13,6 +13,7 @@
 #' @param ... further arguments passed on to the KernSmooth::bkde() function
 #'
 #' @importFrom KernSmooth bkde
+#' @importFrom stats qnorm
 #'
 #' @return A list with following entries
 #' \item{g0}{The consensus density function}
@@ -35,8 +36,10 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   Range = range(c(zValsMat, zValObs))
   zValsDensPerm = apply(zValsMat, 2, function(zz){
       bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE,...)$y})
+  #Estimate permuation densities
   zValsDensObs0 = bkde(zValObs, range.x = Range, gridsize = gridsize,
                        truncate = FALSE,...)
+  #Estimate observed densities
   zValsDensObs = zValsDensObs0$y
   zSeq = zValsDensObs0$x #The support
   zValsDensObs[zValsDensObs<=0] =

@@ -37,6 +37,9 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 #' @export
 #' @rdname testDAA
 #' @examples
+#' testMat = testDAA(as.matrix(otu_table(Vandeputte)),
+#' get_variable(Vandeputte, "Health.status"),
+#' get_variable(Vandeputte,"absCountFrozen"))
 setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y), tieBreak = "none", ...){
     idSam = S>0
     tieBrokenY = tiebreak(Y = Y[idSam, ],
