@@ -7,8 +7,6 @@
 #' @param x A vector defining the groups. Will be coerced to factor.
 #' @param B an integer, the number of permuations
 #' @param argList A list of further arguments passed on to the test function
-#' @param extractFun a function to extract the test statistic
-#'  from the fit object
 #'
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
@@ -16,10 +14,11 @@
 #'
 #' @details For test "wilcox.test" and "t.test",
 #' fast custom implementations are used. Other functions can be supplied
-#' but must accept the formula argument, a list of other arguments and
-#' return solely a test statistic.
+#' but must accept a y outcome variable, a x as grouping variable, and possibly
+#' a list of other arguments. It must return all arguments needed to evaluate
+#' its quantile function if z-values are to be used.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
-                        argList, extractFun){
+                        argList){
   x = factor(x)
   Ycenter = Y
   if(center) {
@@ -27,13 +26,12 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
                                                   center = TRUE,
                                                   scale = FALSE)}
   }
-  if(test %in% c("wilcox.test","t.test")){
+  if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
     if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply
                           to two groups! \n Try 'kruskal.test()' or 'lm()'.")}
     xLog = x==names(table(x))[1]
     mm = table(x)[1]
     nn = table(x)[2]
-  }
 
   if(test=="wilcox.test"){ #Shortcuts possbile in case of Wilcoxon test
     nFac = mm*(mm + 1)/2
@@ -57,16 +55,16 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
         getTstat(y1 = dat[xSam],y2 = dat[!xSam], mm = mm, nn = nn)
       })
     })
-  } else {
+  }
+    } else {
   testFun = match.fun(test)
-  extractFun = match.fun(extractFun)
   statObs = apply(Y,2, function(y){
-    extractFun(testFun(y~x, argList))
+      do.call(testFun, c(list(y = y, x = x), argList))
   })
   n = nrow(Y)
   statsPerm = sapply(integer(B), function(ii){
     apply(Ycenter[sample(seq_len(n)),],2, function(y){
-    extractFun(testFun(y~x, argList))
+    do.call(testFun, c(list(y = y, x = x), argList))
   })})
   }
 

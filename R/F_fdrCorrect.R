@@ -6,11 +6,10 @@
 #'  to test for differential absolute abundance.
 #'  Must accept the formula interface
 #' @param argList A list of arguments, passed on to the testing function
-#' @param testPfun the name of the distribution function of the test statistic
-#' @param testPargs A list of arguments passed on to testPfun
-#' @param extractFun A function to extract the test statistics
-#'  from the fit object. Defaults to the identity() function, i.e. assuming that
-#'the test function immediately returns the test statistic
+#' @param quantileFun the name of the distribution function of the test statistic
+#' @param zValues A boolean, should test statistics be converted to z-values.
+#' See details
+#' @param testPargs A list of arguments passed on to quantileFun
 #' @param z0Quant A vector of length 2 of quantiles of the null distribution,
 #'    in between which only null values are expected
 #' @param gridsize The number of bins for the kernel density estimates
@@ -37,7 +36,10 @@
 #'
 #' @details Efron (2007) centers the observations in each group prior
 #'  to permutation. As permutations will remove any genuine group differences
-#'   anyway, we skip this step by default.
+#'   anyway, we skip this step by default.\\ If zValues = FALSE,
+#'   the density is fitted on the original test statistics rather than converted
+#'   to z-values. This unlocks the procedure for test statistics with unknown
+#'   distributions, but may be numerically less stable.
 #'
 #' @return A list with entries
 #' \item{zValsMat}{Permutation Z-values}
@@ -62,42 +64,49 @@
 #' estFdr = fdrRes$Fdr
 #' #The estimated tail-area false discovery rates.
 #'
-#' #With another type of test
-#' fdrResLm = fdrCorrect(mat, x, test = "lm", B = 5e1,
-#' extractFun = function(x){summary(x)$coef["x1","t value"]})
+#' #With another type of test. Need to supply quantile function in this case
+#' fdrResLm = fdrCorrect(mat, x, B = 5e1,
+#' test = function(x, y){
+#' c(summary(lm(y~x))$coef["x1","t value"], fit$df.residual)},
+#' quantileFun = function(t){pt(a = t[1], df = t[2])})
+#'
+#' With a test statistic without known null distribution(for small samples)
+#' fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
+#' test = function(x, y){
+#' kruskal.test(y~x)$statistic}, zValue = FALSE)
 fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),
-                      testPfun = "pwilcox",
+                      quantileFun = "pwilcox", zValues = TRUE,
                       testPargs = list(m = table(x)[1],
                                        n = table(x)[2]),
-                      extractFun = "identity",
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       weightStrat = "LH", maxIter = 1000L, tol = 1e-4,
                       cPerm = FALSE, nBins = 82L, binEdges = c(-4.1,4.1),
                       center = FALSE, zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3)){
-  if(test == "t.test"){
+  if(is.character(test) && test == "t.test"){
   testPargs = list()
-  testPfun = "pt.edit"
+  quantileFun = "pt.edit"
   }
   p = ncol(Y)
 if(is.null(zVals)){
 #Test statistics
 testStats = getTestStats(Y = Y, center = center, test = test,
-                         x = x, B = B, argList = argList,
-                         extractFun = extractFun)
+                         x = x, B = B, argList = argList)
 
 #Permuation z-values
 zValsMat = apply(testStats$statsPerm,
                  MARGIN = switch(test, "t.test" = c(3,2), 2),
                  function(stats){
-  qnorm(quantCorrect(do.call(testPfun,c(list(q = stats), testPargs))))
+  qnormIf(zValues = zValues,
+          quantCorrect(do.call(quantileFun,c(list(q = stats), testPargs))))
 })
 #Observed z-values
-zValObs = qnorm(apply(matrix(testStats$statObs, ncol = p),2, function(stats){
-  quantCorrect(do.call(testPfun, c(list(q = stats), testPargs)))
-  }))
+zValObs = qnormIf(apply(matrix(testStats$statObs, ncol = p),2, function(stats){
+  quantCorrect(do.call(quantileFun, c(list(q = stats), testPargs)))
+  }), zValues = zValues)
 } else {
+    if(!zValues) stop("Z-values supplied, then also let zValues be TRUE!")
   zValObs = zVals$zValObs; zValsMat = zVals$zValsMat
 }
 
@@ -118,13 +127,4 @@ FdrList = do.call(getFdr, c(list(zValObs = zValObs, p = p), consensus))
 names(zValObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(zValsMat = zValsMat, zValObs = zValObs, Cperm = Cperm,
        weightStrat = weightStrat), FdrList, consensus)
-}
-#' Correct quantiles by not returning 0 or 1
-#' @param quants A vector of quantiles
-#'
-#' @return The same vector of quantiles but without 0 or 1 values
-quantCorrect = function(quants){
-  quants[quants==1] = 1-.Machine$double.eps
-  quants[quants==0] = .Machine$double.eps
-  return(quants)
 }
