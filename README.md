@@ -36,7 +36,7 @@ The method provides an estimate of the proportion of true null hypothesis, which
 fdrRes$p0
 ```
 
-    ## [1] 0.8814992
+    ## [1] 0.884284
 
 The result of the procedure can be represented graphically as follows:
 
@@ -56,9 +56,6 @@ fit = lm(y~x)
 c(summary(fit)$coef["x1","t value"], fit$df.residual)},
 quantileFun = function(q){pt(q = q[1], df = q[2])})
 ```
-
-    ## Warning in getG0(zValObs = zValObs, zValsMat = zValsMat, z0Quant = z0Quant, : Consensus null estimation did not converge,
-    ##               please investigate cause!
 
 This framework also accepts more than 2 groups, and additional covariates through the
 
@@ -93,7 +90,7 @@ Case study
 
 We illustrate the package using an application from microbiology. The species composition of a community of microorganisms can be determined through sequencing. However, this only yields compositional information, and knowledge of the population size can be acquired by cell counting through flow cytometry. Next, the obtained species compositions can multiplied by the total population size to yield approximate absolute cell counts per species. Evidently, this introduces strong correlation between the tests due to the common factor. In other words: random noise in the estimation of the total cell counts will affect all hypotheses. Therefore, we employ permutations to estimate an experiment-specific random null distribution, that will account for this dependence.
 
-The dataset used is taken from Vandeputte *et al.*, 2017 (see ), a study on gut microbiome in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the *phyloseq* package, which is the preferred way to interact with our machinery for microbiome data.
+The dataset used is taken from Vandeputte *et al.*, 2017 (see [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/29143816)), a study on gut microbiome in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the *phyloseq* package, which is the preferred way to interact with our machinery for microbiome data.
 
 ``` r
 testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen")
@@ -107,4 +104,4 @@ quantile(FdrVDP)
 ```
 
     ##           0%          25%          50%          75%         100% 
-    ## 4.879994e-16 2.535337e-05 9.456799e-02 6.976162e-01 1.000000e+00
+    ## 3.977422e-16 3.221655e-06 7.555087e-02 6.753557e-01 1.000000e+00
