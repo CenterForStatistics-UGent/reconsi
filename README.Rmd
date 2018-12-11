@@ -22,7 +22,7 @@ Wilcoxon rank-sum test is used.
 
 ```{r syntData}
 #Create some synthetic data with 90% true null hypothesis
- p = 100; n = 50
+ p = 200; n = 50
 x = rep(c(0,1), each = n/2)
  mat = cbind(
  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
@@ -39,20 +39,29 @@ The method provides an estimate of the proportion of true null hypothesis, which
 is close to the true 90%.
 
 ```{r p0}
- fdrRes$p0
+fdrRes$p0
 ```
 
-It is also possible to provide a custom test function, and provide a helper 
-function to extract the test statistic, which is all the procedure needs. 
-Note that the helper function must accept the formula interface.
+The result of the procedure can be represented graphically as follows:
+
+```{r plotNull}
+plotNull(fdrRes)
+```
+
+It is also possible to provide a custom test function, which must accept at
+least a 'y' response variable and a 'x' grouping factor. Additionally, a quantile function should be supplied for transformation through quantiles to z-values.
 
 ```{r customFunction}
  #With another type of test
- fdrResLm = fdrCorrect(mat, x, test = "lm", B = 5e1,
- extractFun = function(x){summary(x)$coef["x1","t value"]})
+fdrResLm = fdrCorrect(mat, x, B = 5e1,
+                      test = function(x, y){
+fit = lm(y~x)
+c(summary(fit)$coef["x1","t value"], fit$df.residual)},
+quantileFun = function(q){pt(q = q[1], df = q[2])})
 ```
 
-This framework also accepts more than 2 groups.
+This framework also accepts more than 2 groups, and additional covariates 
+through the 
 
 ```{r customFunction2}
  #3 groups
@@ -62,8 +71,24 @@ x = rep(c(0,1,2), each = n/3)
  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
  )
- fdrResLm = fdrCorrect(mat, x, test = "lm", B = 5e1,
- extractFun = function(x){anova(x)[["F value"]]}) #FIX ME!!
+ #Provide an additional covariate through the 'argList' argument
+ z = rpois(n , lambda = 2)
+ fdrResLmZ = fdrCorrect(mat, x, B = 5e1,
+ test = function(x, y, z){
+ fit = lm(y~x+z)
+ c(summary(fit)$coef["x1","t value"], fit$df.residual)},
+ quantileFun = function(q){pt(q = q[1], df = q[2])},
+ argList = list(z = z))
+```
+
+If the null distribution of the test statistic is not known, it is also possbile
+to execute the procedure on the scale of the original test statistics, rather 
+than z-values by setting zValues = FALSE. This may be numerically less stable.
+
+```{r kruskal}
+fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
+test = function(x, y){
+ kruskal.test(y~x)$statistic}, zValues = FALSE)
 ```
 
 ## Case study

@@ -68,19 +68,21 @@
 #' #With another type of test. Need to supply quantile function in this case
 #' fdrResLm = fdrCorrect(mat, x, B = 5e1,
 #' test = function(x, y){
-#' c(summary(lm(y~x))$coef["x1","t value"], fit$df.residual)},
+#' fit = lm(y~x)
+#' c(summary(fit)$coef["x1","t value"], fit$df.residual)},
 #' quantileFun = function(q){pt(q = q[1], df = q[2])})
 #'
 #' #With a test statistic without known null distribution(for small samples)
 #' fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
 #' test = function(x, y){
-#' kruskal.test(y~x)$statistic}, zValue = FALSE)
+#' kruskal.test(y~x)$statistic}, zValues = FALSE)
 #'
 #' #Provide an additional covariate through the 'argList' argument
 #' z = rpois(n , lambda = 2)
 #' fdrResLmZ = fdrCorrect(mat, x, B = 5e1,
 #' test = function(x, y, z){
-#' c(summary(lm(y~x+z))$coef["x1","t value"], fit$df.residual)},
+#' fit = lm(y~x+z)
+#' c(summary(fit)$coef["x1","t value"], fit$df.residual)},
 #' quantileFun = function(q){pt(q = q[1], df = q[2])},
 #' argList = list(z = z))
 fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),

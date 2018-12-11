@@ -1,12 +1,23 @@
 #' Plot the obtained null distribution along with a histogram of observed test
 #' statistics
 #' @param fit an object returned by the fdrCorrect() (or testDAA()) function
+#' @param lowColor,highColor The low and high ends of the colour scale
 #'
 #' @return a ggplot2 plot object
 #' @import ggplot2
 #' @importFrom reshape2 melt
 #' @export
-plotNull = function(fit){
+#' @examples
+#'  p = 200; n = 50
+#'  x = rep(c(0,1), each = n/2)
+#'  mat = cbind(
+#'  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
+#'  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+#'  )
+#Provide just the matrix and grouping factor, and test using the random null
+#' fdrRes = fdrCorrect(mat, x)
+#' plotNull(fdrRes)
+plotNull = function(fit, lowColor ="yellow", highColor ="blue"){
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     df1 = data.frame(weight = weights, curve = colnames(zValsDensPerm))
@@ -14,30 +25,36 @@ plotNull = function(fit){
     moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name ="curve",
                    value.name ="Density")
     dfMerged = merge(moltdf2, df1, by = "curve")
-    lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
-    lfdr[lfdr>1] = 1
-    dfDens = data.frame(zSeq = zSeq, Observed = zValsDensObs, g0 = g0,
-                        Theoretical = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
-                        fdr = lfdr)
-    dfDensMolt = melt(dfDens, id.vars ="zSeq", value.name = "density",
-                      variable.name = "type")
-    dfFdr = data.frame(zValObs = zValObs, Fdr = Fdr)
+    #Permutation densities
     plot = ggplot(data = dfMerged, aes(x =zSeq, group = curve, y = Density,
                                 col = weight, alpha = weight)) +
         geom_line(linetype = "dashed", size = 0.5) +
-        scale_colour_continuous(high = "blue",
-                                low = "yellow", name = "Weights") +
+        scale_colour_continuous(high = highColor,
+                                low = lowColor, name = "Weights") +
         scale_alpha_continuous(guide = FALSE, range = c(0.5,1)) +
         xlab(if(zValues) "z-value" else "Test statistic") +
         ylab("Density/Fdr")  +
         theme_bw()
 
-    # Add permutation densities
+    #Histogram of observed z-values
+plot = plot + geom_histogram(data = data.frame(zValObs = zValObs),
+                             aes(x = zValObs, y = ..density..),
+                             inherit.aes = FALSE, bins = 50, alpha = 0.5,
+                             fill = "mediumseagreen")
+    # Add density functions
+    lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
+    lfdr[lfdr>1] = 1
+    dfDens = data.frame(zSeq = zSeq, RandomNull = g0,
+                        TheoreticalNull = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
+                        fdr = lfdr)
+    dfDensMolt = melt(dfDens, id.vars ="zSeq", value.name = "density",
+                      variable.name = "type")
     plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
                   aes(x = zSeq, y = density, group = type, linetype = type)) +
-        scale_linetype_discrete(name = "Density type")
+        scale_linetype_discrete(name = "")
 
     # Add red dots for Fdr estimates
+    dfFdr = data.frame(zValObs = zValObs, Fdr = Fdr)
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
                    aes(x = zValObs, y = Fdr), col = "red", size = 0.75)
 

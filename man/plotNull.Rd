@@ -5,10 +5,12 @@
 \title{Plot the obtained null distribution along with a histogram of observed test
 statistics}
 \usage{
-plotNull(fit)
+plotNull(fit, lowColor = "yellow", highColor = "blue")
 }
 \arguments{
 \item{fit}{an object returned by the fdrCorrect() (or testDAA()) function}
+
+\item{lowColor, highColor}{The low and high ends of the colour scale}
 }
 \value{
 a ggplot2 plot object
@@ -16,4 +18,14 @@ a ggplot2 plot object
 \description{
 Plot the obtained null distribution along with a histogram of observed test
 statistics
+}
+\examples{
+ p = 200; n = 50
+ x = rep(c(0,1), each = n/2)
+ mat = cbind(
+ matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
+ matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+ )
+fdrRes = fdrCorrect(mat, x)
+plotNull(fdrRes)
 }
