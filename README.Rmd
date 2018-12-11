@@ -112,3 +112,10 @@ in healthy and Crohn's disease patients. The test looks for differences in absol
 ```{r Vandeputte}
 testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen")
 ```
+
+The estimated tail-area false discovery rates can then simply be extracted as
+
+```{r vandeputteFdr}
+FdrVDP = testVanDePutte$Fdr
+table(FdrVDP)
+```
