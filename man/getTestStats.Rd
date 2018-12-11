@@ -5,7 +5,7 @@
 \title{A function to calculate observed and permuation z-statistics
 on a n-by-p matrix of observations}
 \usage{
-getTestStats(Y, center, test = "wilcox.test", x, B, argList, extractFun)
+getTestStats(Y, center, test = "wilcox.test", x, B, argList)
 }
 \arguments{
 \item{Y}{The nxp data matrix}
@@ -19,9 +19,6 @@ getTestStats(Y, center, test = "wilcox.test", x, B, argList, extractFun)
 \item{B}{an integer, the number of permuations}
 
 \item{argList}{A list of further arguments passed on to the test function}
-
-\item{extractFun}{a function to extract the test statistic
-from the fit object}
 }
 \value{
 A list with components
@@ -35,6 +32,7 @@ on a n-by-p matrix of observations
 \details{
 For test "wilcox.test" and "t.test",
 fast custom implementations are used. Other functions can be supplied
-but must accept the formula argument, a list of other arguments and
-return solely a test statistic.
+but must accept a y outcome variable, a x as grouping variable, and possibly
+a list of other arguments. It must return all arguments needed to evaluate
+its quantile function if z-values are to be used.
 }

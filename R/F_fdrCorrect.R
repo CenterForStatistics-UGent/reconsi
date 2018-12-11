@@ -6,7 +6,8 @@
 #'  to test for differential absolute abundance.
 #'  Must accept the formula interface
 #' @param argList A list of arguments, passed on to the testing function
-#' @param quantileFun the name of the distribution function of the test statistic
+#' @param quantileFun the distribution function of the test statistic,
+#' or its name. Must at least accept an argument named q.
 #' @param zValues A boolean, should test statistics be converted to z-values.
 #' See details
 #' @param testPargs A list of arguments passed on to quantileFun
@@ -52,7 +53,7 @@
 #' @export
 #' @importFrom stats pnorm qnorm
 #' @examples
-#' p = 100; n = 50
+#' p = 200; n = 50
 #' x = rep(c(0,1), each = n/2)
 #' mat = cbind(
 #' matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
@@ -68,26 +69,40 @@
 #' fdrResLm = fdrCorrect(mat, x, B = 5e1,
 #' test = function(x, y){
 #' c(summary(lm(y~x))$coef["x1","t value"], fit$df.residual)},
-#' quantileFun = function(t){pt(a = t[1], df = t[2])})
+#' quantileFun = function(q){pt(q = q[1], df = q[2])})
 #'
-#' With a test statistic without known null distribution(for small samples)
+#' #With a test statistic without known null distribution(for small samples)
 #' fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
 #' test = function(x, y){
 #' kruskal.test(y~x)$statistic}, zValue = FALSE)
+#'
+#' #Provide an additional covariate through the 'argList' argument
+#' z = rpois(n , lambda = 2)
+#' fdrResLmZ = fdrCorrect(mat, x, B = 5e1,
+#' test = function(x, y, z){
+#' c(summary(lm(y~x+z))$coef["x1","t value"], fit$df.residual)},
+#' quantileFun = function(q){pt(q = q[1], df = q[2])},
+#' argList = list(z = z))
 fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),
                       quantileFun = "pwilcox", zValues = TRUE,
-                      testPargs = list(m = table(x)[1],
-                                       n = table(x)[2]),
+                      testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       weightStrat = "LH", maxIter = 1000L, tol = 1e-4,
                       cPerm = FALSE, nBins = 82L, binEdges = c(-4.1,4.1),
                       center = FALSE, zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3)){
-  if(is.character(test) && test == "t.test"){
-  testPargs = list()
-  quantileFun = "pt.edit"
+  if(is.character(test)){
+      if(test == "t.test"){
+        testPargs = list()
+        quantileFun = "pt.edit"
+        } else if(test=="wilcox.test"){
+        testPargs = list(m = table(x)[1], n = table(x)[2])
+        }
   }
+if(!"q" %in% formalArgs(match.fun(quantileFun))) {
+stop("Quantile function must accept arguments named 'q'")
+}
   p = ncol(Y)
 if(is.null(zVals)){
 #Test statistics
@@ -96,15 +111,16 @@ testStats = getTestStats(Y = Y, center = center, test = test,
 
 #Permuation z-values
 zValsMat = apply(testStats$statsPerm,
-                 MARGIN = switch(test, "t.test" = c(3,2), 2),
+                 MARGIN = if(length(dim(testStats$statsPerm))==3) c(3,2) else 2,
                  function(stats){
-  qnormIf(zValues = zValues,
-          quantCorrect(do.call(quantileFun,c(list(q = stats), testPargs))))
-})
+  qnormIf(zValues = zValues, quantileFun = quantileFun, stats = stats,
+          testPargs = testPargs)
+          })
 #Observed z-values
-zValObs = qnormIf(apply(matrix(testStats$statObs, ncol = p),2, function(stats){
-  quantCorrect(do.call(quantileFun, c(list(q = stats), testPargs)))
-  }), zValues = zValues)
+zValObs = apply(matrix(testStats$statObs, ncol = p),2, function(stats){
+    qnormIf(zValues = zValues, quantileFun = quantileFun, stats = stats,
+            testPargs = testPargs)
+  })
 } else {
     if(!zValues) stop("Z-values supplied, then also let zValues be TRUE!")
   zValObs = zVals$zValObs; zValsMat = zVals$zValsMat
@@ -126,5 +142,5 @@ FdrList = do.call(getFdr, c(list(zValObs = zValObs, p = p), consensus))
 
 names(zValObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(zValsMat = zValsMat, zValObs = zValObs, Cperm = Cperm,
-       weightStrat = weightStrat), FdrList, consensus)
+       weightStrat = weightStrat, zValues = zValues), FdrList, consensus)
 }

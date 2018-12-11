@@ -28,7 +28,7 @@ plotNull = function(fit){
         scale_colour_continuous(high = "blue",
                                 low = "yellow", name = "Weights") +
         scale_alpha_continuous(guide = FALSE, range = c(0.5,1)) +
-        xlab("z-value") +
+        xlab(if(zValues) "z-value" else "Test statistic") +
         ylab("Density/Fdr")  +
         theme_bw()
 

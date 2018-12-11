@@ -5,12 +5,12 @@
 \title{Perform simultaneous inference, correcting for correlation between tests.}
 \usage{
 fdrCorrect(Y, x, B = 500L, test = "wilcox.test", argList = list(),
-  testPfun = "pwilcox", testPargs = list(m = table(x)[1], n =
-  table(x)[2]), extractFun = "identity", z0Quant = pnorm(c(-1, 1)),
-  gridsize = 801L, weightStrat = "LH", maxIter = 1000L,
-  tol = 1e-04, cPerm = FALSE, nBins = 82L, binEdges = c(-4.1, 4.1),
-  center = FALSE, zVals = NULL, estP0args = list(z0quantRange =
-  seq(0.05, 0.45, 0.0125), smooth.df = 3))
+  quantileFun = "pwilcox", zValues = TRUE, testPargs = list(),
+  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, weightStrat = "LH",
+  maxIter = 1000L, tol = 1e-04, cPerm = FALSE, nBins = 82L,
+  binEdges = c(-4.1, 4.1), center = FALSE, zVals = NULL,
+  estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
+  3))
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -25,13 +25,13 @@ Must accept the formula interface}
 
 \item{argList}{A list of arguments, passed on to the testing function}
 
-\item{testPfun}{the name of the distribution function of the test statistic}
+\item{quantileFun}{the distribution function of the test statistic,
+or its name. Must at least accept an argument named q.}
 
-\item{testPargs}{A list of arguments passed on to testPfun}
+\item{zValues}{A boolean, should test statistics be converted to z-values.
+See details}
 
-\item{extractFun}{A function to extract the test statistics
- from the fit object. Defaults to the identity() function, i.e. assuming that
-the test function immediately returns the test statistic}
+\item{testPargs}{A list of arguments passed on to quantileFun}
 
 \item{z0Quant}{A vector of length 2 of quantiles of the null distribution,
 in between which only null values are expected}
@@ -83,10 +83,13 @@ Perform simultaneous inference, correcting for correlation between tests.
 \details{
 Efron (2007) centers the observations in each group prior
  to permutation. As permutations will remove any genuine group differences
-  anyway, we skip this step by default.
+  anyway, we skip this step by default.\\ If zValues = FALSE,
+  the density is fitted on the original test statistics rather than converted
+  to z-values. This unlocks the procedure for test statistics with unknown
+  distributions, but may be numerically less stable.
 }
 \examples{
-p = 100; n = 50
+p = 200; n = 50
 x = rep(c(0,1), each = n/2)
 mat = cbind(
 matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
@@ -98,7 +101,22 @@ fdrRes$p0
 estFdr = fdrRes$Fdr
 #The estimated tail-area false discovery rates.
 
-#With another type of test
-fdrResLm = fdrCorrect(mat, x, test = "lm", B = 5e1,
-extractFun = function(x){summary(x)$coef["x1","t value"]})
+#With another type of test. Need to supply quantile function in this case
+fdrResLm = fdrCorrect(mat, x, B = 5e1,
+test = function(x, y){
+c(summary(lm(y~x))$coef["x1","t value"], fit$df.residual)},
+quantileFun = function(q){pt(q = q[1], df = q[2])})
+
+#With a test statistic without known null distribution(for small samples)
+fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
+test = function(x, y){
+kruskal.test(y~x)$statistic}, zValue = FALSE)
+
+#Provide an additional covariate through the 'argList' argument
+z = rpois(n , lambda = 2)
+fdrResLmZ = fdrCorrect(mat, x, B = 5e1,
+test = function(x, y, z){
+c(summary(lm(y~x+z))$coef["x1","t value"], fit$df.residual)},
+quantileFun = function(q){pt(q = q[1], df = q[2])},
+argList = list(z = z))
 }

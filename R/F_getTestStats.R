@@ -62,7 +62,9 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
       do.call(testFun, c(list(y = y, x = x), argList))
   })
   n = nrow(Y)
-  statsPerm = sapply(integer(B), function(ii){
+  statsPerm = vapply(integer(B),
+                     FUN.VALUE = statObs,
+                     function(ii){
     apply(Ycenter[sample(seq_len(n)),],2, function(y){
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
