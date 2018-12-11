@@ -117,5 +117,5 @@ The estimated tail-area false discovery rates can then simply be extracted as
 
 ```{r vandeputteFdr}
 FdrVDP = testVanDePutte$Fdr
-table(FdrVDP)
+quantile(FdrVDP)
 ```
