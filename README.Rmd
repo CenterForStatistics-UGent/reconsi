@@ -105,8 +105,8 @@ all hypotheses. Therefore, we employ permutations to estimate an
 experiment-specific random null distribution, that will account for this 
 dependence.
 
-The dataset used is taken from Vandeputte _et al._, 2017 (see 
-\url{https://www.ncbi.nlm.nih.gov/pubmed/29143816}), a study on gut microbiome 
+The dataset used is taken from Vandeputte _et al._, 2017 (see manuscript
+\url{https://www.ncbi.nlm.nih.gov/pubmed/29143816}{here}), a study on gut microbiome 
 in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the _phyloseq_ package, which is the preferred way to interact with our machinery for microbiome data.
 
 ```{r Vandeputte}
