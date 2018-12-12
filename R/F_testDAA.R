@@ -24,7 +24,8 @@ setGeneric("testDAA", function(Y, ...) standardGeneric("testDAA"))
 #'@rdname testDAA
 #'@examples
 #'#Test for phyloseq object
-#'testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen")
+#'testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen",
+#'B = 5e1)
 setMethod("testDAA", "phyloseq", function(Y, groupName, FCname, ...){
 otuTab  = if(taxa_are_rows(Y)) t(as(otu_table(Y), "matrix")) else
     as(otu_table(Y), "matrix")
@@ -39,7 +40,7 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 #' library(phyloseq)
 #' testMat = testDAA(as(otu_table(Vandeputte), "matrix"),
 #' get_variable(Vandeputte, "Health.status"),
-#' get_variable(Vandeputte,"absCountFrozen"))
+#' get_variable(Vandeputte,"absCountFrozen"), B = 5e1)
 setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y),
                                         tieBreak = "none", ...){
     idSam = S>0
