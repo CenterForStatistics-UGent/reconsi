@@ -1,15 +1,16 @@
 
 ``` r
-library(corTests)
+knitr::opts_chunk$set(cache = TRUE, autodep = TRUE,  warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, tidy = TRUE, fig.width = 9, fig.height = 6, purl=TRUE, fig.show = "hold", cache.lazy = FALSE, fig.path = "README_figs/README-")
+library(pransi)
 ```
 
-Manual for the use of the corTest functions
-===========================================
+Manual for the use of the pransi functions
+==========================================
 
 Introduction
 ------------
 
-The aim of this pacakage is to provide simultenous inference for correlated hypotheses using random null distributions. These random null distributions are estimated through permutations. Wilcoxon rank sum test and two sample t-test are natively implemented, but any other test can be used.
+The aim of this pacakage is to provide Permutation RAndom Null dsitributions for simultaneous inference. These random null distributions are estimated through permutations. Wilcoxon rank sum test and two sample t-test are natively implemented, but any other test can be used.
 
 General use
 -----------
@@ -36,7 +37,7 @@ The method provides an estimate of the proportion of true null hypothesis, which
 fdrRes$p0
 ```
 
-    ## [1] 0.884284
+    ## [1] 0.8562802
 
 The result of the procedure can be represented graphically as follows:
 
@@ -44,17 +45,18 @@ The result of the procedure can be represented graphically as follows:
 plotNull(fdrRes)
 ```
 
-![](README_files/figure-markdown_github/plotNull-1.png)
+![](README_figs/README-plotNull-1.png)
 
 It is also possible to provide a custom test function, which must accept at least a 'y' response variable and a 'x' grouping factor. Additionally, a quantile function should be supplied for transformation through quantiles to z-values.
 
 ``` r
- #With another type of test
-fdrResLm = fdrCorrect(mat, x, B = 5e1,
-                      test = function(x, y){
-fit = lm(y~x)
-c(summary(fit)$coef["x1","t value"], fit$df.residual)},
-quantileFun = function(q){pt(q = q[1], df = q[2])})
+# With another type of test
+fdrResLm = fdrCorrect(mat, x, B = 50, test = function(x, y) {
+    fit = lm(y ~ x)
+    c(summary(fit)$coef["x1", "t value"], fit$df.residual)
+}, quantileFun = function(q) {
+    pt(q = q[1], df = q[2])
+})
 ```
 
 This framework also accepts more than 2 groups, and additional covariates through the
@@ -80,9 +82,9 @@ x = rep(c(0,1,2), each = n/3)
 If the null distribution of the test statistic is not known, it is also possbile to execute the procedure on the scale of the original test statistics, rather than z-values by setting zValues = FALSE. This may be numerically less stable.
 
 ``` r
-fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
-test = function(x, y){
- kruskal.test(y~x)$statistic}, zValues = FALSE)
+fdrResKruskal = fdrCorrect(mat, x, B = 50, test = function(x, y) {
+    kruskal.test(y ~ x)$statistic
+}, zValues = FALSE)
 ```
 
 Case study
@@ -104,4 +106,4 @@ quantile(FdrVDP)
 ```
 
     ##           0%          25%          50%          75%         100% 
-    ## 3.977422e-16 3.221655e-06 7.555087e-02 6.753557e-01 1.000000e+00
+    ## 5.231074e-16 3.551768e-06 8.838016e-02 6.757317e-01 1.000000e+00
