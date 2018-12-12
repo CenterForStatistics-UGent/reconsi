@@ -1,6 +1,6 @@
-Package: corTests
+Package: pransi
 Type: Package
-Title: Powerful simultaneous inference for correlated tests
+Title: Permutation RAndom Null distributions for Simultaneous inference
 Version: 0.1.0
 Author: Stijn Hawinkel <stijn.hawinkel@ugent.be>
 Maintainer: Joris Meys <joris.meys@ugent.be>
@@ -17,3 +17,4 @@ Suggests:
     knitr,
     rmarkdown,
     testthat
+VignetteBuilder: knitr

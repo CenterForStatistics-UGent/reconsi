@@ -1,19 +1,34 @@
 ---
-output: github_document
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        keep_md: true
+vignette: >
+    %\VignetteIndexEntry{Manual for the RCM pacakage}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup}
-library(pransi)
-```
+# pransi package: vignette
 
-# Manual for the use of the pransi functions
+\setcounter{tocdepth}{5}
+\tableofcontents
+
+# Introduction
 
 ## Introduction
 
-The aim of this pacakage is to provide Permutation RAndom Null dsitributions 
-for simultaneous inference. These random null distributions 
+The aim of this pacakage is to provide simultenous inference for correlated 
+hypotheses using random null distributions. These random null distributions 
 are estimated through permutations. Wilcoxon rank sum test and two sample t-test
 are natively implemented, but any other test can be used.
+
+## Installing and loading the package
+
+```{r installAndLoad}
+#install.packages("pransi")
+library(pransi)
+```
 
 ## General use
 

@@ -1,4 +1,4 @@
 library(testthat)
-library(corTests)
+library(pransi)
 
-test_check("corTests")
+test_check("pransi")

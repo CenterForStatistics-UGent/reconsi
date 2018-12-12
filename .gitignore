@@ -5,3 +5,4 @@
 *.Rproj
 *.access^
 README_cache/
+inst/NEWS.Rmd

@@ -53,33 +53,33 @@
 #' @export
 #' @importFrom stats pnorm qnorm
 #' @examples
-#' p = 200; n = 50
+#' p = 200; n = 50; B = 5e1
 #' x = rep(c(0,1), each = n/2)
 #' mat = cbind(
 #' matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
 #' matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 #' )
-#' fdrRes = fdrCorrect(mat, x)
+#' fdrRes = fdrCorrect(mat, x, B = B)
 #' fdrRes$p0
 #' #Indeed close to 0.9
 #' estFdr = fdrRes$Fdr
 #' #The estimated tail-area false discovery rates.
 #'
 #' #With another type of test. Need to supply quantile function in this case
-#' fdrResLm = fdrCorrect(mat, x, B = 5e1,
+#' fdrResLm = fdrCorrect(mat, x, B = B,
 #' test = function(x, y){
 #' fit = lm(y~x)
 #' c(summary(fit)$coef["x1","t value"], fit$df.residual)},
 #' quantileFun = function(q){pt(q = q[1], df = q[2])})
 #'
 #' #With a test statistic without known null distribution(for small samples)
-#' fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
+#' fdrResKruskal = fdrCorrect(mat, x, B = B,
 #' test = function(x, y){
 #' kruskal.test(y~x)$statistic}, zValues = FALSE)
 #'
 #' #Provide an additional covariate through the 'argList' argument
 #' z = rpois(n , lambda = 2)
-#' fdrResLmZ = fdrCorrect(mat, x, B = 5e1,
+#' fdrResLmZ = fdrCorrect(mat, x, B = B,
 #' test = function(x, y, z){
 #' fit = lm(y~x+z)
 #' c(summary(fit)$coef["x1","t value"], fit$df.residual)},
@@ -103,7 +103,21 @@ fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),
         }
   }
 if(!"q" %in% formalArgs(match.fun(quantileFun))) {
-stop("Quantile function must accept arguments named 'q'")
+    stop("Quantile function must accept arguments named 'q'\n")
+}
+if(!is.matrix(Y)){
+    stop(paste("Please provide a data matrix as imput!\n",
+               if(is.vector(Y)) "Multiplicity correction only needed when
+               testing multiple hypotheses."))
+}
+if(length(x)!=nrow(Y)){
+    stop("Length of grouping factor does not correspond to number of
+         rows of data matrix!\n")
+}
+if(ncol(Y)<30){
+ warning("Less than 30 hypotheses tested, multplicity correction may
+         be unreliable.\nConsider using p.adjust(..., method ='BH').",
+         immediate. = TRUE)
 }
   p = ncol(Y)
 if(is.null(zVals)){
