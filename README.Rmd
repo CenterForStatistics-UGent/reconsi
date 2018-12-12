@@ -11,10 +11,10 @@ library(pransi)
 
 ## Introduction
 
-The aim of this pacakage is to provide Permutation RAndom Null dsitributions 
-for simultaneous inference. These random null distributions 
-are estimated through permutations. Wilcoxon rank sum test and two sample t-test
-are natively implemented, but any other test can be used.
+The aim of this _pransi_ pacakage is to provide Permutation RAndom Null distributions 
+for simultaneous inference. Wilcoxon rank sum test and two sample t-test
+are natively implemented, but any other test can be used. The package's aim is
+multiplicity correction while accounting for correlations among statistical tests.
 
 ## General use
 

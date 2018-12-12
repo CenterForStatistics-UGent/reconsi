@@ -12,7 +12,7 @@ License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: phyloseq, methods, KernSmooth, reshape2, ggplot2
+Imports: phyloseq, KernSmooth, reshape2, ggplot2, stats, methods
 Suggests: 
     knitr,
     rmarkdown,

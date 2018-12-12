@@ -20,6 +20,7 @@ setGeneric("testDAA", function(Y, ...) standardGeneric("testDAA"))
 
 #'@export
 #'@import phyloseq
+#'@import methods
 #'@rdname testDAA
 #'@examples
 #'#Test for phyloseq object
