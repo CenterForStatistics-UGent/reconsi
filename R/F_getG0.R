@@ -45,7 +45,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   zValsDensObs[zValsDensObs<=0] =
       zValsDensPerm[zValsDensPerm<=0] =
       .Machine$double.eps #Remove negative densities
-  zIndObs = sapply(zValObs, function(rr){which.max(rr<=zSeq)})
+  zIndObs = sapply(zValObs, function(rr){which.min(abs(rr-zSeq))})
   #Indicators for the observed z values in the support of the kernel
   iter = 1L; convergence  = FALSE; p0 = 1
   fdr = as.integer(zSeq >= centralBorders[1] & zSeq <= centralBorders[2]) +
