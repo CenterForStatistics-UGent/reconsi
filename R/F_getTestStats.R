@@ -12,6 +12,8 @@
 #' \item{statObs}{A vector of length p of observed test statistics}
 #' \item{statsPerm}{A p-by-B matrix of permutation test statistics}
 #'
+#' @importFrom permute shuffleSet
+#'
 #' @details For test "wilcox.test" and "t.test",
 #' fast custom implementations are used. Other functions can be supplied
 #' but must accept a y outcome variable, a x as grouping variable, and possibly
@@ -22,7 +24,9 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
   x = factor(x)
   Ycenter = Y
 
-  #FIX ME: useful permutations!
+  #enumerate B unique ways to group
+
+  permDesign = shuffleSet(length(x),B)
   if(center) {
     for (ii in unique(x)){Ycenter[x==ii,] = scale(Ycenter[x==ii,],
                                                   center = TRUE,
@@ -32,8 +36,8 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply
                           to two groups! \n Try 'kruskal.test()' or 'lm()'.")}
     xLog = x==names(table(x))[1]
-    mm = table(x)[1]
     nn = table(x)[2]
+    mm = table(x)[1]
 
   if(test=="wilcox.test"){ #Shortcuts possbile in case of Wilcoxon test
     nFac = mm*(mm + 1)/2
@@ -42,17 +46,18 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     statObs = colSums(YRanked[xLog,]) - nFac
 
     #Permuation test statistics
+    mmSeries = seq_len(mm)
     YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
-    statsPerm = - nFac + vapply(integer(B), function(ii){
-      rowSums(YRankedCenter[,sample(xLog)])
+    statsPerm = - nFac + vapply(seq_len(B), function(ii){
+      rowSums(YRankedCenter[,permDesign[ii,mmSeries]])
     }, FUN.VALUE = statObs)
-  } else if(test=="t.test"){
+  } else if(test == "t.test"){
     statObs = apply(Y, 2, function(dat){
 getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     })
-    statsPerm = vapply(integer(B), FUN.VALUE = matrix(0, 2, ncol(Y)),
+    statsPerm = vapply(seq_len(B), FUN.VALUE = statObs,
                        function(ii){
-      xSam = sample(xLog)
+      xSam = xLog[permDesign[ii,]]
       apply(Ycenter, 2, function(dat){
         getTstat(y1 = dat[xSam],y2 = dat[!xSam], mm = mm, nn = nn)
       })
@@ -64,10 +69,10 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
       do.call(testFun, c(list(y = y, x = x), argList))
   })
   n = nrow(Y)
-  statsPerm = vapply(integer(B),
+  statsPerm = vapply(seq_len(B),
                      FUN.VALUE = statObs,
                      function(ii){
-    apply(Ycenter[sample(seq_len(n)),],2, function(y){
+    apply(Ycenter[permDesign[ii,],],2, function(y){
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
   }
