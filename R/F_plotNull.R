@@ -17,7 +17,7 @@
 #Provide just the matrix and grouping factor, and test using the random null
 #' fdrRes = fdrCorrect(mat, x)
 #' plotNull(fdrRes)
-plotNull = function(fit, lowColor ="yellow", highColor ="blue"){
+plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE){
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     df1 = data.frame(weight = weights, curve = colnames(zValsDensPerm))
@@ -41,23 +41,25 @@ plot = plot + geom_histogram(data = data.frame(zValObs = zValObs),
                              aes(x = zValObs, y = ..density..),
                              inherit.aes = FALSE, bins = 50, alpha = 0.5,
                              fill = "mediumseagreen")
+
     # Add density functions
     lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
     lfdr[lfdr>1] = 1
     dfDens = data.frame(zSeq = zSeq, RandomNull = g0,
                         TheoreticalNull = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
                         fdr = lfdr)
+    if(!dens){dfDens$fdr =NULL}
     dfDensMolt = melt(dfDens, id.vars ="zSeq", value.name = "density",
                       variable.name = "type")
     plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
                   aes(x = zSeq, y = density, group = type, linetype = type)) +
         scale_linetype_discrete(name = "")
-
+    if(dens){
     # Add red dots for Fdr estimates
     dfFdr = data.frame(zValObs = zValObs, Fdr = Fdr)
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
                    aes(x = zValObs, y = Fdr), col = "red", size = 0.75)
-
+}
     return(plot)
 })
 }

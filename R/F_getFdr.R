@@ -16,22 +16,24 @@
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
 #' \item{p0}{The proportion of true null hypotheses}
-getFdr = function(zValObs, G0, g0, fdr, zSeq, p, p0,...)
+getFdr = function(zValObs, G0, g0, fdr, zSeq, p, p0, zValsDensObs,
+                  smoothObs, ...)
 {
-  g0 = g0/(sum(g0))
   #Null
-  G0cumDef = sapply(seq_along(G0), function(yy){
-    if(G0[yy]<0.5) {G0[yy]} else {1-G0[yy]+g0[yy]}
-    })
+  G0[G0>0.5] = 1-G0[G0>0.5]
+  G0cumDefInterp = approx(x = zSeq, y = G0, xout = zValObs)$y
 
   #Observed
-  zcum = ecdf(zValObs)(zValObs)
-  ZcumDef = sapply(zcum, function(yy){if(yy<0.5) yy else (1-yy+1/p)})
-  id = sapply(zValObs, function(rr){which.min(abs(rr-zSeq))})
+  zcum = if(smoothObs) {
+    approx(y = cumsum(zValsDensObs/sum(zValsDensObs)),
+    xout = zValObs, x = zSeq)$y
+   } else {ecdf(zValObs)(zValObs)}
+  zcum[zcum>0.5] = 1-zcum[zcum>0.5]+1/p
+
 
   #Fdr
-  Fdr = G0cumDef[id]/ZcumDef*p0
+  Fdr = G0cumDefInterp/zcum*p0
 
   Fdr[Fdr>1] = 1
-return(list(Fdr = Fdr, fdr = fdr[id], p0 = p0))
+return(list(Fdr = Fdr, fdr = fdr, p0 = p0))
 }
