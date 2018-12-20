@@ -27,11 +27,11 @@ getFdr = function(zValObs, G0, g0, fdr, zSeq, p, p0,...)
   #Observed
   zcum = ecdf(zValObs)(zValObs)
   ZcumDef = sapply(zcum, function(yy){if(yy<0.5) yy else (1-yy+1/p)})
-  id = sapply(zValObs, function(rr){which.max(rr<=zSeq)})
+  id = sapply(zValObs, function(rr){which.min(abs(rr-zSeq))})
 
   #Fdr
   Fdr = G0cumDef[id]/ZcumDef*p0
 
   Fdr[Fdr>1] = 1
-return(list(Fdr = Fdr, fdr = fdr[id], p0 = min(p0,1)))
+return(list(Fdr = Fdr, fdr = fdr[id], p0 = p0))
 }

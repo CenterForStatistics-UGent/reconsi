@@ -21,6 +21,8 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
                         argList){
   x = factor(x)
   Ycenter = Y
+
+  #FIX ME: useful permutations!
   if(center) {
     for (ii in unique(x)){Ycenter[x==ii,] = scale(Ycenter[x==ii,],
                                                   center = TRUE,
@@ -40,10 +42,10 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     statObs = colSums(YRanked[xLog,]) - nFac
 
     #Permuation test statistics
-    YRankedCenter = if(center) apply(Ycenter, 2, rank) else YRanked
-    statsPerm = - nFac + sapply(integer(B), function(ii){
-      colSums(YRankedCenter[sample(xLog),])
-    })
+    YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
+    statsPerm = - nFac + vapply(integer(B), function(ii){
+      rowSums(YRankedCenter[,sample(xLog)])
+    }, FUN.VALUE = statObs)
   } else if(test=="t.test"){
     statObs = apply(Y, 2, function(dat){
 getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)

@@ -45,6 +45,7 @@
 #' @return A list with entries
 #' \item{zValsMat}{Permutation Z-values}
 #' \item{zValObs}{Observed Z-values}
+#' \item{zValObsPerm}{Permutation observed z-values}
 #' \item{Cperm}{(optional) An estimated covariance matrix
 #'  of binned test statistics}
 #' \item{weightStrat}{The weighting strategy }
@@ -89,11 +90,11 @@ fdrCorrect = function(Y, x, B = 5e2L, test = "wilcox.test", argList = list(),
                       quantileFun = "pwilcox", zValues = TRUE,
                       testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
-                      weightStrat = "LH", maxIter = 1000L, tol = 1e-4,
+                      weightStrat = "LH", maxIter = 1000L, tol = 1e-5,
                       cPerm = FALSE, nBins = 82L, binEdges = c(-4.1,4.1),
                       center = FALSE, zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
-                                       smooth.df = 3)){
+                                       smooth.df = 3), permZvals = FALSE){
   if(is.character(test)){
       if(test == "t.test"){
         testPargs = list()
@@ -125,38 +126,58 @@ if(is.null(zVals)){
 testStats = getTestStats(Y = Y, center = center, test = test,
                          x = x, B = B, argList = argList)
 
-#Permuation z-values
-zValsMat = apply(testStats$statsPerm,
-                 MARGIN = if(length(dim(testStats$statsPerm))==3) c(3,2) else 2,
-                 function(stats){
-  qnormIf(zValues = zValues, quantileFun = quantileFun, stats = stats,
-          testPargs = testPargs)
-          })
+if(!(is.character(test) && test=="wilcox.test" && !zValues)){
+#Observed cdf values
+cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
+  quantileIf(zValues = zValues, quantileFun = quantileFun, stats = stats,
+             testPargs = testPargs)
+})
+#Permutation cdf-values
+cdfValsMat =  apply(testStats$statsPerm,
+                  MARGIN = if(length(dim(testStats$statsPerm))==3) c(3,2) else 2,
+                  function(stats){
+                    quantileIf(zValues = zValues, quantileFun = quantileFun, stats = stats,
+                               testPargs = testPargs)
+                  })
+}
 #Observed z-values
-zValObs = apply(matrix(testStats$statObs, ncol = p),2, function(stats){
-    qnormIf(zValues = zValues, quantileFun = quantileFun, stats = stats,
-            testPargs = testPargs)
-  })
+zValObs = if(zValues) {qnorm(
+  if(permZvals) quantCorrect(sapply(seq_along(cdfValObs), function(i){
+  (sum(cdfValObs[i] > cdfValsMat[,i])+1L)/(B+2L)
+})) else cdfValObs
+)
+} else {testStats$statObs}
+#Permuation z-values
+zValsMat = if(zValues) {qnorm(
+  if(permZvals) t(sapply(seq_len(B), function(b){
+  quantCorrect(sapply(seq_along(cdfValObs), function(i){
+    (sum(cdfValsMat[b,i] > cdfValsMat[-b,i])+1L)/(B+2L)
+  }))
+})) else cdfValsMat
+)
+} else testStats$statsPerm
+
 } else {
     if(!zValues) stop("Z-values supplied, then also let zValues be TRUE!")
   zValObs = zVals$zValObs; zValsMat = zVals$zValsMat
-}
+ }
 
 #Permuation correlation matrix of binned test statistics
 Cperm = if(cPerm){getCperm(zValsMat, nBins = nBins, binEdges = binEdges)
-} else {
-        NULL
-    }
+} else {NULL}
 
 #Consensus distribution estimation
-consensus = getG0(zValObs = zValObs, zValsMat = zValsMat, z0Quant = z0Quant,
-                  gridsize = gridsize, maxIter = maxIter, tol = tol,
-                  weightStrat = weightStrat, estP0args = estP0args)
+consensus = getG0(zValObs = zValObs, zValsMat =  zValsMat,
+                  z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
+                  tol = tol, weightStrat = weightStrat, estP0args = estP0args)
 
 #False discovery Rates
-FdrList = do.call(getFdr, c(list(zValObs = zValObs, p = p), consensus))
+FdrList = do.call(getFdr,
+                  c(list(zValObs = zValObs,
+                         p = p), consensus))
 
 names(zValObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(zValsMat = zValsMat, zValObs = zValObs, Cperm = Cperm,
-       weightStrat = weightStrat, zValues = zValues), FdrList, consensus)
+       weightStrat = weightStrat, zValues = zValues, permZvals = permZvals),
+  FdrList, consensus)
 }

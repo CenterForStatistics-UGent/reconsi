@@ -31,6 +31,9 @@
 #' \item{iter}{The number of iterations}
 getG0 = function(zValObs, zValsMat, z0Quant, weightStrat, gridsize,
                  maxIter, tol, estP0args,...){
+  if(length(zValObs)!=nrow(zValsMat)){
+    stop("Dimensions of observed and permuation test statistics don't match!\n")
+  }
 if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   centralBorders = qnorm(z0Quant)
   Range = range(c(zValsMat, zValObs))
@@ -51,7 +54,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   fdr = as.integer(zSeq >= centralBorders[1] & zSeq <= centralBorders[2]) +
       .Machine$double.eps
   while(iter <= maxIter && !convergence){
-    fdrOld = fdr[zIndObs]
+    fdrOld = fdr
     weights = calcWeights(densPerm = zValsDensPerm, zIndObs = zIndObs,
                           weightStrat = weightStrat, fdr = fdr,
                           zIndR = which(zValObs > centralBorders[1] &
@@ -66,7 +69,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
     p0 = do.call(estP0,
                  c(list(zValObs = zValObs, nullDensCum = G0, zSeq = zSeq),
                    estP0args))
-    convergence = sqrt(mean((fdrOld-fdr[zIndObs])^2)) < tol
+    convergence = sqrt(mean((fdrOld-fdr)^2)) < tol
     iter = iter + 1L
   }
   if(!convergence){
