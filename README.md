@@ -1,16 +1,11 @@
 
-``` r
-knitr::opts_chunk$set(cache = TRUE, autodep = TRUE,  warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, tidy = TRUE, fig.width = 9, fig.height = 6, purl=TRUE, fig.show = "hold", cache.lazy = FALSE, fig.path = "README_figs/README-")
-library(pransi)
-```
-
 Manual for the use of the pransi functions
 ==========================================
 
 Introduction
 ------------
 
-The aim of this pacakage is to provide Permutation RAndom Null dsitributions for simultaneous inference. These random null distributions are estimated through permutations. Wilcoxon rank sum test and two sample t-test are natively implemented, but any other test can be used.
+The aim of this *pransi* pacakage is to provide Permutation RAndom Null distributions for simultaneous inference. Wilcoxon rank sum test and two sample t-test are natively implemented, but any other test can be used. The package's aim is multiplicity correction while accounting for correlations among statistical tests.
 
 General use
 -----------
