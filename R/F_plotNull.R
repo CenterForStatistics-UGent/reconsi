@@ -2,6 +2,7 @@
 #' statistics
 #' @param fit an object returned by the fdrCorrect() (or testDAA()) function
 #' @param lowColor,highColor The low and high ends of the colour scale
+#' @param dens a boolean, should fdr and Fdr be plotted?
 #'
 #' @return a ggplot2 plot object
 #' @import ggplot2
@@ -37,8 +38,8 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE){
         theme_bw()
 
     #Histogram of observed z-values
-plot = plot + geom_histogram(data = data.frame(zValObs = zValObs),
-                             aes(x = zValObs, y = ..density..),
+plot = plot + geom_histogram(data = data.frame(statObs = statObs),
+                             aes(x = statObs, y = ..density..),
                              inherit.aes = FALSE, bins = 50, alpha = 0.5,
                              fill = "mediumseagreen")
 
@@ -56,9 +57,9 @@ plot = plot + geom_histogram(data = data.frame(zValObs = zValObs),
         scale_linetype_discrete(name = "")
     if(dens){
     # Add red dots for Fdr estimates
-    dfFdr = data.frame(zValObs = zValObs, Fdr = Fdr)
+    dfFdr = data.frame(statObs = statObs, Fdr = Fdr)
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
-                   aes(x = zValObs, y = Fdr), col = "red", size = 0.75)
+                   aes(x = statObs, y = Fdr), col = "red", size = 0.75)
 }
     return(plot)
 })

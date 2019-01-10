@@ -11,6 +11,8 @@ plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE)
 \item{fit}{an object returned by the fdrCorrect() (or testDAA()) function}
 
 \item{lowColor, highColor}{The low and high ends of the colour scale}
+
+\item{dens}{a boolean, should fdr and Fdr be plotted?}
 }
 \value{
 a ggplot2 plot object

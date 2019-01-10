@@ -4,10 +4,10 @@
 \alias{estP0}
 \title{Estimate the fraction of true null hypotheses.}
 \usage{
-estP0(zValObs, nullDensCum, zSeq, z0quantRange, smooth.df)
+estP0(statObs, nullDensCum, zSeq, z0quantRange, smooth.df)
 }
 \arguments{
-\item{zValObs}{A vector of observed z-values}
+\item{statObs}{A vector of observed z-values}
 
 \item{nullDensCum}{A smoothed cumulative distribution function
 of the observed z-values}

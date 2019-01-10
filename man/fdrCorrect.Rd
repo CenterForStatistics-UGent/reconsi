@@ -5,10 +5,10 @@
 \title{Perform simultaneous inference, correcting for correlation between tests.}
 \usage{
 fdrCorrect(Y, x, B = 1000L, test = "wilcox.test", argList = list(),
-  distFun, quantileFun, densFun, zValues = TRUE, testPargs = list(),
-  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, weightStrat = "LHw",
-  maxIter = 1000L, tol = 1e-05, cPerm = FALSE, nBins = 82L,
-  binEdges = c(-4.1, 4.1), center = FALSE, zVals = NULL,
+  distFun = "pnorm", quantileFun = "qnorm", densFun = NULL,
+  zValues = TRUE, testPargs = list(), z0Quant = pnorm(c(-1, 1)),
+  gridsize = 801L, weightStrat = "LHw", maxIter = 1000L,
+  tol = 1e-05, center = FALSE, zVals = NULL,
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
   3), permZvals = FALSE, normAsump = TRUE, smoothObs = TRUE,
   normAsumpG0 = FALSE)
@@ -26,13 +26,14 @@ Must accept the formula interface}
 
 \item{argList}{A list of arguments, passed on to the testing function}
 
-\item{distFun}{the distribution function of the test statistic,
-or its name. Must at least accept an argument named q.}
+\item{distFun, quantileFun, densFun}{the distribution, quantile and density
+functions of the test statistic, or its name.
+Must at least accept an argument named 'q', 'p' and 'x' respectively.}
 
 \item{zValues}{A boolean, should test statistics be converted to z-values.
 See details}
 
-\item{testPargs}{A list of arguments passed on to distFun}
+\item{testPargs}{A list of arguments passed on to distFun/quantileFun/densFun}
 
 \item{z0Quant}{A vector of length 2 of quantiles of the null distribution,
 in between which only null values are expected}
@@ -49,30 +50,30 @@ of the null distribution}
 \item{tol}{The tolerance for the infinity norm of the central borders
 in the iterative procedure}
 
-\item{cPerm}{A boolean, should the covariance matrix
-of the binned counts be returned?}
-
-\item{nBins}{The number of bins for the binning of the test statistic
-in the calculation of the correlation matrix}
-
-\item{binEdges}{The edges of the furthest bins}
-
 \item{center}{A boolean, should observations be centered
 in each group prior to permuations? See details.}
 
-\item{zVals}{An optional list of observed (zValObs) and
+\item{zVals}{An optional list of observed (statObs) and
 permutation (zValsPerm) z-values. If supplied, the calculation
    of the observed and permutation test statistics is skipped
    and the algorithm proceeds with calculation
    of the consensus null distribution}
 
 \item{estP0args}{A list of arguments passed on to the estP0 function}
+
+\item{permZvals}{A boolean, should permutations rather than theoretical null distributions be used?}
+
+\item{normAsump}{A boolean, should normality be assumed when estimating the individual permutation null distributions}
+
+\item{smoothObs}{A boolean, should the fitted rather than estimated observed distribution be used in the Fdr calculation?}
+
+\item{normAsumpG0}{A boolean, should normality be assumed when estimating the random null distribution}
 }
 \value{
 A list with entries
-\item{zValsMat}{Permutation Z-values}
-\item{zValObs}{Observed Z-values}
-\item{zValObsPerm}{Permutation observed z-values}
+\item{statsPerm}{Permutation Z-values}
+\item{statObs}{Observed Z-values}
+\item{statObsPerm}{Permutation observed z-values}
 \item{Cperm}{(optional) An estimated covariance matrix
  of binned test statistics}
 \item{weightStrat}{The weighting strategy }
@@ -94,8 +95,8 @@ Efron (2007) centers the observations in each group prior
 p = 200; n = 50; B = 5e1
 x = rep(c(0,1), each = n/2)
 mat = cbind(
-matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
-matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+matrix(rnorm(n*p/10, mean = 5+x), n, p/10), #DA
+matrix(rnorm(n*p*9/10, mean = 5), n, p*9/10) #Non DA
 )
 fdrRes = fdrCorrect(mat, x, B = B)
 fdrRes$p0

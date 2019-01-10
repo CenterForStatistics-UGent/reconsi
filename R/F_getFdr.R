@@ -8,9 +8,12 @@
 #' @param zSeq Support of the density estimation
 #' @param p the number of hypotheses
 #' @param p0 The estimated fraction of null hypotheses
+#' @param zValsDensObs estimated densities of observed test statistics
+#' @param smoothObs A boolean, should estimated observed densities of the test
+#' statistics be used in estimating the Fdr
 #' @param ... more arguments, ignored
 #'
-#' @importFrom stats ecdf
+#' @importFrom stats ecdf approx
 #'
 #' @return A list with components
 #' \item{Fdr}{Tail are false discovery rate}

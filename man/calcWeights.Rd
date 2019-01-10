@@ -7,6 +7,9 @@
 calcWeights(logDensPerm, weightStrat, fdr, zIndR)
 }
 \arguments{
+\item{logDensPerm}{A matrix with B rows of logged density estimates of the B
+permutation distributions}
+
 \item{weightStrat}{A character string, either "LH" for likelihoods based
 on the central region, or "LHw" for weighted likelihoods}
 
@@ -15,12 +18,6 @@ along the support of the kernel}
 
 \item{zIndR}{An indicator vector indicating the z-values
 within the central region}
-
-\item{densPerm}{A matrix with B rows of density estimates of the B
-permutation distributions}
-
-\item{zIndObs}{An indicator vector of the observed z-values
-in the support of the kernel}
 }
 \value{
 A vector of weights of length B

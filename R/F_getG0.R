@@ -10,10 +10,15 @@
 #' @param maxIter An integer, the maximum number of iterations in determining R
 #' @param tol The convergence tolerance.
 #' @param estP0args A list of arguments passed on to the estP0args() function
-#' @param ... further arguments passed on to the KernSmooth::bkde() function
+#' @param normAsump A boolean, should normality be assumed when estimating the individual permutation null distributions
+#' @param normAsumpG0 A boolean, should normality be assumed when estimating the random null distribution
+#' @param B an integer, the number of permutations
+#' @param p an integer, the number of hypotheses
+#' @param quantileFun The quantile function of the test statistic, either as a function or as a character string
+#' @param testPargs A list of arguments passed on to quantileFun
 #'
 #' @importFrom KernSmooth bkde
-#' @importFrom stats qnorm
+#' @importFrom stats qnorm dnorm approx
 #' @importFrom MASS fitdistr
 #'
 #' @return A list with following entries
@@ -32,7 +37,7 @@
 #' \item{iter}{The number of iterations}
 getG0 = function(statObs, statsPerm, z0Quant, weightStrat, gridsize,
                  maxIter, tol, estP0args, normAsump, normAsumpG0, quantileFun,
-                 testPargs, B, p,...){
+                 testPargs, B, p){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!\n")
   }
@@ -42,7 +47,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
 
   #Estimate observed densities
   zValsDensObs0 = bkde(statObs, range.x = Range, gridsize = gridsize,
-                       truncate = FALSE,...)
+                       truncate = FALSE)
   zValsDensObs = zValsDensObs0$y
   zSeq = zValsDensObs0$x #The support
 
@@ -55,7 +60,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
       dnorm(zSeq, mean = fit[1], sd = fit[2])
     })
   } else {apply(statsPerm, 2, function(zz){
-    bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE,...)$y})}
+    bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE)$y})}
   zValsDensObs[zValsDensObs<=0] =
       zValsDensPerm[zValsDensPerm<=0] =
       .Machine$double.eps #Remove negative densities
@@ -108,15 +113,4 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
               zValsDensObs = zValsDensObs, zValsDensPerm = zValsDensPerm,
               convergence  = convergence, weights = weights, fdr = fdr,
               p0 = p0, iter = iter))
-}
-
-estNormal = function(y, x, w  = NULL, p, B){
-  if(is.null(w)){
-  fit = lm.fit(y = y, x = x)
-  c(mean = fit$coef, sd = sqrt(sum(fit$residuals^2)/p))
-  } else {
-  fit = lm.wfit(y = c(y), x = as.matrix(rep.int(1L, p*B)), w = w)
-  c(mean = fit$coef, sd = sqrt(sum(fit$residuals^2*w)/p))
-  }
-
 }

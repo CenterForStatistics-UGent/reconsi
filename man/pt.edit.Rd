@@ -8,12 +8,10 @@
 pt.edit(q)
 }
 \arguments{
-\item{q}{vector with t-statistic and degrees of freedom}
-
-\item{p}{a vector with quantile and degrees of freedom}
+\item{q}{a vector with t-statistic and degrees of freedom}
 }
 \value{
-corresponding quantile
+A value between 0 and 1, the evaluation of the cdf
 }
 \description{
 A custom function to calculate the distribution function of the t-test

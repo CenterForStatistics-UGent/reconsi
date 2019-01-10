@@ -30,6 +30,10 @@
 #'    and the algorithm proceeds with calculation
 #'    of the consensus null distribution
 #' @param estP0args A list of arguments passed on to the estP0 function
+#' @param permZvals A boolean, should permutations rather than theoretical null distributions be used?
+#' @param normAsump A boolean, should normality be assumed when estimating the individual permutation null distributions
+#' @param smoothObs A boolean, should the fitted rather than estimated observed distribution be used in the Fdr calculation?
+#' @param normAsumpG0 A boolean, should normality be assumed when estimating the random null distribution
 #'
 #' @details Efron (2007) centers the observations in each group prior
 #'  to permutation. As permutations will remove any genuine group differences
@@ -83,8 +87,8 @@
 #' distFun = function(q){pt(q = q[1], df = q[2])},
 #' argList = list(z = z))
 fdrCorrect = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
-                      distFun , quantileFun, densFun, zValues = TRUE,
-                      testPargs = list(),
+                      distFun ="pnorm" , quantileFun =  "qnorm", densFun = NULL,
+                      zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       weightStrat = "LHw", maxIter = 1000L, tol = 1e-5,
                       center = FALSE, zVals = NULL,
@@ -93,20 +97,23 @@ fdrCorrect = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
                       normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE){
   if(is.character(test)){
       if(test == "t.test"){
-        distFun = "pt.edit"; densFun = "dt"; quantileFun ="qt"
+        distFun = "pt.edit"; densFun = "dt"; quantileFun = "qt.edit"
+        if(!zValues) {
+            stop("With t-tests, the test statistic must be converted to zValues.\nPlease set zValues = TRUE")
+        }
         } else if(test=="wilcox.test"){
         testPargs = list(m = table(x)[1], n = table(x)[2])
         distFun = "pwilcox"; densFun ="dwilcox"; quantileFun = "qwilcox"
         }
   }
  if(zValues) quantileFun = "qnorm"
-if(!"q" %in% formalArgs(match.fun(distFun))){
+if(!"q" %in% names(formals(distFun))){
     stop("Distribution function must accept arguments named 'q'\n")
 }
- if(!"p" %in% formalArgs(match.fun(quantileFun))){
+ if(!"p" %in% names(formals(quantileFun))){
      stop("Quantile function must accept arguments named 'q'\n")
  }
- if(!"x" %in% formalArgs(match.fun(densFun))){
+ if(!is.null(densFun) & !"x" %in% names(formals(densFun))){
      stop("Density function must accept arguments named 'q'\n")
  }
 if(!is.matrix(Y)){
@@ -136,7 +143,7 @@ if(zValues){
 #If procedure works with z-values rather than raw test statistics, convert to z-values
 #Permutation cdf-values
 cdfValsMat =  apply(testStats$statsPerm,
-                  MARGIN = if(length(dim(testStats$statsPerm))==3) c(3,2) else 2,
+                  MARGIN = if(length(dim(testStats$statsPerm))==3) c(2,3) else 2,
                   function(stats){
                       quantCorrect(do.call(distFun,
                                            c(list(q = stats), testPargs)))
@@ -144,14 +151,14 @@ cdfValsMat =  apply(testStats$statsPerm,
 #Observed z-values
 statObs = qnorm(
     if(permZvals) quantCorrect(sapply(seq_along(cdfValObs), function(i){
-        (sum(cdfValObs[i] > cdfValsMat[,i])+1L)/(B+2L)
+        (sum(cdfValObs[i] > cdfValsMat[i,])+1L)/(B+2L)
     })) else cdfValObs
 )
 #Permuation z-values
 statsPerm = qnorm(
     if(permZvals) sapply(seq_len(B), function(b){
         quantCorrect(sapply(seq_along(cdfValObs), function(i){
-            (sum(cdfValsMat[b,i] > cdfValsMat[-b,i])+1L)/(B+2L)
+            (sum(cdfValsMat[i,b] > cdfValsMat[i,-b])+1L)/(B+2L)
         }))
     }) else cdfValsMat
 )
@@ -187,11 +194,8 @@ FdrList = do.call(getFdr,
 
 names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(statsPerm = statsPerm, statObs = statObs, weightStrat = weightStrat,
-       zValues = zValues, permZvals = permZvals,
-       cdfValObs = cdfValObs,
-       densFun = densFun,
-       testPargs = testPargs,
-       distFun = distFun,
+       zValues = zValues, permZvals = permZvals, cdfValObs = cdfValObs,
+       densFun = densFun, testPargs = testPargs, distFun = distFun,
        quantileFun = quantileFun),
   FdrList, consensus)
 }

@@ -4,10 +4,10 @@
 \alias{getCperm}
 \title{Obtain a null covariance matrix of binned test statistics}
 \usage{
-getCperm(zValsMat, nBins = 82L, binEdges = c(-4.1, 4.1))
+getCperm(statsPerm, nBins = 82L, binEdges = c(-4.1, 4.1))
 }
 \arguments{
-\item{zValsMat}{The pxB matrix of permutation z-values in the columns}
+\item{statsPerm}{The pxB matrix of permutation z-values in the columns}
 
 \item{nBins}{an integer, the number of bins}
 
@@ -23,4 +23,14 @@ Obtain a null covariance matrix of binned test statistics
 This is not the covariance matrix of the p test statistic, nor of the
    data! It is an approximate covariance matrix of binned test statistics for
    visualization purposes.
+}
+\examples{
+p = 200; n = 50; B = 5e1
+x = rep(c(0,1), each = n/2)
+mat = cbind(
+matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
+matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+)
+fdrRes = fdrCorrect(mat, x, B = B)
+image(getCperm(fdrRes$statsPerm))
 }

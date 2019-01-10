@@ -4,13 +4,13 @@
 \alias{getG0}
 \title{Obtain the consensus null}
 \usage{
-getG0(zValObs, zValsMat, z0Quant, weightStrat, gridsize, maxIter, tol,
-  estP0args, normAsump, normAsumpG0, quantileFun, testPargs, B, p, ...)
+getG0(statObs, statsPerm, z0Quant, weightStrat, gridsize, maxIter, tol,
+  estP0args, normAsump, normAsumpG0, quantileFun, testPargs, B, p)
 }
 \arguments{
-\item{zValObs}{A vector of lenght p with observed test statistics}
+\item{statObs}{A vector of lenght p with observed test statistics}
 
-\item{zValsMat}{A pxB matrix with permuation z-values}
+\item{statsPerm}{A pxB matrix with permuation z-values}
 
 \item{z0Quant}{a vector of length of quantiles defining the central part R
 of the distribution. If a single number is supplied, then
@@ -26,7 +26,17 @@ of the distribution. If a single number is supplied, then
 
 \item{estP0args}{A list of arguments passed on to the estP0args() function}
 
-\item{...}{further arguments passed on to the KernSmooth::bkde() function}
+\item{normAsump}{A boolean, should normality be assumed when estimating the individual permutation null distributions}
+
+\item{normAsumpG0}{A boolean, should normality be assumed when estimating the random null distribution}
+
+\item{quantileFun}{The quantile function of the test statistic, either as a function or as a character string}
+
+\item{testPargs}{A list of arguments passed on to quantileFun}
+
+\item{B}{an integer, the number of permutations}
+
+\item{p}{an integer, the number of hypotheses}
 }
 \value{
 A list with following entries
