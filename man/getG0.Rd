@@ -5,7 +5,7 @@
 \title{Obtain the consensus null}
 \usage{
 getG0(zValObs, zValsMat, z0Quant, weightStrat, gridsize, maxIter, tol,
-  estP0args, ...)
+  estP0args, normAsump, normAsumpG0, quantileFun, testPargs, B, p, ...)
 }
 \arguments{
 \item{zValObs}{A vector of lenght p with observed test statistics}

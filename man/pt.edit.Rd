@@ -9,6 +9,8 @@ pt.edit(q)
 }
 \arguments{
 \item{q}{vector with t-statistic and degrees of freedom}
+
+\item{p}{a vector with quantile and degrees of freedom}
 }
 \value{
 corresponding quantile

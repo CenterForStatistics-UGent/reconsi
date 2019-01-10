@@ -12,10 +12,10 @@
 #'    within the central region
 #'
 #' @return A vector of weights of length B
-calcWeights = function(densPerm, weightStrat, fdr, zIndR){
+calcWeights = function(logDensPerm, weightStrat, fdr, zIndR){
   weights = switch(weightStrat,
-                   "LH" = exp(stabExp(colSums(log(densPerm[zIndR,])))),
-                   "LHw" = exp(stabExp(colSums(log(densPerm)*fdr))),
+                   "LH" = exp(stabExp(colSums(logDensPerm[zIndR,]))),
+                   "LHw" = exp(stabExp(colSums(logDensPerm*fdr))),
                     stop("Weighting strategy unknown! \n"))
   weights/sum(weights)
 }

@@ -47,9 +47,11 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
 
     #Permuation test statistics
     mmSeries = seq_len(mm)
-    YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
+    #YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
-      rowSums(YRankedCenter[,permDesign[ii,mmSeries]])
+      Yranked = t(apply(Y, 2, rank, ties.method = "random"))
+      #Random tiebreaking, important to combat test statisitc discreteness
+      rowSums(Yranked[,permDesign[ii,mmSeries]])
     }, FUN.VALUE = statObs)
   } else if(test == "t.test"){
     statObs = apply(Y, 2, function(dat){

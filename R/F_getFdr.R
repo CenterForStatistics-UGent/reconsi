@@ -1,7 +1,7 @@
 #' Calculate tail-area (Fdr) and local (fdr) false discovery rates,
 #'    based on a certain null distribution
 #'
-#' @param zValObs Vector of observed z-values
+#' @param statObs Vector of observed z-values
 #' @param G0 null distribution function
 #' @param g0 Null density function
 #' @param fdr local false discovery rate, already estimated
@@ -16,18 +16,18 @@
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
 #' \item{p0}{The proportion of true null hypotheses}
-getFdr = function(zValObs, G0, g0, fdr, zSeq, p, p0, zValsDensObs,
+getFdr = function(statObs, G0, g0, fdr, zSeq, p, p0, zValsDensObs,
                   smoothObs, ...)
 {
   #Null
   G0[G0>0.5] = 1-G0[G0>0.5]
-  G0cumDefInterp = approx(x = zSeq, y = G0, xout = zValObs)$y
+  G0cumDefInterp = approx(x = zSeq, y = G0, xout = statObs)$y
 
   #Observed
   zcum = if(smoothObs) {
     approx(y = cumsum(zValsDensObs/sum(zValsDensObs)),
-    xout = zValObs, x = zSeq)$y
-   } else {ecdf(zValObs)(zValObs)}
+    xout = statObs, x = zSeq)$y
+   } else {ecdf(statObs)(statObs)}
   zcum[zcum>0.5] = 1-zcum[zcum>0.5]+1/p
 
 

@@ -6,11 +6,12 @@
 #'  to test for differential absolute abundance.
 #'  Must accept the formula interface
 #' @param argList A list of arguments, passed on to the testing function
-#' @param distFun the distribution function of the test statistic,
-#' or its name. Must at least accept an argument named q.
+#' @param distFun,quantileFun,densFun the distribution, quantile and density
+#' functions of the test statistic, or its name.
+#' Must at least accept an argument named 'q', 'p' and 'x' respectively.
 #' @param zValues A boolean, should test statistics be converted to z-values.
 #' See details
-#' @param testPargs A list of arguments passed on to distFun
+#' @param testPargs A list of arguments passed on to distFun/quantileFun/densFun
 #' @param z0Quant A vector of length 2 of quantiles of the null distribution,
 #'    in between which only null values are expected
 #' @param gridsize The number of bins for the kernel density estimates
@@ -21,14 +22,9 @@
 #'    of the null distribution
 #' @param tol The tolerance for the infinity norm of the central borders
 #'    in the iterative procedure
-#' @param cPerm A boolean, should the covariance matrix
-#'    of the binned counts be returned?
-#' @param nBins The number of bins for the binning of the test statistic
-#'    in the calculation of the correlation matrix
-#' @param binEdges The edges of the furthest bins
 #' @param center A boolean, should observations be centered
 #'    in each group prior to permuations? See details.
-#' @param zVals An optional list of observed (zValObs) and
+#' @param zVals An optional list of observed (statObs) and
 #' permutation (zValsPerm) z-values. If supplied, the calculation
 #'    of the observed and permutation test statistics is skipped
 #'    and the algorithm proceeds with calculation
@@ -43,9 +39,9 @@
 #'   distributions, but may be numerically less stable.
 #'
 #' @return A list with entries
-#' \item{zValsMat}{Permutation Z-values}
-#' \item{zValObs}{Observed Z-values}
-#' \item{zValObsPerm}{Permutation observed z-values}
+#' \item{statsPerm}{Permutation Z-values}
+#' \item{statObs}{Observed Z-values}
+#' \item{statObsPerm}{Permutation observed z-values}
 #' \item{Cperm}{(optional) An estimated covariance matrix
 #'  of binned test statistics}
 #' \item{weightStrat}{The weighting strategy }
@@ -57,8 +53,8 @@
 #' p = 200; n = 50; B = 5e1
 #' x = rep(c(0,1), each = n/2)
 #' mat = cbind(
-#' matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
-#' matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+#' matrix(rnorm(n*p/10, mean = 5+x), n, p/10), #DA
+#' matrix(rnorm(n*p*9/10, mean = 5), n, p*9/10) #Non DA
 #' )
 #' fdrRes = fdrCorrect(mat, x, B = B)
 #' fdrRes$p0
@@ -87,26 +83,32 @@
 #' distFun = function(q){pt(q = q[1], df = q[2])},
 #' argList = list(z = z))
 fdrCorrect = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
-                      distFun = "pwilcox", zValues = TRUE,
+                      distFun , quantileFun, densFun, zValues = TRUE,
                       testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
-                      weightStrat = "LH", maxIter = 1000L, tol = 1e-5,
-                      cPerm = FALSE, nBins = 82L, binEdges = c(-4.1,4.1),
+                      weightStrat = "LHw", maxIter = 1000L, tol = 1e-5,
                       center = FALSE, zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
-                      normAsump = FALSE, smoothObs = FALSE){
+                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE){
   if(is.character(test)){
       if(test == "t.test"){
-        testPargs = list()
-        distFun = "pt.edit"
+        distFun = "pt.edit"; densFun = "dt"; quantileFun ="qt"
         } else if(test=="wilcox.test"){
         testPargs = list(m = table(x)[1], n = table(x)[2])
+        distFun = "pwilcox"; densFun ="dwilcox"; quantileFun = "qwilcox"
         }
   }
-if(!"q" %in% formalArgs(match.fun(distFun))) {
-    stop("Quantile function must accept arguments named 'q'\n")
+ if(zValues) quantileFun = "qnorm"
+if(!"q" %in% formalArgs(match.fun(distFun))){
+    stop("Distribution function must accept arguments named 'q'\n")
 }
+ if(!"p" %in% formalArgs(match.fun(quantileFun))){
+     stop("Quantile function must accept arguments named 'q'\n")
+ }
+ if(!"x" %in% formalArgs(match.fun(densFun))){
+     stop("Density function must accept arguments named 'q'\n")
+ }
 if(!is.matrix(Y)){
     stop(paste("Please provide a data matrix as imput!\n",
                if(is.vector(Y)) "Multiplicity correction only needed when
@@ -126,73 +128,70 @@ if(is.null(zVals)){
 #Test statistics
 testStats = getTestStats(Y = Y, center = center, test = test,
                          x = x, B = B, argList = argList)
-
 #Observed cdf values
 cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
-  quantileIf(zValues = TRUE, distFun = distFun, stats = stats,
-             testPargs = testPargs)
+    quantCorrect(do.call(distFun, c(list(q = stats), testPargs)))
 })
-
-if(!(is.character(test) && test=="wilcox.test" && !zValues)){
+if(zValues){
+#If procedure works with z-values rather than raw test statistics, convert to z-values
 #Permutation cdf-values
 cdfValsMat =  apply(testStats$statsPerm,
-                  MARGIN = if(length(dim(testStats$statsPerm))==3) c(2,3) else 2,
+                  MARGIN = if(length(dim(testStats$statsPerm))==3) c(3,2) else 2,
                   function(stats){
-                    quantileIf(zValues = zValues, distFun = distFun,
-                               stats = stats, testPargs = testPargs)
+                      quantCorrect(do.call(distFun,
+                                           c(list(q = stats), testPargs)))
                   })
-}
 #Observed z-values
-zValObs = if(zValues) {qnorm(
-  if(permZvals) quantCorrect(sapply(seq_along(cdfValObs), function(i){
-  (sum(cdfValObs[i] > cdfValsMat[,i])+1L)/(B+2L)
-})) else cdfValObs
+statObs = qnorm(
+    if(permZvals) quantCorrect(sapply(seq_along(cdfValObs), function(i){
+        (sum(cdfValObs[i] > cdfValsMat[,i])+1L)/(B+2L)
+    })) else cdfValObs
 )
-} else {testStats$statObs}
 #Permuation z-values
-zValsMat = if(zValues) {qnorm(
-  if(permZvals) sapply(seq_len(B), function(b){
-  quantCorrect(sapply(seq_along(cdfValObs), function(i){
-    (sum(cdfValsMat[b,i] > cdfValsMat[-b,i])+1L)/(B+2L)
-  }))
-}) else cdfValsMat
+statsPerm = qnorm(
+    if(permZvals) sapply(seq_len(B), function(b){
+        quantCorrect(sapply(seq_along(cdfValObs), function(i){
+            (sum(cdfValsMat[b,i] > cdfValsMat[-b,i])+1L)/(B+2L)
+        }))
+    }) else cdfValsMat
 )
-} else testStats$statsPerm
-
+#No additional arguments needed
+testPargs = list()
 } else {
-    #if(!zValues) stop("Z-values supplied, then also let zValues be TRUE!")
-  zValObs = zVals$zValObs; zValsMat = zVals$zValsMat
+    #If procedure works on raw test statistics, not many conversions are needed
+#Observed statistics
+statObs = if(is.matrix(testStats$statObs)) testStats$statObs[1,] else
+  testStats$statObs
+#Permuation statistics
+statsPerm = if(length(dim(testStats$statsPerm))==3) testStats$statsPerm[1,,] else
+    testStats$statsPerm
+}
+} else {
+    #If test statistics give, recover them
+  statObs = zVals$statObs; statsPerm = zVals$statsPerm
   cdfValObs = zVals$cdfValObs
  }
 
-#Permuation correlation matrix of binned test statistics
-Cperm = if(cPerm){getCperm(zValsMat, nBins = nBins, binEdges = binEdges)
-} else {NULL}
-
-quantileFun = if(zValues) "qnorm" else
-  if(test=="t.test") "qt" else if (test=="wilcox.test") "qwilcox"
-
 #Consensus distribution estimation
-consensus = getG0(zValObs = zValObs, zValsMat =  zValsMat,
+consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
                   tol = tol, weightStrat = weightStrat, estP0args = estP0args,
                   normAsump = normAsump, quantileFun = quantileFun,
-                  testPargs = testPargs)
+                  testPargs = testPargs,
+                  normAsumpG0 = normAsumpG0, B = B, p = p)
 
 #False discovery Rates
 FdrList = do.call(getFdr,
-                  c(list(zValObs = zValObs,
+                  c(list(statObs = statObs,
                          p = p, smoothObs = smoothObs), consensus))
 
-names(zValObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
-c(list(zValsMat = zValsMat, zValObs = zValObs, Cperm = Cperm,
-       weightStrat = weightStrat, zValues = zValues, permZvals = permZvals,
+names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
+c(list(statsPerm = statsPerm, statObs = statObs, weightStrat = weightStrat,
+       zValues = zValues, permZvals = permZvals,
        cdfValObs = cdfValObs,
-       densFun = if(zValues) "dnorm" else
-         if(test=="t.test") "dt" else if (test=="wilcox.test") "dwilcox",
-       testPargs = if(zValues) list() else testPargs,
-       distFun = if(zValues) "pnorm" else
-         if(test=="t.test") "pt" else if (test=="wilcox.test") "pwilcox",
+       densFun = densFun,
+       testPargs = testPargs,
+       distFun = distFun,
        quantileFun = quantileFun),
   FdrList, consensus)
 }

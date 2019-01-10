@@ -10,6 +10,15 @@
 #'
 #' @return The covariance matrix of binned z-values
 #'
+#' @examples
+#' p = 200; n = 50; B = 5e1
+#' x = rep(c(0,1), each = n/2)
+#' mat = cbind(
+#' matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
+#' matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+#' )
+#' fdrRes = fdrCorrect(mat, x, B = B)
+#' image(getCperm(fdrRes$zValsMat))
 getCperm = function(zValsMat, nBins = 82L, binEdges = c(-4.1,4.1)){
   Breaks = c(-Inf, seq(binEdges[1], binEdges[2], length.out = nBins+1), Inf)
   bootYs = apply(zValsMat, 2, function(xx){table(cut(xx, breaks = Breaks))})

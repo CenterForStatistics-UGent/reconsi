@@ -4,13 +4,14 @@
 \alias{fdrCorrect}
 \title{Perform simultaneous inference, correcting for correlation between tests.}
 \usage{
-fdrCorrect(Y, x, B = 500L, test = "wilcox.test", argList = list(),
-  quantileFun = "pwilcox", zValues = TRUE, testPargs = list(),
-  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, weightStrat = "LH",
-  maxIter = 1000L, tol = 1e-04, cPerm = FALSE, nBins = 82L,
+fdrCorrect(Y, x, B = 1000L, test = "wilcox.test", argList = list(),
+  distFun, quantileFun, densFun, zValues = TRUE, testPargs = list(),
+  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, weightStrat = "LHw",
+  maxIter = 1000L, tol = 1e-05, cPerm = FALSE, nBins = 82L,
   binEdges = c(-4.1, 4.1), center = FALSE, zVals = NULL,
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
-  3))
+  3), permZvals = FALSE, normAsump = TRUE, smoothObs = TRUE,
+  normAsumpG0 = FALSE)
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -25,13 +26,13 @@ Must accept the formula interface}
 
 \item{argList}{A list of arguments, passed on to the testing function}
 
-\item{quantileFun}{the distribution function of the test statistic,
+\item{distFun}{the distribution function of the test statistic,
 or its name. Must at least accept an argument named q.}
 
 \item{zValues}{A boolean, should test statistics be converted to z-values.
 See details}
 
-\item{testPargs}{A list of arguments passed on to quantileFun}
+\item{testPargs}{A list of arguments passed on to distFun}
 
 \item{z0Quant}{A vector of length 2 of quantiles of the null distribution,
 in between which only null values are expected}
@@ -71,6 +72,7 @@ permutation (zValsPerm) z-values. If supplied, the calculation
 A list with entries
 \item{zValsMat}{Permutation Z-values}
 \item{zValObs}{Observed Z-values}
+\item{zValObsPerm}{Permutation observed z-values}
 \item{Cperm}{(optional) An estimated covariance matrix
  of binned test statistics}
 \item{weightStrat}{The weighting strategy }
@@ -106,7 +108,7 @@ fdrResLm = fdrCorrect(mat, x, B = B,
 test = function(x, y){
 fit = lm(y~x)
 c(summary(fit)$coef["x1","t value"], fit$df.residual)},
-quantileFun = function(q){pt(q = q[1], df = q[2])})
+distFun = function(q){pt(q = q[1], df = q[2])})
 
 #With a test statistic without known null distribution(for small samples)
 fdrResKruskal = fdrCorrect(mat, x, B = B,
@@ -119,6 +121,6 @@ fdrResLmZ = fdrCorrect(mat, x, B = B,
 test = function(x, y, z){
 fit = lm(y~x+z)
 c(summary(fit)$coef["x1","t value"], fit$df.residual)},
-quantileFun = function(q){pt(q = q[1], df = q[2])},
+distFun = function(q){pt(q = q[1], df = q[2])},
 argList = list(z = z))
 }

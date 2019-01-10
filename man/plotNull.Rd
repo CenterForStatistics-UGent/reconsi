@@ -5,7 +5,7 @@
 \title{Plot the obtained null distribution along with a histogram of observed test
 statistics}
 \usage{
-plotNull(fit, lowColor = "yellow", highColor = "blue")
+plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE)
 }
 \arguments{
 \item{fit}{an object returned by the fdrCorrect() (or testDAA()) function}
