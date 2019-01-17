@@ -25,7 +25,7 @@
 #' @param center A boolean, should observations be centered
 #'    in each group prior to permuations? See details.
 #' @param zVals An optional list of observed (statObs) and
-#' permutation (zValsPerm) z-values. If supplied, the calculation
+#' permutation (statsPerm) z-values. If supplied, the calculation
 #'    of the observed and permutation test statistics is skipped
 #'    and the algorithm proceeds with calculation
 #'    of the consensus null distribution
@@ -87,7 +87,7 @@
 #' distFun = function(q){pt(q = q[1], df = q[2])},
 #' argList = list(z = z))
 fdrCorrect = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
-                      distFun ="pnorm" , quantileFun =  "qnorm", densFun = NULL,
+                      distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       weightStrat = "LHw", maxIter = 1000L, tol = 1e-5,
@@ -106,8 +106,7 @@ fdrCorrect = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
         distFun = "pwilcox"; densFun ="dwilcox"; quantileFun = "qwilcox"
         }
   }
- if(zValues) quantileFun = "qnorm"
-if(!"q" %in% names(formals(distFun))){
+ if(!"q" %in% names(formals(distFun))){
     stop("Distribution function must accept arguments named 'q'\n")
 }
  if(!"p" %in% names(formals(quantileFun))){
@@ -163,7 +162,6 @@ statsPerm = qnorm(
     }) else cdfValsMat
 )
 #No additional arguments needed
-testPargs = list()
 } else {
     #If procedure works on raw test statistics, not many conversions are needed
 #Observed statistics
@@ -178,7 +176,7 @@ statsPerm = if(length(dim(testStats$statsPerm))==3) testStats$statsPerm[1,,] els
   statObs = zVals$statObs; statsPerm = zVals$statsPerm
   cdfValObs = zVals$cdfValObs
  }
-
+  if(zValues) {quantileFun = "qnorm"; densFun ="dnorm"; distFun = "pnorm";testPargs = list()}
 #Consensus distribution estimation
 consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,

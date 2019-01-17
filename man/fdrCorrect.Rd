@@ -54,7 +54,7 @@ in the iterative procedure}
 in each group prior to permuations? See details.}
 
 \item{zVals}{An optional list of observed (statObs) and
-permutation (zValsPerm) z-values. If supplied, the calculation
+permutation (statsPerm) z-values. If supplied, the calculation
    of the observed and permutation test statistics is skipped
    and the algorithm proceeds with calculation
    of the consensus null distribution}

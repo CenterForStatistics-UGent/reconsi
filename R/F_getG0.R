@@ -43,6 +43,7 @@ getG0 = function(statObs, statsPerm, z0Quant, weightStrat, gridsize,
   }
 if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   centralBorders = do.call(quantileFun, c(list(p = z0Quant), testPargs))
+  #quantile(statObs, probs = c(z0Quant, 1-z0Quant))
   Range = range(c(statsPerm, statObs))
 
   #Estimate observed densities
@@ -51,7 +52,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   zValsDensObs = zValsDensObs0$y
   zSeq = zValsDensObs0$x #The support
 
-  #Estimate permuation densities
+  #Estimate permutation densities
   x1 = as.matrix(rep.int(1L, p))
   xall = as.matrix(rep.int(1L, p*B))
   zValsDensPerm = if(normAsump){
@@ -95,6 +96,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
       g0 =rowSums(rowMultiply(zValsDensPerm, weights))}
     G0 = cumsum(g0/sum(g0))
     fdr = g0/zValsDensObs*p0
+    fdr[fdr>1] = 1 #Only normalize here?
     centralBorders = zSeq[c(which.max(G0 > z0Quant[1]),
                             which.max(G0 > z0Quant[2]))]
     p0 = do.call(estP0,
@@ -105,7 +107,6 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
     iter = iter + 1L
   }
   fdr = approx(y = fdr, x= zSeq, xout = statObs)$y
-  fdr[fdr>1] = 1 #Only normalize here?
   if(!convergence){
       warning("Consensus null estimation did not converge,
               please investigate cause! \n")}

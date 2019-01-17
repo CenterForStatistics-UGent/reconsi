@@ -3,6 +3,7 @@
 #'@importFrom stats pt qt
 #'@param q a vector with t-statistic and degrees of freedom
 #'@return A value between 0 and 1, the evaluation of the cdf
+#'@export
 pt.edit = function(q){
   pt(q = q[1], df = q[2])
 }

@@ -7,7 +7,7 @@ knitr::opts_chunk$set(cache = TRUE, autodep = TRUE,  warning=FALSE, message=FALS
 library(pransi)
 ```
 
-# Manual for the use of the pransi functions
+# Manual for the use of the pransi package
 
 ## Introduction
 

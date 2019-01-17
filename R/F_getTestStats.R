@@ -49,9 +49,10 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     mmSeries = seq_len(mm)
     #YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
-      Yranked = t(apply(Y, 2, rank, ties.method = "random"))
+      #YRanked = t(apply(Y, 2, rank, ties.method = "random"))
       #Random tiebreaking, important to combat test statisitc discreteness
-      rowSums(Yranked[,permDesign[ii,mmSeries]])
+      #rowSums(YRanked[,permDesign[ii,mmSeries]])
+      colSums(YRanked[permDesign[ii,mmSeries],])
     }, FUN.VALUE = statObs)
   } else if(test == "t.test"){
     statObs = apply(Y, 2, function(dat){
@@ -61,7 +62,7 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
                        function(ii){
       xSam = xLog[permDesign[ii,]]
       apply(Ycenter, 2, function(dat){
-        getTstat(y1 = dat[xSam],y2 = dat[!xSam], mm = mm, nn = nn)
+        getTstat(y1 = dat[xSam], y2 = dat[!xSam], mm = mm, nn = nn)
       })
     })
   }
