@@ -34,7 +34,8 @@
 #' @param normAsump A boolean, should normality be assumed when estimating the individual permutation null distributions
 #' @param smoothObs A boolean, should the fitted rather than estimated observed distribution be used in the Fdr calculation?
 #' @param normAsumpG0 A boolean, should normality be assumed when estimating the random null distribution
-#'
+#' @param tieBreak A boolean, should ties of permutation test statistics
+#'  be broken randomly? If not, midranks are used
 #' @details Efron (2007) centers the observations in each group prior
 #'  to permutation. As permutations will remove any genuine group differences
 #'   anyway, we skip this step by default.\\ If zValues = FALSE,
@@ -90,11 +91,12 @@ fdrCorrect = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
                       distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
-                      weightStrat = "LHw", maxIter = 1000L, tol = 1e-5,
+                      weightStrat = "LHw", maxIter = 1000L, tol = 1e-8,
                       center = FALSE, zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
-                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE){
+                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE,
+                      tieBreak = FALSE){
   if(is.character(test)){
       if(test == "t.test"){
         distFun = "pt.edit"; densFun = "dt"; quantileFun = "qt.edit"
@@ -133,7 +135,7 @@ if(ncol(Y)<30){
 if(is.null(zVals)){
 #Test statistics
 testStats = getTestStats(Y = Y, center = center, test = test,
-                         x = x, B = B, argList = argList)
+                         x = x, B = B, argList = argList, tieBreak = tieBreak)
 #Observed cdf values
 cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
     quantCorrect(do.call(distFun, c(list(q = stats), testPargs)))

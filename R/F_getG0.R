@@ -75,15 +75,14 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
 
   #zIndObs = sapply(statObs, function(rr){which.min(abs(rr-zSeq))})
   #Indicators for the observed z values in the support of the kernel
-  iter = 1L; convergence  = FALSE; p0 = 1
-  fdr = as.integer(zSeq >= centralBorders[1] & zSeq <= centralBorders[2]) +
-      .Machine$double.eps
+  iter = 1L; convergence = FALSE; p0 = 1
+  fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])
+  fdr[fdr==0] = .Machine$double.eps
   while(iter <= maxIter && !convergence){
-    fdrOld = fdr
+    fdrOld = fdr; p0old = p0
     weights = calcWeights(logDensPerm = LogPermDensInterp,
                           weightStrat = weightStrat,
-                          fdr = if(weightStrat =="LHw") {approx(y = fdr, x = zSeq,
-                                       xout = statObs)$y} else {NULL},
+                          fdr = fdr,
                           zIndR = if(weightStrat =="LHw") {NULL
                             } else {which(statObs > centralBorders[1] &
                                             statObs < centralBorders[2])})
@@ -94,25 +93,29 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
     g0 = dnorm(zSeq, mean = fitAll[1],
                sd = fitAll[2])    #Multiply by total sum of weights
     } else {
-      g0 =rowSums(rowMultiply(zValsDensPerm, weights))}
+      g0 =rowSums(rowMultiply(zValsDensPerm, weights))
+      fitAll = NULL
+    }
     G0 = cumsum(g0/sum(g0))
     fdr = g0/zValsDensObs*p0
-    fdr[fdr>1] = 1 #Only normalize here?
+    fdr = approx(y = fdr, x = zSeq, xout = statObs)$y
+    fdr[fdr>1] = 1 #Normalize here already!
     centralBorders = zSeq[c(which.max(G0 > z0Quant[1]),
                             which.max(G0 > z0Quant[2]))]
     p0 = do.call(estP0,
                  c(list(statObs = statObs, nullDensCum = G0, zSeq = zSeq),
                    estP0args))
-    convergence = sqrt(mean((fdrOld-fdr)^2)) < tol
+    convergence = sqrt(mean((fdrOld-fdr)^2)) < tol &&
+      (p0-p0old)^2 < tol
+
     #    cat(iter, "\n")
     iter = iter + 1L
   }
-  fdr = approx(y = fdr, x= zSeq, xout = statObs)$y
   if(!convergence){
       warning("Consensus null estimation did not converge,
               please investigate cause! \n")}
   return(list(g0 = g0, G0 = G0, R = centralBorders, zSeq = zSeq,
               zValsDensObs = zValsDensObs, zValsDensPerm = zValsDensPerm,
               convergence  = convergence, weights = weights, fdr = fdr,
-              p0 = p0, iter = iter))
+              p0 = p0, iter = iter, fitAll = fitAll))
 }

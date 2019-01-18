@@ -7,6 +7,8 @@
 #' @param x A vector defining the groups. Will be coerced to factor.
 #' @param B an integer, the number of permuations
 #' @param argList A list of further arguments passed on to the test function
+#' @param tieBreak A boolean, should ties of permutation test statistics
+#'  be broken randomly? If not, midranks are used
 #'
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
@@ -20,7 +22,7 @@
 #' a list of other arguments. It must return all arguments needed to evaluate
 #' its quantile function if z-values are to be used.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
-                        argList){
+                        argList, tieBreak = FALSE){
   x = factor(x)
   Ycenter = Y
 
@@ -49,10 +51,12 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     mmSeries = seq_len(mm)
     #YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
-      #YRanked = t(apply(Y, 2, rank, ties.method = "random"))
-      #Random tiebreaking, important to combat test statisitc discreteness
-      #rowSums(YRanked[,permDesign[ii,mmSeries]])
+      if(tieBreak){YRanked = t(apply(Y, 2, rank, ties.method = "random"))
+      #Random tiebreaking, important to combat test statistic discreteness
+      rowSums(YRanked[,permDesign[ii,mmSeries]])
+      } else {
       colSums(YRanked[permDesign[ii,mmSeries],])
+      }
     }, FUN.VALUE = statObs)
   } else if(test == "t.test"){
     statObs = apply(Y, 2, function(dat){
