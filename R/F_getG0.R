@@ -42,8 +42,9 @@ getG0 = function(statObs, statsPerm, z0Quant, weightStrat, gridsize,
     stop("Dimensions of observed and permutation test statistics don't match!\n")
   }
 if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
-  centralBorders = do.call(quantileFun, c(list(p = z0Quant), testPargs))
-  #quantile(statObs, probs = c(z0Quant, 1-z0Quant))
+  centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
+  #The starting values are CRUCIAL!
+  #centralBorders = do.call(quantileFun, c(list(p = z0Quant), testPargs))
   Range = range(c(statsPerm, statObs))
 
   #Estimate observed densities
