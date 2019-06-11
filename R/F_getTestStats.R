@@ -7,14 +7,16 @@
 #' @param x A vector defining the groups. Will be coerced to factor.
 #' @param B an integer, the number of permuations
 #' @param argList A list of further arguments passed on to the test function
-#' @param tieBreak A boolean, should ties of permutation test statistics
+#' @param tieBreakRan A boolean, should ties of permutation test statistics
 #'  be broken randomly? If not, midranks are used
+#' @param replace A boolean. If FALSE, samples are permuated
+#' (sampled without replacement), if TRUE the samples are bootstrapped (sampled wiht replacement)
 #'
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
 #' \item{statsPerm}{A p-by-B matrix of permutation test statistics}
 #'
-#' @importFrom permute shuffleSet
+#' @importFrom resample samp.bootstrap samp.permute
 #'
 #' @details For test "wilcox.test" and "t.test",
 #' fast custom implementations are used. Other functions can be supplied
@@ -22,17 +24,20 @@
 #' a list of other arguments. It must return all arguments needed to evaluate
 #' its quantile function if z-values are to be used.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
-                        argList, tieBreak = FALSE){
+                        argList, tieBreakRan = FALSE, replace = FALSE){
   x = factor(x)
   Ycenter = Y
 
   #enumerate B unique ways to group
-
-  permDesign = shuffleSet(length(x),B)
+  permDesign = if(replace) samp.bootstrap(nrow(Y), B) else samp.permute(length(x),B)
   if(center) {
+    if(replace){
+      Ycenter = scale(Ycenter, center = TRUE, scale = FALSE)
+    } else {
     for (ii in unique(x)){Ycenter[x==ii,] = scale(Ycenter[x==ii,],
                                                   center = TRUE,
                                                   scale = FALSE)}
+    }
   }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
     if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply
@@ -51,11 +56,11 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     mmSeries = seq_len(mm)
     #YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
-      if(tieBreak){YRanked = t(apply(Y, 2, rank, ties.method = "random"))
+      if(tieBreakRan){YRanked = t(apply(Y, 2, rank, ties.method = "random"))
       #Random tiebreaking, important to combat test statistic discreteness
-      rowSums(YRanked[,permDesign[ii,mmSeries]])
+      rowSums(YRanked[,permDesign[mmSeries,ii]])
       } else {
-      colSums(YRanked[permDesign[ii,mmSeries],])
+      colSums(YRanked[permDesign[mmSeries,ii],])
       }
     }, FUN.VALUE = statObs)
   } else if(test == "t.test"){
@@ -64,7 +69,7 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     })
     statsPerm = vapply(seq_len(B), FUN.VALUE = statObs,
                        function(ii){
-      xSam = xLog[permDesign[ii,]]
+      xSam = xLog[permDesign[,ii]]
       apply(Ycenter, 2, function(dat){
         getTstat(y1 = dat[xSam], y2 = dat[!xSam], mm = mm, nn = nn)
       })
@@ -79,7 +84,7 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
   statsPerm = vapply(seq_len(B),
                      FUN.VALUE = statObs,
                      function(ii){
-    apply(Ycenter[permDesign[ii,],],2, function(y){
+    apply(Ycenter[permDesign[,ii],],2, function(y){
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
   }

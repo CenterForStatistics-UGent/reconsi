@@ -7,10 +7,10 @@
 #'
 #' @return A vector of length 2 with mean and standard deviation
 #' @importFrom stats lm.fit lm.wfit
-estNormal = function(y, x, w  = NULL, p, B){
+estNormal = function(y, x, w  = NULL, p = NULL, B){
     if(is.null(w)){
         fit = lm.fit(y = y, x = x)
-        c(mean = fit$coef, sd = sqrt(sum(fit$residuals^2)/p))
+        c(mean = fit$coef, sd = sqrt(mean(fit$residuals^2)))
     } else {
         fit = lm.wfit(y = c(y), x = as.matrix(rep.int(1L, p*B)), w = w)
         c(mean = fit$coef, sd = sqrt(sum(fit$residuals^2*w)/p))

@@ -3,6 +3,7 @@
 #' @param fit an object returned by the fdrCorrect() (or testDAA()) function
 #' @param lowColor,highColor The low and high ends of the colour scale
 #' @param dens a boolean, should fdr and Fdr be plotted?
+#' @param idDA indices of known null taxa
 #'
 #' @return a ggplot2 plot object
 #' @import ggplot2
@@ -18,7 +19,8 @@
 #Provide just the matrix and grouping factor, and test using the random null
 #' fdrRes = fdrCorrect(mat, x)
 #' plotNull(fdrRes)
-plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE){
+plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
+                    idDA = NULL){
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     df1 = data.frame(weight = weights, curve = colnames(zValsDensPerm))
@@ -49,6 +51,12 @@ plot = plot + geom_histogram(data = data.frame(statObs = statObs),
     dfDens = data.frame(zSeq = zSeq, RandomNull = g0,
                         TheoreticalNull = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
                         fdr = lfdr)
+    if(!is.null(idDA)){
+      #If null taxa known, add normal density
+      nullZdens = estNormal(y = statObs[idDA], x = matrix(rep.int(1, sum(idDA))),
+                            p = sum(idDA))
+      dfDens$NullDensity = dnorm(zSeq, mean = nullZdens["mean.x1"], sd = nullZdens["sd"])
+    }
     if(!dens){dfDens$fdr =NULL}
     dfDensMolt = melt(dfDens, id.vars ="zSeq", value.name = "density",
                       variable.name = "type")
@@ -60,7 +68,8 @@ plot = plot + geom_histogram(data = data.frame(statObs = statObs),
     dfFdr = data.frame(statObs = statObs, Fdr = Fdr)
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
                    aes(x = statObs, y = Fdr), col = "red", size = 0.75)
-}
+    }
+
     return(plot)
 })
 }

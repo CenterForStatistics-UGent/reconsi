@@ -34,7 +34,7 @@
 #' @param normAsump A boolean, should normality be assumed when estimating the individual permutation null distributions
 #' @param smoothObs A boolean, should the fitted rather than estimated observed distribution be used in the Fdr calculation?
 #' @param normAsumpG0 A boolean, should normality be assumed when estimating the random null distribution
-#' @param tieBreak A boolean, should ties of permutation test statistics
+#' @param tieBreakRan A boolean, should ties of permutation test statistics
 #'  be broken randomly? If not, midranks are used
 #' @details Efron (2007) centers the observations in each group prior
 #'  to permutation. As permutations will remove any genuine group differences
@@ -87,17 +87,20 @@
 #' c(summary(fit)$coef["x1","t value"], fit$df.residual)},
 #' distFun = function(q){pt(q = q[1], df = q[2])},
 #' argList = list(z = z))
-fdrCorrect = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
+fdrCorrect = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
                       distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       weightStrat = "LHw", maxIter = 1000L, tol = 1e-8,
                       center = FALSE, zVals = NULL,
-                      estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
+                      estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
-                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE,
-                      tieBreak = FALSE){
+                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = TRUE,
+                      tieBreakRan = test == "wilcox.test"){
   if(is.character(test)){
+    if(is.null(x)){
+      stop("Grouping factor x must be supplied for Wilcoxon rank sum test or two-sample t-test!")
+    }
       if(test == "t.test"){
         distFun = "pt.edit"; densFun = "dt"; quantileFun = "qt.edit"
         if(!zValues) {
@@ -122,7 +125,7 @@ if(!is.matrix(Y)){
                if(is.vector(Y)) "Multiplicity correction only needed when
                testing multiple hypotheses."))
 }
-if(length(x)!=nrow(Y)){
+if(!is.null(x) & length(x)!=nrow(Y)){
     stop("Length of grouping factor does not correspond to number of
          rows of data matrix!\n")
 }
@@ -135,7 +138,8 @@ if(ncol(Y)<30){
 if(is.null(zVals)){
 #Test statistics
 testStats = getTestStats(Y = Y, center = center, test = test,
-                         x = x, B = B, argList = argList, tieBreak = tieBreak)
+                         x = x, B = B, argList = argList,
+                         tieBreakRan = tieBreakRan, replace = is.null(x))
 #Observed cdf values
 cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
     quantCorrect(do.call(distFun, c(list(q = stats), testPargs)))
