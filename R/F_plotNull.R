@@ -24,9 +24,9 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     df1 = data.frame(weight = weights, curve = colnames(zValsDensPerm))
-    df2 = data.frame( zValsDensPerm, zSeq = zSeq)
-    moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name ="curve",
-                   value.name ="Density")
+    df2 = data.frame(zValsDensPerm, zSeq = zSeq)
+    moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name = "curve",
+                   value.name = "Density")
     dfMerged = merge(moltdf2, df1, by = "curve")
     #Permutation densities
     plot = ggplot(data = dfMerged, aes(x =zSeq, group = curve, y = Density,
@@ -40,7 +40,7 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
         theme_bw()
 
     #Histogram of observed z-values
-plot = plot + geom_histogram(data = data.frame(statObs = statObs),
+    plot = plot + geom_histogram(data = data.frame(statObs = statObs),
                              aes(x = statObs, y = ..density..),
                              inherit.aes = FALSE, bins = 50, alpha = 0.5,
                              fill = "mediumseagreen")
@@ -48,6 +48,8 @@ plot = plot + geom_histogram(data = data.frame(statObs = statObs),
     # Add density functions
     lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
     lfdr[lfdr>1] = 1
+    #Only show lfdr for observed z-values
+    lfdr[zSeq > (max(statObs)+0.1) | zSeq < (min(statObs)-0.1)] = NA
     dfDens = data.frame(zSeq = zSeq, RandomNull = g0,
                         TheoreticalNull = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
                         fdr = lfdr)
@@ -62,7 +64,7 @@ plot = plot + geom_histogram(data = data.frame(statObs = statObs),
                       variable.name = "type")
     plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
                   aes(x = zSeq, y = density, group = type, linetype = type)) +
-        scale_linetype_discrete(name = "")
+        scale_linetype_manual(name = "", values = c("solid", "dashed", "dotdash"))
     if(dens){
     # Add red dots for Fdr estimates
     dfFdr = data.frame(statObs = statObs, Fdr = Fdr)
