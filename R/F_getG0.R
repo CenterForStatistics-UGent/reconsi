@@ -18,7 +18,7 @@
 #' @param testPargs A list of arguments passed on to quantileFun
 #'
 #' @importFrom KernSmooth bkde
-#' @importFrom stats qnorm dnorm approx
+#' @importFrom stats qnorm dnorm approx quantile
 #' @importFrom MASS fitdistr
 #'
 #' @return A list with following entries
@@ -54,9 +54,6 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   zSeq = zValsDensObs0$x #The support
 
   #Estimate permutation densities
-  # x1 = as.matrix(rep.int(1L, p))
-  # xall = as.matrix(rep.int(1L, p*B))
-  pbFrac = p*B/(p*B-1)
   zValsDensPerm = if(normAsump){
     apply(statsPerm, 2, function(zz){
       fit = estNormal(y = zz)
@@ -89,8 +86,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
                                             statObs < centralBorders[2])})
     #Null distribution
     if(normAsumpG0){
-    fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p),
-                       pbFrac = pbFrac)
+    fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
     g0 = dnorm(zSeq, mean = fitAll[1],
                sd = fitAll[2])
     } else {

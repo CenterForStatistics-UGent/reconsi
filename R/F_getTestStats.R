@@ -25,11 +25,10 @@
 #' its quantile function if z-values are to be used.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
                         argList, tieBreakRan = FALSE, replace = FALSE){
-  x = factor(x)
   Ycenter = Y
 
   #enumerate B unique ways to group
-  permDesign = if(replace) samp.bootstrap(nrow(Y), B) else samp.permute(length(x),B)
+  permDesign = if(replace) samp.bootstrap(nrow(Y), B) else samp.permute(NROW(x),B)
   if(center) {
     if(replace){
       Ycenter = scale(Ycenter, center = TRUE, scale = FALSE)
@@ -40,6 +39,10 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     }
   }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
+    if(NCOL(x)!=1){
+      stop("Provide single grouping variable for Wilcoxon rank sum test or t-test")
+    }
+    x = factor(x)
     if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply
                           to two groups! \n Try 'kruskal.test()' or 'lm()'.")}
     xLog = x==names(table(x))[1]

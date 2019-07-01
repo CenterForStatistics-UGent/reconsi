@@ -4,7 +4,7 @@
 #' @param B the number of permutations
 #' @param test Character string, giving the name of the function
 #'  to test for differential absolute abundance.
-#'  Must accept the formula interface
+#'  This function must accept the formula interface y~x
 #' @param argList A list of arguments, passed on to the testing function
 #' @param distFun,quantileFun,densFun the distribution, quantile and density
 #' functions of the test statistic, or its name.
@@ -97,7 +97,7 @@ fdrCorrect = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = lis
                                        smooth.df = 3), permZvals = FALSE,
                       normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = TRUE,
                       tieBreakRan = test == "wilcox.test"){
-  if(is.character(test)){
+  if(test %in% c("wilcox.test", "t-test")){
     if(is.null(x)){
       stop("Grouping factor x must be supplied for Wilcoxon rank sum test or two-sample t-test!")
     }
@@ -125,7 +125,7 @@ if(!is.matrix(Y)){
                if(is.vector(Y)) "Multiplicity correction only needed when
                testing multiple hypotheses."))
 }
-if(!is.null(x) & length(x)!=nrow(Y)){
+if(!is.null(x) & NROW(x)!=nrow(Y)){
     stop("Length of grouping factor does not correspond to number of
          rows of data matrix!\n")
 }

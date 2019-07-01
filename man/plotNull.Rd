@@ -5,7 +5,8 @@
 \title{Plot the obtained null distribution along with a histogram of observed test
 statistics}
 \usage{
-plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE)
+plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE,
+  idDA = NULL)
 }
 \arguments{
 \item{fit}{an object returned by the fdrCorrect() (or testDAA()) function}
@@ -13,6 +14,8 @@ plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE)
 \item{lowColor, highColor}{The low and high ends of the colour scale}
 
 \item{dens}{a boolean, should fdr and Fdr be plotted?}
+
+\item{idDA}{indices of known null taxa}
 }
 \value{
 a ggplot2 plot object

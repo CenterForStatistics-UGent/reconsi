@@ -4,14 +4,14 @@
 \alias{fdrCorrect}
 \title{Perform simultaneous inference, correcting for correlation between tests.}
 \usage{
-fdrCorrect(Y, x, B = 1000L, test = "wilcox.test", argList = list(),
-  distFun = "pnorm", quantileFun = "qnorm", densFun = NULL,
-  zValues = TRUE, testPargs = list(), z0Quant = pnorm(c(-1, 1)),
-  gridsize = 801L, weightStrat = "LHw", maxIter = 1000L,
-  tol = 1e-05, center = FALSE, zVals = NULL,
+fdrCorrect(Y, x = NULL, B = 1000L, test = "wilcox.test",
+  argList = list(), distFun = "pnorm", quantileFun = "qnorm",
+  densFun = NULL, zValues = TRUE, testPargs = list(),
+  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, weightStrat = "LHw",
+  maxIter = 1000L, tol = 1e-08, center = FALSE, zVals = NULL,
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
   3), permZvals = FALSE, normAsump = TRUE, smoothObs = TRUE,
-  normAsumpG0 = FALSE)
+  normAsumpG0 = TRUE, tieBreakRan = test == "wilcox.test")
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -22,7 +22,7 @@ fdrCorrect(Y, x, B = 1000L, test = "wilcox.test", argList = list(),
 
 \item{test}{Character string, giving the name of the function
 to test for differential absolute abundance.
-Must accept the formula interface}
+This function must accept the formula interface y~x}
 
 \item{argList}{A list of arguments, passed on to the testing function}
 
@@ -68,6 +68,9 @@ permutation (statsPerm) z-values. If supplied, the calculation
 \item{smoothObs}{A boolean, should the fitted rather than estimated observed distribution be used in the Fdr calculation?}
 
 \item{normAsumpG0}{A boolean, should normality be assumed when estimating the random null distribution}
+
+\item{tieBreakRan}{A boolean, should ties of permutation test statistics
+be broken randomly? If not, midranks are used}
 }
 \value{
 A list with entries

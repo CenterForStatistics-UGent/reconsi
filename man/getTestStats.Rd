@@ -5,7 +5,8 @@
 \title{A function to calculate observed and permuation z-statistics
 on a n-by-p matrix of observations}
 \usage{
-getTestStats(Y, center, test = "wilcox.test", x, B, argList)
+getTestStats(Y, center, test = "wilcox.test", x, B, argList,
+  tieBreakRan = FALSE, replace = FALSE)
 }
 \arguments{
 \item{Y}{The nxp data matrix}
@@ -19,6 +20,12 @@ getTestStats(Y, center, test = "wilcox.test", x, B, argList)
 \item{B}{an integer, the number of permuations}
 
 \item{argList}{A list of further arguments passed on to the test function}
+
+\item{tieBreakRan}{A boolean, should ties of permutation test statistics
+be broken randomly? If not, midranks are used}
+
+\item{replace}{A boolean. If FALSE, samples are permuated
+(sampled without replacement), if TRUE the samples are bootstrapped (sampled wiht replacement)}
 }
 \value{
 A list with components

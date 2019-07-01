@@ -7,6 +7,8 @@
 pt.edit = function(q){
   pt(q = q[1], df = q[2])
 }
+#' A custom function to calculate the quantile function of the t-test
+#'  statistic. For internal use only
 #'@param p a vector with quantile and degrees of freedom
 #'@return the corresponding quantile
 qt.edit = function(p){

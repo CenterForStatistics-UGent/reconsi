@@ -8,6 +8,7 @@
 #' @return a ggplot2 plot object
 #' @import ggplot2
 #' @importFrom reshape2 melt
+#' @importFrom stats weights density
 #' @export
 #' @examples
 #'  p = 200; n = 50
@@ -55,8 +56,7 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                         fdr = lfdr)
     if(!is.null(idDA)){
       #If null taxa known, add normal density
-      nullZdens = estNormal(y = statObs[idDA], x = matrix(rep.int(1, sum(idDA))),
-                            p = sum(idDA))
+      nullZdens = estNormal(y = statObs[idDA])
       dfDens$NullDensity = dnorm(zSeq, mean = nullZdens["mean.x1"], sd = nullZdens["sd"])
     }
     if(!dens){dfDens$fdr =NULL}

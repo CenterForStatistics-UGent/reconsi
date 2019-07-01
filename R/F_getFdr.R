@@ -36,7 +36,13 @@ getFdr = function(statObs, G0, g0, fdr, zSeq, p, p0, zValsDensObs,
 
   #Fdr
   Fdr = G0cumDefInterp/zcum*p0
-
   Fdr[Fdr>1] = 1
+  #fdr
+  if(is.null(fdr)){
+    fdr  = g0/zValsDensObs*p0
+    fdr = approx(y = fdr, x = zSeq, xout = statObs)$y
+    fdr[fdr>1] = 1
+  }
+
 return(list(Fdr = Fdr, fdr = fdr, p0 = p0))
 }
