@@ -4,18 +4,14 @@
 \alias{estNormal}
 \title{Fast estimation of mean and standard deviation of a normal disitrbution, optionally with weights}
 \usage{
-estNormal(y, w = NULL, pbFrac = NULL)
+estNormal(y, w = NULL, p)
 }
 \arguments{
 \item{y}{vector of observations}
 
 \item{w}{optional weight vector}
 
-\item{x}{design matrix}
-
-\item{p}{an integer, number of observations}
-
-\item{B}{an integer, the number of bootstraps}
+\item{p}{The number of features}
 }
 \value{
 A vector of length 2 with mean and standard deviation

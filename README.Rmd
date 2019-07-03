@@ -4,19 +4,19 @@ output: github_document
 
 ```{r setup, echo = FALSE}
 knitr::opts_chunk$set(cache = TRUE, autodep = TRUE,  warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, tidy = TRUE, fig.width = 9, fig.height = 6, purl=TRUE, fig.show = "hold", cache.lazy = FALSE, fig.path = "README_figs/README-")
-library(pransi)
+library(rransi)
 ```
 
-# Manual for the use of the pransi package
+# Introduction
 
-## Introduction
-
-The aim of this _pransi_ pacakage is to provide Permutation RAndom Null distributions 
-for simultaneous inference. Wilcoxon rank sum test and two sample t-test
+The aim of this _rransi_ pacakage is to provide Resampling RAndom Null distributions 
+for Simultaneous Inference. Wilcoxon rank sum test and two sample t-test
 are natively implemented, but any other test can be used. The package's aim is
-multiplicity correction while accounting for correlations among statistical tests.
+multiplicity correction while accounting for correlations among statistical tests. This will reduce the variability of the false discovery proportion, while increasing the power.
 
-## General use
+A short tutorial is given here, more detailed instructions can be found in the [Manual]().
+
+# General use
 
 We illustrate the general use of the package on a synthetic dataset. The default 
 Wilcoxon rank-sum test is used.
@@ -61,37 +61,6 @@ c(summary(fit)$coef["x1","t value"], fit$df.residual)},
 quantileFun = function(q){pt(q = q[1], df = q[2])})
 ```
 
-This framework also accepts more than 2 groups, and additional covariates 
-through the 
-
-```{r customFunction2}
- #3 groups
- p = 100; n = 60
-x = rep(c(0,1,2), each = n/3)
- mat = cbind(
- matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
- matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
- )
- #Provide an additional covariate through the 'argList' argument
- z = rpois(n , lambda = 2)
- fdrResLmZ = fdrCorrect(mat, x, B = 5e1,
- test = function(x, y, z){
- fit = lm(y~x+z)
- c(summary(fit)$coef["x1","t value"], fit$df.residual)},
- quantileFun = function(q){pt(q = q[1], df = q[2])},
- argList = list(z = z))
-```
-
-If the null distribution of the test statistic is not known, it is also possbile
-to execute the procedure on the scale of the original test statistics, rather 
-than z-values by setting zValues = FALSE. This may be numerically less stable.
-
-```{r kruskal}
-fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
-test = function(x, y){
- kruskal.test(y~x)$statistic}, zValues = FALSE)
-```
-
 ## Case study
 
 We illustrate the package using an application from microbiology. The species
@@ -110,7 +79,8 @@ The dataset used is taken from Vandeputte _et al._, 2017 (see [manuscript](https
 in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the _phyloseq_ package, which is the preferred way to interact with our machinery for microbiome data.
 
 ```{r Vandeputte}
-testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen")
+testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen", 
+                         B = 1e2L)
 ```
 
 The estimated tail-area false discovery rates can then simply be extracted as

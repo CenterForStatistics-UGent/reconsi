@@ -4,14 +4,14 @@
 \alias{fdrCorrect}
 \title{Perform simultaneous inference, correcting for correlation between tests.}
 \usage{
-fdrCorrect(Y, x = NULL, B = 1000L, test = "wilcox.test",
-  argList = list(), distFun = "pnorm", quantileFun = "qnorm",
-  densFun = NULL, zValues = TRUE, testPargs = list(),
-  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, weightStrat = "LHw",
-  maxIter = 1000L, tol = 1e-08, center = FALSE, zVals = NULL,
+fdrCorrect(Y, x, B = 1000L, test = "wilcox.test", argList = list(),
+  distFun = "pnorm", quantileFun = "qnorm", densFun = NULL,
+  zValues = TRUE, testPargs = list(), z0Quant = pnorm(c(-1, 1)),
+  gridsize = 801L, weightStrat = "LHw", maxIter = 1000L,
+  tol = 1e-08, center = FALSE, zVals = NULL,
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
   3), permZvals = FALSE, normAsump = TRUE, smoothObs = TRUE,
-  normAsumpG0 = TRUE, tieBreakRan = test == "wilcox.test")
+  normAsumpG0 = FALSE, tieBreakRan = identical(test, "wilcox.test"))
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -22,7 +22,7 @@ fdrCorrect(Y, x = NULL, B = 1000L, test = "wilcox.test",
 
 \item{test}{Character string, giving the name of the function
 to test for differential absolute abundance.
-This function must accept the formula interface y~x}
+Must accept the formula interface}
 
 \item{argList}{A list of arguments, passed on to the testing function}
 
@@ -111,7 +111,7 @@ estFdr = fdrRes$Fdr
 fdrResLm = fdrCorrect(mat, x, B = B,
 test = function(x, y){
 fit = lm(y~x)
-c(summary(fit)$coef["x1","t value"], fit$df.residual)},
+c(summary(fit)$coef["x","t value"], fit$df.residual)},
 distFun = function(q){pt(q = q[1], df = q[2])})
 
 #With a test statistic without known null distribution(for small samples)
@@ -124,7 +124,7 @@ z = rpois(n , lambda = 2)
 fdrResLmZ = fdrCorrect(mat, x, B = B,
 test = function(x, y, z){
 fit = lm(y~x+z)
-c(summary(fit)$coef["x1","t value"], fit$df.residual)},
+c(summary(fit)$coef["x","t value"], fit$df.residual)},
 distFun = function(q){pt(q = q[1], df = q[2])},
 argList = list(z = z))
 }

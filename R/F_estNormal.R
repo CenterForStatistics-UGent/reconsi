@@ -1,8 +1,7 @@
 #' Fast estimation of mean and standard deviation of a normal disitrbution, optionally with weights
 #' @param y vector of observations
-#' @param x design matrix
 #' @param w optional weight vector
-#' @param pBfrac 1/(p*B-1)
+#' @param p The number of features
 #'
 #' @return A vector of length 2 with mean and standard deviation
 #' @importFrom stats sd weighted.mean

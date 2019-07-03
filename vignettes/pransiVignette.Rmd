@@ -9,7 +9,7 @@ vignette: >
     %\VignetteEncoding{UTF-8}
 ---
 
-# pransi package: vignette
+# rransi package: vignette
 
 \setcounter{tocdepth}{5}
 \tableofcontents
@@ -64,21 +64,21 @@ plotNull(fdrRes)
 ```
 
 It is also possible to provide a custom test function, which must accept at
-least a 'y' response variable and a 'x' grouping factor. Additionally, a quantile function should be supplied for transformation through quantiles to z-values.
+least a 'y' response variable and a 'x' grouping factor. Additionally, quantile, distribution and density functions should be supplied for transformation through quantiles to z-values.
 
 ```{r customFunction}
- #With another type of test
+ #With a custom function, here linera regression
 fdrResLm = fdrCorrect(mat, x, B = 5e1,
                       test = function(x, y){
 fit = lm(y~x)
-c(summary(fit)$coef["x1","t value"], fit$df.residual)},
+c(summary(fit)$coef["x","t value"], fit$df.residual)},
 quantileFun = function(p){qt(p = p[1], df = p[2])}, 
 distFun = function(q){pt(q = q[1], df = q[2])},
 densFun = function(x){dt(x = x[1], df = x[2])})
 ```
 
 This framework also accepts more than 2 groups, and additional covariates 
-through the 
+through the "argList" argument.
 
 ```{r customFunction2}
  #3 groups
@@ -93,7 +93,7 @@ x = rep(c(0,1,2), each = n/3)
  fdrResLmZ = fdrCorrect(mat, x, B = 5e1,
  test = function(x, y, z){
  fit = lm(y~x+z)
- c(summary(fit)$coef["x1","t value"], fit$df.residual)},
+ c(summary(fit)$coef["x","t value"], fit$df.residual)},
 quantileFun = function(p){qt(p = p[1], df = p[2])}, 
 distFun = function(q){pt(q = q[1], df = q[2])},
  argList = list(z = z))
@@ -107,6 +107,14 @@ than z-values by setting zValues = FALSE. This may be numerically less stable.
 fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
 test = function(x, y){
  kruskal.test(y~x)$statistic}, zValues = FALSE)
+```
+
+Alternatively, the permutations may be used to determine the marginal null distributions, by setting the "permZvals" flag to true.
+
+```{r permZvals}
+fdrResKruskal = fdrCorrect(mat, x, B = 5e1,
+test = function(x, y){
+ kruskal.test(y~x)$statistic}, permZvals = TRUE)
 ```
 
 ## Case study
@@ -127,7 +135,7 @@ The dataset used is taken from Vandeputte _et al._, 2017 (see [manuscript](https
 in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the _phyloseq_ package, which is the preferred way to interact with our machinery for microbiome data.
 
 ```{r Vandeputte}
-testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen")
+testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen", B = 5e1)
 ```
 
 The estimated tail-area false discovery rates can then simply be extracted as

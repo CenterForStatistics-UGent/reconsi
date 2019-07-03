@@ -4,7 +4,7 @@
 #' @param B the number of permutations
 #' @param test Character string, giving the name of the function
 #'  to test for differential absolute abundance.
-#'  This function must accept the formula interface y~x
+#'  Must accept the formula interface
 #' @param argList A list of arguments, passed on to the testing function
 #' @param distFun,quantileFun,densFun the distribution, quantile and density
 #' functions of the test statistic, or its name.
@@ -71,7 +71,7 @@
 #' fdrResLm = fdrCorrect(mat, x, B = B,
 #' test = function(x, y){
 #' fit = lm(y~x)
-#' c(summary(fit)$coef["x1","t value"], fit$df.residual)},
+#' c(summary(fit)$coef["x","t value"], fit$df.residual)},
 #' distFun = function(q){pt(q = q[1], df = q[2])})
 #'
 #' #With a test statistic without known null distribution(for small samples)
@@ -84,23 +84,23 @@
 #' fdrResLmZ = fdrCorrect(mat, x, B = B,
 #' test = function(x, y, z){
 #' fit = lm(y~x+z)
-#' c(summary(fit)$coef["x1","t value"], fit$df.residual)},
+#' c(summary(fit)$coef["x","t value"], fit$df.residual)},
 #' distFun = function(q){pt(q = q[1], df = q[2])},
 #' argList = list(z = z))
-fdrCorrect = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
+fdrCorrect = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
                       distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       weightStrat = "LHw", maxIter = 1000L, tol = 1e-8,
                       center = FALSE, zVals = NULL,
-                      estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125),
+                      estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
-                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = TRUE,
-                      tieBreakRan = test == "wilcox.test"){
-  if(test %in% c("wilcox.test", "t-test")){
-    if(is.null(x)){
-      stop("Grouping factor x must be supplied for Wilcoxon rank sum test or two-sample t-test!")
+                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE,
+                      tieBreakRan = identical(test, "wilcox.test")){
+    if(is.function(test)){
+
     }
+    else if(is.character(test)){
       if(test == "t.test"){
         distFun = "pt.edit"; densFun = "dt"; quantileFun = "qt.edit"
         if(!zValues) {
@@ -117,7 +117,7 @@ fdrCorrect = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = lis
  if(!"p" %in% names(formals(quantileFun))){
      stop("Quantile function must accept arguments named 'q'\n")
  }
- if(!is.null(densFun) & !"x" %in% names(formals(densFun))){
+ if(!is.null(densFun) && !"x" %in% names(formals(densFun))){
      stop("Density function must accept arguments named 'q'\n")
  }
 if(!is.matrix(Y)){
@@ -125,7 +125,7 @@ if(!is.matrix(Y)){
                if(is.vector(Y)) "Multiplicity correction only needed when
                testing multiple hypotheses."))
 }
-if(!is.null(x) & NROW(x)!=nrow(Y)){
+if(length(x)!=nrow(Y)){
     stop("Length of grouping factor does not correspond to number of
          rows of data matrix!\n")
 }
@@ -138,8 +138,7 @@ if(ncol(Y)<30){
 if(is.null(zVals)){
 #Test statistics
 testStats = getTestStats(Y = Y, center = center, test = test,
-                         x = x, B = B, argList = argList,
-                         tieBreakRan = tieBreakRan, replace = is.null(x))
+                         x = x, B = B, argList = argList, tieBreakRan = tieBreakRan)
 #Observed cdf values
 cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
     quantCorrect(do.call(distFun, c(list(q = stats), testPargs)))
