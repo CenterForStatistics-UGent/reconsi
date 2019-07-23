@@ -28,17 +28,17 @@ General use
 We illustrate the general use of the package on a synthetic dataset. The default Wilcoxon rank-sum test is used.
 
 ``` r
-#Create some synthetic data with 90% true null hypotheses
- p = 200; n = 50
- x = rep(c(0,1), each = n/2)
- mat = cbind(
- matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
- matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
- )
- #Provide just the matrix and grouping factor, and test using the random null
- fdrRes = fdrCorrect(mat, x)
- #The estimated tail-area false discovery rates.
- estFdr = fdrRes$Fdr
+# Create some synthetic data with 90% true null hypotheses
+p = 200
+n = 50
+x = rep(c(0, 1), each = n/2)
+mat = cbind(matrix(rnorm(n * p/10, mean = 5 + x), n, p/10), matrix(rnorm(n * 
+    p * 9/10, mean = 5), n, p * 9/10))
+# Provide just the matrix and grouping factor, and test using the random
+# null
+fdrRes = rransi(mat, x)
+# The estimated tail-area false discovery rates.
+estFdr = fdrRes$Fdr
 ```
 
 The method provides an estimate of the proportion of true null hypothesis, which is close to the true 90%.
@@ -47,7 +47,7 @@ The method provides an estimate of the proportion of true null hypothesis, which
 fdrRes$p0
 ```
 
-    ## [1] 0.8725868
+    ## [1] 0.88195
 
 The result of the procedure can be represented graphically as follows:
 
@@ -61,7 +61,7 @@ It is also possible to provide a custom test function, which must accept at leas
 
 ``` r
 # With another type of test
-fdrResLm = fdrCorrect(mat, x, B = 50, test = function(x, y) {
+fdrResLm = rransi(mat, x, B = 50, test = function(x, y) {
     fit = lm(y ~ x)
     c(summary(fit)$coef["x", "t value"], fit$df.residual)
 }, distFun = function(q) {
@@ -87,5 +87,15 @@ FdrVDP = testVanDePutte$Fdr
 quantile(FdrVDP)
 ```
 
-    ##          0%         25%         50%         75%        100% 
-    ## 0.000000000 0.002845192 0.317899004 0.795212031 0.922768970
+    ##           0%          25%          50%          75%         100% 
+    ## 0.0000000000 0.0003678914 0.2490903062 0.7022028119 0.8779864469
+
+An approximation of the correlation matrix of the test statistics can be drawn as follows:
+
+``` r
+plotCperm(testVanDePutte$statsPerm)
+```
+
+![](README_figs/README-approxCor-1.png)
+
+This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated. This is a consequence of the random null distribution shifting left and right.
