@@ -25,7 +25,8 @@ getTestStats(Y, center, test = "wilcox.test", x, B, argList,
 be broken randomly? If not, midranks are used}
 
 \item{replace}{A boolean. If FALSE, samples are permuated
-(sampled without replacement), if TRUE the samples are bootstrapped (sampled wiht replacement)}
+(sampled without replacement), if TRUE the samples are bootstrapped
+(sampled with replacement)}
 }
 \value{
 A list with components

@@ -1,4 +1,4 @@
 library(testthat)
-library(pransi)
+library(rransi)
 
-test_check("pransi")
+test_check("rransi")

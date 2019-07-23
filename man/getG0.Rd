@@ -26,11 +26,14 @@ of the distribution. If a single number is supplied, then
 
 \item{estP0args}{A list of arguments passed on to the estP0args() function}
 
-\item{normAsump}{A boolean, should normality be assumed when estimating the individual permutation null distributions}
+\item{normAsump}{A boolean, should normality be assumed when estimating the
+individual permutation null distributions}
 
-\item{normAsumpG0}{A boolean, should normality be assumed when estimating the random null distribution}
+\item{normAsumpG0}{A boolean, should normality be assumed when estimating
+the random null distribution}
 
-\item{quantileFun}{The quantile function of the test statistic, either as a function or as a character string}
+\item{quantileFun}{The quantile function of the test statistic,
+either as a function or as a character string}
 
 \item{testPargs}{A list of arguments passed on to quantileFun}
 

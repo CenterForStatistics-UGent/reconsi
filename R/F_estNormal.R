@@ -1,4 +1,5 @@
-#' Fast estimation of mean and standard deviation of a normal disitrbution, optionally with weights
+#' Fast estimation of mean and standard deviation of a normal distrbution,
+#' optionally with weights
 #' @param y vector of observations
 #' @param w optional weight vector
 #' @param p The number of features
@@ -10,10 +11,11 @@ estNormal = function(y, w = NULL, p){
         # fit = lm.fit(y = y, x = x)
         # c(mean = fit$coef, sd = sqrt(mean(fit$residuals^2)))
         c(mean = mean(y), sd = sd(y))
+        #ML estimate = biased!
     } else {
         # fit = lm.wfit(y = c(y), x = as.matrix(rep.int(1L, p*B)), w = w)
         # c(mean = fit$coef, sd = sqrt(sum(fit$residuals^2*w)/p))
         wmean = weighted.mean(y, w = w)
-        c(wmean, sd = sqrt(sum((y-wmean)^2*w)*1/(p-1)))
+        c(mean = wmean, sd = sqrt(sum((y-wmean)^2*w)*1/(p-1)))
     }
 }

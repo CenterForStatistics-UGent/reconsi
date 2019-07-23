@@ -9,9 +9,9 @@
 #' @param x a grouping factor of length n
 #' @param S a vector of library sizes. Will be calculated f
 #' @param tieBreak A character string, specifying the tie break doctrine to use.
-#' @param ... passed on to the fdrCorrect() function
+#' @param ... passed on to the rransi() function
 #'
-#'@return See the fdrCorrect() function
+#'@return See the rransi() function
 
 
 #' @rdname testDAA
@@ -48,5 +48,5 @@ setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y),
                           FC = if(length(FC)==1) FC else FC[idSam],
                           tieBreak = tieBreak, S = S[idSam])
     if(min(table(x[idSam]))<2L) {return(NULL)}
-    fdrCorrect(tieBrokenY[,colSums(tieBrokenY)>0], x=x[idSam], ...)
+    rransi(tieBrokenY[,colSums(tieBrokenY)>0], x=x[idSam], ...)
 })

@@ -10,7 +10,8 @@
 #' @param tieBreakRan A boolean, should ties of permutation test statistics
 #'  be broken randomly? If not, midranks are used
 #' @param replace A boolean. If FALSE, samples are permuated
-#' (sampled without replacement), if TRUE the samples are bootstrapped (sampled wiht replacement)
+#' (sampled without replacement), if TRUE the samples are bootstrapped
+#' (sampled with replacement)
 #'
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
@@ -28,7 +29,8 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
   Ycenter = Y
 
   #enumerate B unique ways to group
-  permDesign = if(replace) samp.bootstrap(nrow(Y), B) else samp.permute(NROW(x),B)
+  permDesign = if(replace) samp.bootstrap(nrow(Y), B) else
+      samp.permute(NROW(x),B)
   if(center) {
     if(replace){
       Ycenter = scale(Ycenter, center = TRUE, scale = FALSE)
@@ -40,7 +42,8 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
   }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
     if(NCOL(x)!=1){
-      stop("Provide single grouping variable for Wilcoxon rank sum test or t-test")
+        stop("Provide single grouping variable for Wilcoxon rank sum test
+             or t-test")
     }
     x = factor(x)
     if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply

@@ -3,18 +3,30 @@ output: github_document
 ---
 
 ```{r setup, echo = FALSE}
-knitr::opts_chunk$set(cache = TRUE, autodep = TRUE,  warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, tidy = TRUE, fig.width = 9, fig.height = 6, purl=TRUE, fig.show = "hold", cache.lazy = FALSE, fig.path = "README_figs/README-")
-library(rransi)
+knitr::opts_chunk$set(cache = FALSE, autodep = TRUE,  warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, tidy = TRUE, fig.width = 9, fig.height = 6, purl=TRUE, fig.show = "hold", cache.lazy = FALSE, fig.path = "README_figs/README-")
 ```
 
 # Introduction
 
-The aim of this _rransi_ pacakage is to provide Resampling RAndom Null distributions 
-for Simultaneous Inference. Wilcoxon rank sum test and two sample t-test
-are natively implemented, but any other test can be used. The package's aim is
-multiplicity correction while accounting for correlations among statistical tests. This will reduce the variability of the false discovery proportion, while increasing the power.
+Dependence between test statistic is known to render statistical inference more variable. This is caused by the random nature of the null distribution under dependence. The aim of this _rransi_ pacakage is to provide Resampling RAndom Null distributions 
+for Simultaneous Inference to estimate these random functions for improved inference. It can reduce the variability of the false discovery proportion, while increasing the power. Any type of test statistic can be supplied, only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
 
-A short tutorial is given here, more detailed instructions can be found in the [Manual]().
+A short tutorial is given here, more detailed instructions can be found in the vignette.
+
+# Installation
+
+The package can be installed using the following commands:
+
+```{r install, eval = FALSE}
+library(devtools)
+install_github("CenterForStatistics-Ugent/rransi")
+```
+
+and loaded as
+
+```{r loadRransi}
+library(rransi)
+```
 
 # General use
 
@@ -22,18 +34,17 @@ We illustrate the general use of the package on a synthetic dataset. The default
 Wilcoxon rank-sum test is used.
 
 ```{r syntData}
-#Create some synthetic data with 90% true null hypothesis
+#Create some synthetic data with 90% true null hypotheses
  p = 200; n = 50
-x = rep(c(0,1), each = n/2)
+ x = rep(c(0,1), each = n/2)
  mat = cbind(
  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
  )
  #Provide just the matrix and grouping factor, and test using the random null
  fdrRes = fdrCorrect(mat, x)
-  #The estimated tail-area false discovery rates.
-  estFdr = fdrRes$Fdr
-
+ #The estimated tail-area false discovery rates.
+ estFdr = fdrRes$Fdr
 ```
 
 The method provides an estimate of the proportion of true null hypothesis, which 
@@ -49,16 +60,15 @@ The result of the procedure can be represented graphically as follows:
 plotNull(fdrRes)
 ```
 
-It is also possible to provide a custom test function, which must accept at
-least a 'y' response variable and a 'x' grouping factor. Additionally, a quantile function should be supplied for transformation through quantiles to z-values.
+It is also possible to provide a custom test function, which must accept at least a 'y' response variable and a 'x' grouping factor. Additionally, a distribution function should be supplied for transformation through quantiles to z-values.
 
 ```{r customFunction}
  #With another type of test
 fdrResLm = fdrCorrect(mat, x, B = 5e1,
                       test = function(x, y){
-fit = lm(y~x)
-c(summary(fit)$coef["x1","t value"], fit$df.residual)},
-quantileFun = function(q){pt(q = q[1], df = q[2])})
+                          fit = lm(y~x)
+                          c(summary(fit)$coef["x","t value"], fit$df.residual)},
+                      distFun = function(q){pt(q = q[1], df = q[2])})
 ```
 
 ## Case study
@@ -76,11 +86,10 @@ experiment-specific random null distribution, that will account for this
 dependence.
 
 The dataset used is taken from Vandeputte _et al._, 2017 (see [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/29143816)), a study on gut microbiome 
-in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the _phyloseq_ package, which is the preferred way to interact with our machinery for microbiome data.
+in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the [phyloseq](https://bioconductor.org/packages/release/bioc/html/phyloseq.html) package, which is the preferred way to interact with our machinery for microbiome data.
 
 ```{r Vandeputte}
-testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen", 
-                         B = 1e2L)
+testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen", B = 1e2L)
 ```
 
 The estimated tail-area false discovery rates can then simply be extracted as
@@ -89,3 +98,11 @@ The estimated tail-area false discovery rates can then simply be extracted as
 FdrVDP = testVanDePutte$Fdr
 quantile(FdrVDP)
 ```
+
+An approximation of the correlation matrix of the test statistics can be drawn as follows:
+
+```{r approxCor}
+rransi:::plotCperm(testVanDePutte$statsPerm)
+```
+
+This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated. This is a consequence of the random null distribution shifting left and right.

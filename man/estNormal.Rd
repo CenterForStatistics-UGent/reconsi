@@ -2,7 +2,8 @@
 % Please edit documentation in R/F_estNormal.R
 \name{estNormal}
 \alias{estNormal}
-\title{Fast estimation of mean and standard deviation of a normal disitrbution, optionally with weights}
+\title{Fast estimation of mean and standard deviation of a normal distrbution,
+optionally with weights}
 \usage{
 estNormal(y, w = NULL, p)
 }
@@ -17,5 +18,6 @@ estNormal(y, w = NULL, p)
 A vector of length 2 with mean and standard deviation
 }
 \description{
-Fast estimation of mean and standard deviation of a normal disitrbution, optionally with weights
+Fast estimation of mean and standard deviation of a normal distrbution,
+optionally with weights
 }

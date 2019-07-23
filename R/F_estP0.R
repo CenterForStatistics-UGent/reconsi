@@ -16,7 +16,7 @@
 #'
 #'@importFrom stats smooth.spline predict
 estP0 = function(statObs, nullDensCum, zSeq, z0quantRange, smooth.df){
-  pi0 = sapply(z0quantRange, function(z0Quant) {
+  pi0 = vapply(z0quantRange, FUN.VALUE = double(1), function(z0Quant) {
     z0Quant = c(z0Quant, 1-z0Quant)
     centralBorders = zSeq[c(which.max(nullDensCum > z0Quant[1]),
                             which.max(nullDensCum > z0Quant[2]))]

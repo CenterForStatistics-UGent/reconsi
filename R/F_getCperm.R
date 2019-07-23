@@ -10,7 +10,6 @@
 #'
 #' @return The covariance matrix of binned z-values
 #' @export
-#'
 #' @examples
 #' p = 200; n = 50; B = 5e1
 #' x = rep(c(0,1), each = n/2)
@@ -18,10 +17,11 @@
 #' matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
 #' matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 #' )
-#' fdrRes = fdrCorrect(mat, x, B = B)
-#' image(getCperm(fdrRes$statsPerm))
+#' mat = mat = mat + rnorm(n, sd = 0.3) #Introduce some dependence
+#' fdrRes = rransi(mat, x, B = B)
+#' corMat = getCperm(fdrRes$statsPerm)
 getCperm = function(statsPerm, nBins = 82L, binEdges = c(-4.1,4.1)){
   Breaks = c(-Inf, seq(binEdges[1], binEdges[2], length.out = nBins+1), Inf)
   bootYs = apply(statsPerm, 2, function(xx){table(cut(xx, breaks = Breaks))})
-  tcrossprod(bootYs-rowMeans(bootYs))/(ncol(statsPerm)-1) #The permutation matrix
+  tcrossprod(bootYs-rowMeans(bootYs))/(ncol(statsPerm)-1)
 }

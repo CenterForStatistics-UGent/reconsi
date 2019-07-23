@@ -10,11 +10,14 @@
 #' @param maxIter An integer, the maximum number of iterations in determining R
 #' @param tol The convergence tolerance.
 #' @param estP0args A list of arguments passed on to the estP0args() function
-#' @param normAsump A boolean, should normality be assumed when estimating the individual permutation null distributions
-#' @param normAsumpG0 A boolean, should normality be assumed when estimating the random null distribution
+#' @param normAsump A boolean, should normality be assumed when estimating the
+#'  individual permutation null distributions
+#' @param normAsumpG0 A boolean, should normality be assumed when estimating
+#'  the random null distribution
 #' @param B an integer, the number of permutations
 #' @param p an integer, the number of hypotheses
-#' @param quantileFun The quantile function of the test statistic, either as a function or as a character string
+#' @param quantileFun The quantile function of the test statistic,
+#' either as a function or as a character string
 #' @param testPargs A list of arguments passed on to quantileFun
 #'
 #' @importFrom KernSmooth bkde
@@ -39,7 +42,8 @@ getG0 = function(statObs, statsPerm, z0Quant, weightStrat, gridsize,
                  maxIter, tol, estP0args, normAsump, normAsumpG0, quantileFun,
                  testPargs, B, p){
   if(length(statObs)!=nrow(statsPerm)){
-    stop("Dimensions of observed and permutation test statistics don't match!\n")
+    stop("Dimensions of observed and permutation test statistics don't match!
+         ")
   }
 if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
@@ -70,8 +74,6 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   LogPermDensInterp = log(apply(zValsDensPerm, 2, function(dens){
     approx(x = zSeq, y = dens, xout = statObs)$y
   }))
-
-  #zIndObs = sapply(statObs, function(rr){which.min(abs(rr-zSeq))})
   #Indicators for the observed z values in the support of the kernel
   iter = 1L; convergence = FALSE; p0 = 1
   fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])

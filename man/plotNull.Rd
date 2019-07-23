@@ -6,16 +6,18 @@
 statistics}
 \usage{
 plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE,
-  idDA = NULL)
+  idDA = NULL, nResampleCurves = length(fit$weights))
 }
 \arguments{
-\item{fit}{an object returned by the fdrCorrect() (or testDAA()) function}
+\item{fit}{an object returned by the rransi() (or testDAA()) function}
 
 \item{lowColor, highColor}{The low and high ends of the colour scale}
 
 \item{dens}{a boolean, should fdr and Fdr be plotted?}
 
 \item{idDA}{indices of known null taxa}
+
+\item{nResampleCurves}{The number of resample null distributions to plot}
 }
 \value{
 a ggplot2 plot object
@@ -31,6 +33,6 @@ statistics
  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
  )
-fdrRes = fdrCorrect(mat, x)
+fdrRes = rransi(mat, x)
 plotNull(fdrRes)
 }
