@@ -26,15 +26,15 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves]
-    #The curves to plot
+    #The Curves to plot
     df1 = data.frame(weight = weights,
-                     curve = colnames(zValsDensPerm))[idCurves,]
+                     Curve = colnames(zValsDensPerm))[idCurves,]
     df2 = data.frame(zValsDensPerm[,idCurves], zSeq = zSeq)
-    moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name = "curve",
+    moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name = "Curve",
                    value.name = "Density")
-    dfMerged = merge(moltdf2, df1, by = "curve")
+    dfMerged = merge(moltdf2, df1, by = "Curve")
     #Permutation densities
-    plot = ggplot(data = dfMerged, aes(x =zSeq, group = curve, y = Density,
+    plot = ggplot(data = dfMerged, aes(x =zSeq, group = Curve, y = Density,
                                 col = weight, alpha = weight)) +
         geom_line(linetype = "dashed", size = 0.4) +
         scale_colour_continuous(high = highColor,
