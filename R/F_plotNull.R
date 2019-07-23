@@ -25,8 +25,10 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                     idDA = NULL, nResampleCurves = length(fit$weights)){
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
-    idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves] #The curves to plot
-    df1 = data.frame(weight = weights, curve = colnames(zValsDensPerm))[idCurves,]
+    idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves]
+    #The curves to plot
+    df1 = data.frame(weight = weights,
+                     curve = colnames(zValsDensPerm))[idCurves,]
     df2 = data.frame(zValsDensPerm[,idCurves], zSeq = zSeq)
     moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name = "curve",
                    value.name = "Density")
@@ -59,14 +61,17 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
     if(!is.null(idDA)){
       #If null taxa known, add normal density
       nullZdens = estNormal(y = statObs[idDA])
-      dfDens$NullDensity = dnorm(zSeq, mean = nullZdens["mean.x1"], sd = nullZdens["sd"])
+      dfDens$NullDensity = dnorm(zSeq, mean = nullZdens["mean.x1"],
+                                 sd = nullZdens["sd"])
     }
     if(!dens){dfDens$fdr =NULL}
     dfDensMolt = melt(dfDens, id.vars ="zSeq", value.name = "density",
                       variable.name = "type")
     plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
-                  aes(x = zSeq, y = density, group = type, linetype = type, size = type)) +
-        scale_linetype_manual(name = "", values = c("solid", "dashed", "dotdash")) +
+                  aes(x = zSeq, y = density, group = type,
+                      linetype = type, size = type)) +
+        scale_linetype_manual(name = "",
+                              values = c("solid", "dashed", "dotdash")) +
         scale_size_manual(values = c(0.2, 0.4, 0.4), guide = FALSE)
     if(dens){
     # Add red dots for Fdr estimates
