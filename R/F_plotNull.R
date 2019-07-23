@@ -4,6 +4,7 @@
 #' @param lowColor,highColor The low and high ends of the colour scale
 #' @param dens a boolean, should fdr and Fdr be plotted?
 #' @param idDA indices of known null taxa
+#' @param nResampleCurves The number of resample null distributions to plot
 #'
 #' @return a ggplot2 plot object
 #' @import ggplot2
@@ -21,18 +22,19 @@
 #' fdrRes = fdrCorrect(mat, x)
 #' plotNull(fdrRes)
 plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
-                    idDA = NULL){
+                    idDA = NULL, nResampleCurves = length(fit$weights)){
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
-    df1 = data.frame(weight = weights, curve = colnames(zValsDensPerm))
-    df2 = data.frame(zValsDensPerm, zSeq = zSeq)
+    idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves] #The curves to plot
+    df1 = data.frame(weight = weights, curve = colnames(zValsDensPerm))[idCurves,]
+    df2 = data.frame(zValsDensPerm[,idCurves], zSeq = zSeq)
     moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name = "curve",
                    value.name = "Density")
     dfMerged = merge(moltdf2, df1, by = "curve")
     #Permutation densities
     plot = ggplot(data = dfMerged, aes(x =zSeq, group = curve, y = Density,
                                 col = weight, alpha = weight)) +
-        geom_line(linetype = "dashed", size = 0.5) +
+        geom_line(linetype = "dashed", size = 0.4) +
         scale_colour_continuous(high = highColor,
                                 low = lowColor, name = "Weights") +
         scale_alpha_continuous(guide = FALSE, range = c(0.5,1)) +
@@ -51,9 +53,9 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
     lfdr[lfdr>1] = 1
     #Only show lfdr for observed z-values
     lfdr[zSeq > (max(statObs)+0.1) | zSeq < (min(statObs)-0.1)] = NA
-    dfDens = data.frame(zSeq = zSeq, RandomNull = g0,
-                        TheoreticalNull = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
-                        fdr = lfdr)
+    dfDens = data.frame("zSeq" = zSeq, "ResampleNull" = g0,
+                        "StandardNormal" = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
+                        "fdr" = lfdr)
     if(!is.null(idDA)){
       #If null taxa known, add normal density
       nullZdens = estNormal(y = statObs[idDA])
@@ -63,13 +65,14 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
     dfDensMolt = melt(dfDens, id.vars ="zSeq", value.name = "density",
                       variable.name = "type")
     plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
-                  aes(x = zSeq, y = density, group = type, linetype = type)) +
-        scale_linetype_manual(name = "", values = c("solid", "dashed", "dotdash"))
+                  aes(x = zSeq, y = density, group = type, linetype = type, size = type)) +
+        scale_linetype_manual(name = "", values = c("solid", "dashed", "dotdash")) +
+        scale_size_manual(values = c(0.2, 0.4, 0.4))
     if(dens){
     # Add red dots for Fdr estimates
     dfFdr = data.frame(statObs = statObs, Fdr = Fdr)
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
-                   aes(x = statObs, y = Fdr), col = "red", size = 0.75)
+                   aes(x = statObs, y = Fdr), col = "red", size = 0.65)
     }
 
     return(plot)

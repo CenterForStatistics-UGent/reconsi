@@ -1,6 +1,6 @@
 Package: rransi
 Type: Package
-Title: Permutation RAndom Null distributions for Simultaneous inference
+Title: Resample RAndom Null distributions for Simultaneous inference
 Version: 0.1.0
 Author: Stijn Hawinkel <stijn.hawinkel@ugent.be>
 Maintainer: Joris Meys <joris.meys@ugent.be>

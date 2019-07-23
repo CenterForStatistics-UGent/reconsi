@@ -125,7 +125,7 @@ if(!is.matrix(Y)){
                if(is.vector(Y)) "Multiplicity correction only needed when
                testing multiple hypotheses."))
 }
-if(length(x)!=nrow(Y)){
+if(NROW(x)!=nrow(Y)){
     stop("Length of grouping factor does not correspond to number of
          rows of data matrix!\n")
 }
