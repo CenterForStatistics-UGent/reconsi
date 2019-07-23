@@ -67,7 +67,7 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
     plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
                   aes(x = zSeq, y = density, group = type, linetype = type, size = type)) +
         scale_linetype_manual(name = "", values = c("solid", "dashed", "dotdash")) +
-        scale_size_manual(values = c(0.2, 0.4, 0.4))
+        scale_size_manual(values = c(0.2, 0.4, 0.4), guide = FALSE)
     if(dens){
     # Add red dots for Fdr estimates
     dfFdr = data.frame(statObs = statObs, Fdr = Fdr)
