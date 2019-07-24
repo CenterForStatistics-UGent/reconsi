@@ -5,6 +5,7 @@
 #' @param dens a boolean, should fdr and Fdr be plotted?
 #' @param idDA indices of known null taxa
 #' @param nResampleCurves The number of resample null distributions to plot
+#' @param hSize A double, the size of the line of the collapsed null estimate
 #'
 #' @return a ggplot2 plot object
 #' @import ggplot2
@@ -12,17 +13,18 @@
 #' @importFrom stats weights density
 #' @export
 #' @examples
-#'  p = 200; n = 50
+#'  p = 200; n = 50; B = 1e2
 #'  x = rep(c(0,1), each = n/2)
 #'  mat = cbind(
 #'  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
 #'  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 #'  )
 #Provide just the matrix and grouping factor, and test using the random null
-#' fdrRes = rransi(mat, x)
+#' fdrRes = rransi(mat, x, B = B)
 #' plotNull(fdrRes)
 plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
-                    idDA = NULL, nResampleCurves = length(fit$weights)){
+                    idDA = NULL, nResampleCurves = length(fit$weights),
+                    hSize = 0.5){
     with(fit, {
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves]
@@ -77,7 +79,7 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
     # Add red dots for Fdr estimates
     dfFdr = data.frame(statObs = statObs, Fdr = Fdr)
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
-                   aes(x = statObs, y = Fdr), col = "red", size = 0.65)
+                   aes(x = statObs, y = Fdr), col = "red", size = hSize)
     }
 
     return(plot)

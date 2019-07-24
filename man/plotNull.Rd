@@ -6,7 +6,7 @@
 statistics}
 \usage{
 plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE,
-  idDA = NULL, nResampleCurves = length(fit$weights))
+  idDA = NULL, nResampleCurves = length(fit$weights), hSize = 0.5)
 }
 \arguments{
 \item{fit}{an object returned by the rransi() (or testDAA()) function}
@@ -18,6 +18,8 @@ plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE,
 \item{idDA}{indices of known null taxa}
 
 \item{nResampleCurves}{The number of resample null distributions to plot}
+
+\item{hSize}{A double, the size of the line of the collapsed null estimate}
 }
 \value{
 a ggplot2 plot object
