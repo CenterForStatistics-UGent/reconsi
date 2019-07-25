@@ -109,7 +109,7 @@ test = function(x, y){
  kruskal.test(y~x)$statistic}, zValues = FALSE)
 ```
 
-Alternatively, the permutations may be used to determine the marginal null distributions, by setting the "permZvals" flag to true.
+Alternatively, the same permutations may be used to determine the marginal null distributions as to estimate the random null distribution, by setting the "permZvals" flag to true.
 
 ```{r permZvals}
 fdrResKruskal = rransi(mat, x, B = 5e1,
