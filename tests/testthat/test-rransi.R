@@ -28,3 +28,18 @@ test_that("rransi throws warnings where necessary", {
                             x = sample(x, p, replace = TRUE)))
     #Few hypotheses
 })
+
+test_that("rransi throws an error when no grouping variable is provided
+          and no bootstrap requested", {
+    expect_error(rransi(Y = mat, x = NULL))
+})
+test_that("rransi works when bootstrap is requested", {
+              expect_silent(rransi(Y = mat, x = NULL,
+                                  replace = TRUE, center = TRUE,
+                                  test = function(y, x){
+                                      testRes = t.test(y, mu = 0,
+                                                       var.equal = TRUE)
+                                      c(testRes$statistic, testRes$parameter)},
+                                  distFun = function(q){pt(q = q[1],
+                                                           df = q[2])}))
+          })

@@ -1,7 +1,8 @@
 #' Perform simultaneous inference, correcting for correlation between tests
 #' through resample random null distributions
 #' @param Y the matrix of sequencing counts
-#' @param x a grouping factor
+#' @param x a grouping factor. If provided, this grouping factor is permuted.
+#' Otherwise a bootstrap procedure is performed
 #' @param B the number of permutations
 #' @param test Character string, giving the name of the function
 #'  to test for differential absolute abundance.
@@ -25,6 +26,8 @@
 #'    in the iterative procedure
 #' @param center A boolean, should observations be centered
 #'    in each group prior to permuations? See details.
+#' @param replace A boolean. Should resampling occur with replacement (boostrap)
+#' or without replacement (permutation)
 #' @param zVals An optional list of observed (statObs) and
 #' permutation (statsPerm) z-values. If supplied, the calculation
 #'    of the observed and permutation test statistics is skipped
@@ -92,12 +95,23 @@
 #' c(summary(fit)$coef["x","t value"], fit$df.residual)},
 #' distFun = function(q){pt(q = q[1], df = q[2])},
 #' argList = list(z = z))
-rransi = function(Y, x, B = 1e3L, test = "wilcox.test", argList = list(),
+#'
+#' #When nog grouping variable is provided, a bootstrap is performed
+#' matBoot = cbind(
+#' matrix(rnorm(n*p/10, mean = 1), n, p/10), #DA
+#' matrix(rnorm(n*p*9/10, mean = 0), n, p*9/10) #Non DA
+#' )
+#' fdrResBoot = rransi(matBoot, B = B,
+#' test = function(y, x){testRes = t.test(y, mu = 0, var.equal = TRUE);
+#' c(testRes$statistic, testRes$parameter)},
+#' distFun = function(q){pt(q = q[1], df = q[2])},
+#' center = TRUE, replace = TRUE)
+rransi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
                       distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       weightStrat = "LHw", maxIter = 1000L, tol = 1e-8,
-                      center = FALSE, zVals = NULL,
+                      center = FALSE, replace = FALSE, zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
                       normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE,
@@ -131,7 +145,7 @@ if(!is.matrix(Y)){
                if(is.vector(Y)) "Multiplicity correction only needed when
                testing multiple hypotheses."))
 }
-if(NROW(x)!=nrow(Y)){
+if(!is.null(x) && NROW(x)!=nrow(Y)){
     stop("Length of grouping factor does not correspond to number of
          rows of data matrix!\n")
 }
@@ -145,7 +159,7 @@ if(is.null(zVals)){
 #Test statistics
 testStats = getTestStats(Y = Y, center = center, test = test,
                          x = x, B = B, argList = argList,
-                         tieBreakRan = tieBreakRan)
+                         tieBreakRan = tieBreakRan, replace = replace)
 #Observed cdf values
 cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
     quantCorrect(do.call(distFun, c(list(q = stats), testPargs)))

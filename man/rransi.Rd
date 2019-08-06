@@ -5,19 +5,21 @@
 \title{Perform simultaneous inference, correcting for correlation between tests
 through resample random null distributions}
 \usage{
-rransi(Y, x, B = 1000L, test = "wilcox.test", argList = list(),
-  distFun = "pnorm", quantileFun = "qnorm", densFun = NULL,
-  zValues = TRUE, testPargs = list(), z0Quant = pnorm(c(-1, 1)),
-  gridsize = 801L, weightStrat = "LHw", maxIter = 1000L,
-  tol = 1e-08, center = FALSE, zVals = NULL,
-  estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
-  3), permZvals = FALSE, normAsump = TRUE, smoothObs = TRUE,
-  normAsumpG0 = FALSE, tieBreakRan = identical(test, "wilcox.test"))
+rransi(Y, x = NULL, B = 1000L, test = "wilcox.test",
+  argList = list(), distFun = "pnorm", quantileFun = "qnorm",
+  densFun = NULL, zValues = TRUE, testPargs = list(),
+  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, weightStrat = "LHw",
+  maxIter = 1000L, tol = 1e-08, center = FALSE, replace = FALSE,
+  zVals = NULL, estP0args = list(z0quantRange = seq(0.05, 0.45,
+  0.0125), smooth.df = 3), permZvals = FALSE, normAsump = TRUE,
+  smoothObs = TRUE, normAsumpG0 = FALSE,
+  tieBreakRan = identical(test, "wilcox.test"))
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
 
-\item{x}{a grouping factor}
+\item{x}{a grouping factor. If provided, this grouping factor is permuted.
+Otherwise a bootstrap procedure is performed}
 
 \item{B}{the number of permutations}
 
@@ -53,6 +55,9 @@ in the iterative procedure}
 
 \item{center}{A boolean, should observations be centered
 in each group prior to permuations? See details.}
+
+\item{replace}{A boolean. Should resampling occur with replacement (boostrap)
+or without replacement (permutation)}
 
 \item{zVals}{An optional list of observed (statObs) and
 permutation (statsPerm) z-values. If supplied, the calculation
@@ -133,4 +138,15 @@ fit = lm(y~x+z)
 c(summary(fit)$coef["x","t value"], fit$df.residual)},
 distFun = function(q){pt(q = q[1], df = q[2])},
 argList = list(z = z))
+
+#When nog grouping variable is provided, a bootstrap is performed
+matBoot = cbind(
+matrix(rnorm(n*p/10, mean = 1), n, p/10), #DA
+matrix(rnorm(n*p*9/10, mean = 0), n, p*9/10) #Non DA
+)
+fdrResBoot = rransi(matBoot, B = B,
+test = function(y, x){testRes = t.test(y, mu = 0, var.equal = TRUE);
+c(testRes$statistic, testRes$parameter)},
+distFun = function(q){pt(q = q[1], df = q[2])},
+center = TRUE, replace = TRUE)
 }

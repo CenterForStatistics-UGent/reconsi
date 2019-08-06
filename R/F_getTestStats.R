@@ -26,20 +26,20 @@
 #' its quantile function if z-values are to be used.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
                         argList, tieBreakRan = FALSE, replace = FALSE){
-  Ycenter = Y
-
   #enumerate B unique ways to group
   permDesign = if(replace) samp.bootstrap(nrow(Y), B) else
       samp.permute(NROW(x),B)
-  if(center) {
+  if(center){
     if(replace){
-      Ycenter = scale(Ycenter, center = TRUE, scale = FALSE)
+      Ycenter = scale(Y, center = TRUE, scale = FALSE)
     } else {
-    for (ii in unique(x)){Ycenter[x==ii,] = scale(Ycenter[x==ii,],
+    for (ii in unique(x)){Y[x==ii,] = scale(Y[x==ii,],
                                                   center = TRUE,
                                                   scale = FALSE)}
     }
-  }
+  } else {
+      Ycenter = Y
+      }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
     if(NCOL(x)!=1){
         stop("Provide single grouping variable for Wilcoxon rank sum test
