@@ -26,6 +26,9 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                     idDA = NULL, nResampleCurves = length(fit$weights),
                     hSize = 0.5){
     with(fit, {
+        zValsDensPerm = lapply(fit$PermDensFits, function(Fit){
+            dnorm(zSeq, mean = Fit["mean"], sd = Fit["sd"])
+        })
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves]
     #The Curves to plot

@@ -113,11 +113,11 @@ rransi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
                       distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
-                      weightStrat = "LHw", maxIter = 1000L, tol = 1e-8,
+                      maxIter = 1000L, tol = 1e-8,
                       center = FALSE, replace = FALSE, zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
-                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE,
+                      smoothObs = TRUE,
                       tieBreakRan = identical(test, "wilcox.test")){
     if(is.function(test)){
 
@@ -214,10 +214,10 @@ statsPerm = if(length(dim(testStats$statsPerm))==3)
 #Consensus distribution estimation
 consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
-                  tol = tol, weightStrat = weightStrat, estP0args = estP0args,
-                  normAsump = normAsump, quantileFun = quantileFun,
+                  tol = tol, estP0args = estP0args,
+                  quantileFun = quantileFun,
                   testPargs = testPargs,
-                  normAsumpG0 = normAsumpG0, B = B, p = p)
+                  B = B, p = p)
 
 #False discovery Rates
 FdrList = do.call(getFdr,
@@ -225,8 +225,8 @@ FdrList = do.call(getFdr,
                          p = p, smoothObs = smoothObs), consensus))
 
 names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
-c(list(statsPerm = statsPerm, statObs = statObs, weightStrat = weightStrat,
-       zValues = zValues, permZvals = permZvals, cdfValObs = cdfValObs,
+c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
+       permZvals = permZvals, cdfValObs = cdfValObs,
        densFun = densFun, testPargs = testPargs, distFun = distFun,
        quantileFun = quantileFun),
   FdrList, consensus)

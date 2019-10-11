@@ -38,7 +38,7 @@
 #'    of the kernel}
 #' \item{p0}{The estimated fraction of true null hypotheses}
 #' \item{iter}{The number of iterations}
-getG0 = function(statObs, statsPerm, z0Quant, weightStrat, gridsize,
+getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, quantileFun,
                  testPargs, B, p){
   if(length(statObs)!=nrow(statsPerm)){
@@ -56,10 +56,11 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
                        truncate = FALSE)
   zValsDensObs = zValsDensObs0$y
   zSeq = zValsDensObs0$x #The support
+  zValsDensObsInterp = approx(y = zValsDensObs, x = zSeq, xout = statObs)$y
 
   #Estimate permutation densities
   PermDensFits = apply(statsPerm, 2, estNormal)
-  LogPermDensEvals = lapply(PermDensFits, function(fit){
+  LogPermDensEvals = apply(PermDensFits, 2, function(fit){
     dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
   })
   #Indicators for the observed z values in the support of the kernel
@@ -69,18 +70,14 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   while(iter <= maxIter && !convergence){
     fdrOld = fdr; p0old = p0
     weights = calcWeights(logDensPerm = LogPermDensEvals,
-                          weightStrat = weightStrat,
-                          fdr = fdr,
-                          zIndR = if(weightStrat =="LHw") {NULL
-                            } else {which(statObs > centralBorders[1] &
-                                            statObs < centralBorders[2])})
+                          fdr = fdr)
     #Null distribution
     fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
     g0 = dnorm(statObs, mean = fitAll[1],
                sd = fitAll[2])
-    G0 = pnorm(statObs, mean = fitAll[1],
+    G0 = pnorm(zSeq, mean = fitAll[1],
                sd = fitAll[2])
-    fdr = g0/zValsDensObs*p0
+    fdr = g0/zValsDensObsInterp*p0
     #fdr = approx(y = fdr, x = zSeq, xout = statObs)$y
     fdr[fdr>1] = 1 #Normalize here already!
     centralBorders = zSeq[c(which.max(G0 > z0Quant[1]),
@@ -90,8 +87,6 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
                    estP0args))
     convergence = sqrt(mean((fdrOld-fdr)^2)) < tol &&
       (p0-p0old)^2 < tol
-
-    #    cat(iter, "\n")
     iter = iter + 1L
   }
   if(!convergence){
