@@ -57,6 +57,12 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   zValsDensObs = zValsDensObs0$y
   zSeq = zValsDensObs0$x #The support
 
+  zValsDensPerm = apply(statsPerm, 2, function(zz){
+      bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE)$y})
+  zValsDensObs[zValsDensObs<=0] =
+      zValsDensPerm[zValsDensPerm<=0] =
+      .Machine$double.eps #Remove negative densities
+
   #Estimate permutation densities
   if(normAsump){
   LogPermDensInterp = apply(statsPerm, 2, function(zz){
@@ -64,11 +70,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
     dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
   })
   } else {
-    zValsDensPermapply(statsPerm, 2, function(zz){
-    bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE)$y})
-  zValsDensObs[zValsDensObs<=0] =
-      zValsDensPerm[zValsDensPerm<=0] =
-      .Machine$double.eps #Remove negative densities
+
   #Interpolate estimated densities
   #obsDensInterp = approx(xout = statObs, x = zSeq, y = zValsDensObs)$y
   LogPermDensInterp = log(apply(zValsDensPerm, 2, function(dens){

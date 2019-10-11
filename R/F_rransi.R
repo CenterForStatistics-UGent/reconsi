@@ -117,7 +117,7 @@ rransi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
                       center = FALSE, replace = FALSE, zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
-                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = FALSE,
+                      normAsump = TRUE, smoothObs = TRUE, normAsumpG0 = TRUE,
                       tieBreakRan = identical(test, "wilcox.test")){
     if(is.function(test)){
 

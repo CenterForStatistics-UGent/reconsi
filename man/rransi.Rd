@@ -12,8 +12,8 @@ rransi(Y, x = NULL, B = 1000L, test = "wilcox.test",
   maxIter = 1000L, tol = 1e-08, center = FALSE, replace = FALSE,
   zVals = NULL, estP0args = list(z0quantRange = seq(0.05, 0.45,
   0.0125), smooth.df = 3), permZvals = FALSE, normAsump = TRUE,
-  smoothObs = TRUE, normAsumpG0 = FALSE,
-  tieBreakRan = identical(test, "wilcox.test"))
+  smoothObs = TRUE, normAsumpG0 = TRUE, tieBreakRan = identical(test,
+  "wilcox.test"))
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -86,12 +86,15 @@ be broken randomly? If not, midranks are used}
 A list with entries
 \item{statsPerm}{Permutation Z-values}
 \item{statObs}{Observed Z-values}
-\item{statObsPerm}{Permutation observed z-values}
-\item{Cperm}{(optional) An estimated covariance matrix
- of binned test statistics}
-\item{weightStrat}{The weighting strategy }
-\item{Fdr, fdr}{The estimated tail-area and local false discovery rates}
-\item{consensus}{The consensus null distribution}
+\item{weightsStrat}{Weighting strategy used}
+\item{densFun,distFun,quantileFun}{Density, distribution and
+quantile function as given}
+\item{testPargs}{Same as given}
+\item{weightStrat}{The weighting strategy}
+\item{zValues}{z-values}
+\item{permZvals}{Permutation z-values}
+\item{cdfValObs}{Cumulative distribution function evaluation
+of observed test statistics}
 }
 \description{
 Perform simultaneous inference, correcting for correlation between tests
