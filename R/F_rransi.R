@@ -54,12 +54,15 @@
 #' @return A list with entries
 #' \item{statsPerm}{Permutation Z-values}
 #' \item{statObs}{Observed Z-values}
-#' \item{statObsPerm}{Permutation observed z-values}
-#' \item{Cperm}{(optional) An estimated covariance matrix
-#'  of binned test statistics}
-#' \item{weightStrat}{The weighting strategy }
-#' \item{Fdr, fdr}{The estimated tail-area and local false discovery rates}
-#' \item{consensus}{The consensus null distribution}
+#' \item{weightsStrat}{Weighting strategy used}
+#' \item{densFun,distFun,quantileFun}{Density, distribution and
+#' quantile function as given}
+#' \item{testPargs}{Same as given}
+#' \item{weightStrat}{The weighting strategy}
+#' \item{zValues}{z-values}
+#' \item{permZvals}{Permutation z-values}
+#' \item{cdfValObs}{Cumulative distribution function evaluation
+#' of observed test statistics}
 #' @export
 #' @importFrom stats pnorm qnorm
 #' @examples

@@ -58,22 +58,23 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   zSeq = zValsDensObs0$x #The support
 
   #Estimate permutation densities
-  zValsDensPerm = if(normAsump){
-    apply(statsPerm, 2, function(zz){
-      fit = estNormal(y = zz)
-      dnorm(zSeq, mean = fit[1], sd = fit[2])
-    })
-  } else {apply(statsPerm, 2, function(zz){
-    bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE)$y})}
+  if(normAsump){
+  LogPermDensInterp = apply(statsPerm, 2, function(zz){
+    fit = estNormal(y = zz)
+    dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
+  })
+  } else {
+    zValsDensPermapply(statsPerm, 2, function(zz){
+    bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE)$y})
   zValsDensObs[zValsDensObs<=0] =
       zValsDensPerm[zValsDensPerm<=0] =
       .Machine$double.eps #Remove negative densities
-
   #Interpolate estimated densities
   #obsDensInterp = approx(xout = statObs, x = zSeq, y = zValsDensObs)$y
   LogPermDensInterp = log(apply(zValsDensPerm, 2, function(dens){
     approx(x = zSeq, y = dens, xout = statObs)$y
   }))
+  }
   #Indicators for the observed z values in the support of the kernel
   iter = 1L; convergence = FALSE; p0 = 1
   fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])
