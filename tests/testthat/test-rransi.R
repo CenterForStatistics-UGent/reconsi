@@ -41,5 +41,6 @@ test_that("rransi works when bootstrap is requested", {
                                                        var.equal = TRUE)
                                       c(testRes$statistic, testRes$parameter)},
                                   distFun = function(q){pt(q = q[1],
-                                                           df = q[2])}))
+                                                           df = q[2])},
+                                  warnConvergence = FALSE))
           })

@@ -4,8 +4,8 @@
 \alias{getG0}
 \title{Obtain the consensus null}
 \usage{
-getG0(statObs, statsPerm, z0Quant, weightStrat, gridsize, maxIter, tol,
-  estP0args, normAsump, normAsumpG0, quantileFun, testPargs, B, p)
+getG0(statObs, statsPerm, z0Quant, gridsize, maxIter, tol, estP0args,
+  quantileFun, testPargs, B, p, warnConvergence)
 }
 \arguments{
 \item{statObs}{A vector of lenght p with observed test statistics}
@@ -16,8 +16,6 @@ getG0(statObs, statsPerm, z0Quant, weightStrat, gridsize, maxIter, tol,
 of the distribution. If a single number is supplied, then
 (z0quant, 1-z0quant) will be used}
 
-\item{weightStrat}{A character vector, indicating the weighting strategy}
-
 \item{gridsize}{An integer, the gridsize for the density estimation}
 
 \item{maxIter}{An integer, the maximum number of iterations in determining R}
@@ -25,12 +23,6 @@ of the distribution. If a single number is supplied, then
 \item{tol}{The convergence tolerance.}
 
 \item{estP0args}{A list of arguments passed on to the estP0args() function}
-
-\item{normAsump}{A boolean, should normality be assumed when estimating the
-individual permutation null distributions}
-
-\item{normAsumpG0}{A boolean, should normality be assumed when estimating
-the random null distribution}
 
 \item{quantileFun}{The quantile function of the test statistic,
 either as a function or as a character string}
@@ -40,15 +32,15 @@ either as a function or as a character string}
 \item{B}{an integer, the number of permutations}
 
 \item{p}{an integer, the number of hypotheses}
+
+\item{warnConvergence}{Should a warning be thrown when the estimation
+of the random null does not converge?}
 }
 \value{
 A list with following entries
-\item{g0}{The consensus density function}
-\item{G0}{The consensus distribution function}
-\item{R}{The central region}
+\item{PermDensFits}{The permutation density fits}
 \item{zSeq}{The support of the kernel for density estimation}
 \item{zValsDensObs}{The estimated densities of the observed z-values}
-\item{zValsDensPerm}{The estimated densities of the permutation z-values}
 \item{convergence}{A boolean, has the algorithm converged?}
 \item{weights}{Vector of length B with weights
    for the permutation distributions}
@@ -56,6 +48,7 @@ A list with following entries
    of the kernel}
 \item{p0}{The estimated fraction of true null hypotheses}
 \item{iter}{The number of iterations}
+\item{fitAll}{The consensus null fit}
 }
 \description{
 Obtain the consensus null

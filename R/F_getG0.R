@@ -5,32 +5,26 @@
 #' @param z0Quant a vector of length of quantiles defining the central part R
 #'    of the distribution. If a single number is supplied, then
 #'    (z0quant, 1-z0quant) will be used
-#' @param weightStrat A character vector, indicating the weighting strategy
 #' @param gridsize An integer, the gridsize for the density estimation
 #' @param maxIter An integer, the maximum number of iterations in determining R
 #' @param tol The convergence tolerance.
 #' @param estP0args A list of arguments passed on to the estP0args() function
-#' @param normAsump A boolean, should normality be assumed when estimating the
-#'  individual permutation null distributions
-#' @param normAsumpG0 A boolean, should normality be assumed when estimating
-#'  the random null distribution
-#' @param B an integer, the number of permutations
-#' @param p an integer, the number of hypotheses
 #' @param quantileFun The quantile function of the test statistic,
 #' either as a function or as a character string
 #' @param testPargs A list of arguments passed on to quantileFun
+#' @param B an integer, the number of permutations
+#' @param p an integer, the number of hypotheses
+#' @param warnConvergence Should a warning be thrown when the estimation
+#' of the random null does not converge?
 #'
 #' @importFrom KernSmooth bkde
 #' @importFrom stats qnorm dnorm approx quantile
 #' @importFrom MASS fitdistr
 #'
 #' @return A list with following entries
-#' \item{g0}{The consensus density function}
-#' \item{G0}{The consensus distribution function}
-#' \item{R}{The central region}
+#' \item{PermDensFits}{The permutation density fits}
 #' \item{zSeq}{The support of the kernel for density estimation}
 #' \item{zValsDensObs}{The estimated densities of the observed z-values}
-#' \item{zValsDensPerm}{The estimated densities of the permutation z-values}
 #' \item{convergence}{A boolean, has the algorithm converged?}
 #' \item{weights}{Vector of length B with weights
 #'    for the permutation distributions}
@@ -38,9 +32,10 @@
 #'    of the kernel}
 #' \item{p0}{The estimated fraction of true null hypotheses}
 #' \item{iter}{The number of iterations}
-getG0 = function(statObs, statsPerm, z0Quant, weightStrat, gridsize,
-                 maxIter, tol, estP0args, normAsump, normAsumpG0, quantileFun,
-                 testPargs, B, p){
+#' \item{fitAll}{The consensus null fit}
+getG0 = function(statObs, statsPerm, z0Quant, gridsize,
+                 maxIter, tol, estP0args, quantileFun,
+                 testPargs, B, p, warnConvergence){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!
          ")
@@ -48,7 +43,6 @@ getG0 = function(statObs, statsPerm, z0Quant, weightStrat, gridsize,
 if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
   #The starting values are CRUCIAL!
-  #centralBorders = do.call(quantileFun, c(list(p = z0Quant), testPargs))
   Range = range(c(statsPerm, statObs))
 
   #Estimate observed densities
@@ -56,6 +50,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
                        truncate = FALSE)
   zValsDensObs = zValsDensObs0$y
   zSeq = zValsDensObs0$x #The support
+  zValsDensObsInterp = approx(y = zValsDensObs, x = zSeq, xout = statObs)$y
 
   zValsDensPerm = apply(statsPerm, 2, function(zz){
       bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE)$y})
@@ -64,60 +59,39 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
       .Machine$double.eps #Remove negative densities
 
   #Estimate permutation densities
-  if(normAsump){
-  LogPermDensInterp = apply(statsPerm, 2, function(zz){
-    fit = estNormal(y = zz)
+  PermDensFits = apply(statsPerm, 2, estNormal)
+  LogPermDensEvals = apply(PermDensFits, 2, function(fit){
     dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
   })
-  } else {
-
-  #Interpolate estimated densities
-  #obsDensInterp = approx(xout = statObs, x = zSeq, y = zValsDensObs)$y
-  LogPermDensInterp = log(apply(zValsDensPerm, 2, function(dens){
-    approx(x = zSeq, y = dens, xout = statObs)$y
-  }))
-  }
   #Indicators for the observed z values in the support of the kernel
   iter = 1L; convergence = FALSE; p0 = 1
   fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])
   fdr[fdr==0] = .Machine$double.eps
   while(iter <= maxIter && !convergence){
     fdrOld = fdr; p0old = p0
-    weights = calcWeights(logDensPerm = LogPermDensInterp,
-                          weightStrat = weightStrat,
-                          fdr = fdr,
-                          zIndR = if(weightStrat =="LHw") {NULL
-                            } else {which(statObs > centralBorders[1] &
-                                            statObs < centralBorders[2])})
+    weights = calcWeights(logDensPerm = LogPermDensEvals,
+                          fdr = fdr)
     #Null distribution
-    if(normAsumpG0){
     fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
-    g0 = dnorm(zSeq, mean = fitAll[1],
+    g0 = dnorm(statObs, mean = fitAll[1],
                sd = fitAll[2])
-    } else {
-      g0 =rowSums(rowMultiply(zValsDensPerm, weights))
-      fitAll = NULL
-    }
-    G0 = cumsum(g0/sum(g0))
-    fdr = g0/zValsDensObs*p0
-    fdr = approx(y = fdr, x = zSeq, xout = statObs)$y
+    G0 = pnorm(zSeq, mean = fitAll[1],
+               sd = fitAll[2])
+    fdr = g0/zValsDensObsInterp*p0
+    #fdr = approx(y = fdr, x = zSeq, xout = statObs)$y
     fdr[fdr>1] = 1 #Normalize here already!
-    centralBorders = zSeq[c(which.max(G0 > z0Quant[1]),
-                            which.max(G0 > z0Quant[2]))]
     p0 = do.call(estP0,
                  c(list(statObs = statObs, nullDensCum = G0, zSeq = zSeq),
                    estP0args))
     convergence = sqrt(mean((fdrOld-fdr)^2)) < tol &&
       (p0-p0old)^2 < tol
-
-    #    cat(iter, "\n")
     iter = iter + 1L
   }
-  if(!convergence){
+  if(!convergence && warnConvergence){
       warning("Consensus null estimation did not converge,
               please investigate cause! \n")}
-  return(list(g0 = g0, G0 = G0, R = centralBorders, zSeq = zSeq,
-              zValsDensObs = zValsDensObs, zValsDensPerm = zValsDensPerm,
-              convergence  = convergence, weights = weights, fdr = fdr,
+  return(list(PermDensFits = PermDensFits, zSeq = zSeq,
+              zValsDensObs = zValsDensObs, convergence  = convergence,
+              weights = weights, fdr = fdr,
               p0 = p0, iter = iter, fitAll = fitAll))
 }

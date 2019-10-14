@@ -8,12 +8,20 @@ through resample random null distributions}
 rransi(Y, x = NULL, B = 1000L, test = "wilcox.test",
   argList = list(), distFun = "pnorm", quantileFun = "qnorm",
   densFun = NULL, zValues = TRUE, testPargs = list(),
+<<<<<<< HEAD
   z0Quant = pnorm(c(-1, 1)), gridsize = 801L, weightStrat = "LHw",
   maxIter = 1000L, tol = 1e-08, center = FALSE, replace = FALSE,
   zVals = NULL, estP0args = list(z0quantRange = seq(0.05, 0.45,
   0.0125), smooth.df = 3), permZvals = FALSE, normAsump = TRUE,
   smoothObs = TRUE, normAsumpG0 = TRUE, tieBreakRan = identical(test,
   "wilcox.test"))
+=======
+  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, maxIter = 1000L,
+  tol = 1e-08, center = FALSE, replace = FALSE, zVals = NULL,
+  estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
+  3), permZvals = FALSE, smoothObs = TRUE,
+  tieBreakRan = identical(test, "wilcox.test"), warnConvergence = TRUE)
+>>>>>>> noInterpolate
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -43,10 +51,6 @@ in between which only null values are expected}
 
 \item{gridsize}{The number of bins for the kernel density estimates}
 
-\item{weightStrat}{A character vector, indicating the weighting strategy.
-Either "LH" for likelihoods based on the central region,
-or "LHw" for weighted likelihoods}
-
 \item{maxIter}{An integer, the maximum number of iterations in the estimation
 of the null distribution}
 
@@ -70,17 +74,14 @@ permutation (statsPerm) z-values. If supplied, the calculation
 \item{permZvals}{A boolean, should permutations rather than theoretical null
 distributions be used?}
 
-\item{normAsump}{A boolean, should normality be assumed when estimating
-the individual permutation null distributions}
-
 \item{smoothObs}{A boolean, should the fitted rather than estimated observed
 distribution be used in the Fdr calculation?}
 
-\item{normAsumpG0}{A boolean, should normality be assumed when estimating
-the random null distribution}
-
 \item{tieBreakRan}{A boolean, should ties of permutation test statistics
 be broken randomly? If not, midranks are used}
+
+\item{warnConvergence}{Should a warning be thrown when the estimation
+of the random null does not converge?}
 }
 \value{
 A list with entries

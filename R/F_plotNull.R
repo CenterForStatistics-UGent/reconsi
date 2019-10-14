@@ -26,6 +26,9 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                     idDA = NULL, nResampleCurves = length(fit$weights),
                     hSize = 0.5){
     with(fit, {
+        zValsDensPerm = apply(PermDensFits, 2, function(Fit){
+            dnorm(zSeq, mean = Fit["mean"], sd = Fit["sd"])
+        })
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves]
     #The Curves to plot
@@ -36,7 +39,7 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                    value.name = "Density")
     dfMerged = merge(moltdf2, df1, by = "Curve")
     #Permutation densities
-    plot = ggplot(data = dfMerged, aes(x =zSeq, group = Curve, y = Density,
+    plot = ggplot(data = dfMerged, aes(x = zSeq, group = Curve, y = Density,
                                 col = weight, alpha = weight)) +
         geom_line(linetype = "dashed", size = 0.4) +
         scale_colour_continuous(high = highColor,
@@ -53,6 +56,7 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                              fill = "mediumseagreen")
 
     # Add density functions
+    g0 = dnorm(zSeq,  mean = fitAll["mean"], sd = fitAll["sd"])
     lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
     lfdr[lfdr>1] = 1
     #Only show lfdr for observed z-values
@@ -66,8 +70,8 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
       dfDens$NullDensity = dnorm(zSeq, mean = nullZdens["mean.x1"],
                                  sd = nullZdens["sd"])
     }
-    if(!dens){dfDens$fdr =NULL}
-    dfDensMolt = melt(dfDens, id.vars ="zSeq", value.name = "density",
+    if(!dens){dfDens$fdr = NULL}
+    dfDensMolt = melt(dfDens, id.vars = "zSeq", value.name = "density",
                       variable.name = "type")
     plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
                   aes(x = zSeq, y = density, group = type,

@@ -51,13 +51,11 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     xLog = x==names(table(x))[1]
     nn = table(x)[2]
     mm = table(x)[1]
-
   if(test=="wilcox.test"){ #Shortcuts possbile in case of Wilcoxon test
     nFac = mm*(mm + 1)/2
     YRanked = apply(Y, 2, rank)
     #Observed test statistic
     statObs = colSums(YRanked[xLog,]) - nFac
-
     #Permuation test statistics
     mmSeries = seq_len(mm)
     #YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
@@ -94,6 +92,5 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
   }
-
   return(list(statObs = statObs, statsPerm = statsPerm))
 }
