@@ -17,9 +17,6 @@
 #' @param z0Quant A vector of length 2 of quantiles of the null distribution,
 #'    in between which only null values are expected
 #' @param gridsize The number of bins for the kernel density estimates
-#' @param weightStrat A character vector, indicating the weighting strategy.
-#'    Either "LH" for likelihoods based on the central region,
-#'    or "LHw" for weighted likelihoods
 #' @param maxIter An integer, the maximum number of iterations in the estimation
 #'    of the null distribution
 #' @param tol The tolerance for the infinity norm of the central borders
@@ -36,14 +33,12 @@
 #' @param estP0args A list of arguments passed on to the estP0 function
 #' @param permZvals A boolean, should permutations rather than theoretical null
 #' distributions be used?
-#' @param normAsump A boolean, should normality be assumed when estimating
-#' the individual permutation null distributions
 #' @param smoothObs A boolean, should the fitted rather than estimated observed
 #' distribution be used in the Fdr calculation?
-#' @param normAsumpG0 A boolean, should normality be assumed when estimating
-#' the random null distribution
 #' @param tieBreakRan A boolean, should ties of permutation test statistics
 #'  be broken randomly? If not, midranks are used
+#' @param warnConvergence Should a warning be thrown when the estimation
+#' of the random null does not converge?
 #' @details Efron (2007) centers the observations in each group prior
 #'  to permutation. As permutations will remove any genuine group differences
 #'   anyway, we skip this step by default.\\ If zValues = FALSE,
@@ -118,7 +113,8 @@ rransi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
                       smoothObs = TRUE,
-                      tieBreakRan = identical(test, "wilcox.test")){
+                      tieBreakRan = identical(test, "wilcox.test"),
+                  warnConvergence = TRUE){
     if(is.function(test)){
 
     }
@@ -217,12 +213,13 @@ consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   tol = tol, estP0args = estP0args,
                   quantileFun = quantileFun,
                   testPargs = testPargs,
-                  B = B, p = p)
+                  B = B, p = p, warnConvergence = warnConvergence)
 
 #False discovery Rates
 FdrList = do.call(getFdr,
                   c(list(statObs = statObs,
                          p = p, smoothObs = smoothObs), consensus))
+consensus$fdr = NULL
 
 names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,

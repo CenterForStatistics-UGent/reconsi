@@ -4,20 +4,14 @@
 \alias{calcWeights}
 \title{Obtain weights as posterior probabilities to calculate the consensus null}
 \usage{
-calcWeights(logDensPerm, weightStrat, fdr, zIndR)
+calcWeights(logDensPerm, fdr)
 }
 \arguments{
 \item{logDensPerm}{A matrix with B rows of logged density estimates of the B
 permutation distributions}
 
-\item{weightStrat}{A character string, either "LH" for likelihoods based
-on the central region, or "LHw" for weighted likelihoods}
-
 \item{fdr}{A vector of local false discovery rates
 along the support of the kernel}
-
-\item{zIndR}{An indicator vector indicating the z-values
-within the central region}
 }
 \value{
 A vector of weights of length B

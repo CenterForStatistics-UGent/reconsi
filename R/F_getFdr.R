@@ -2,8 +2,7 @@
 #'    based on a certain null distribution
 #'
 #' @param statObs Vector of observed z-values
-#' @param G0 null distribution function
-#' @param g0 Null density function
+#' @param fitAll The parameters of the estimated random null
 #' @param fdr local false discovery rate, already estimated
 #' @param zSeq Support of the density estimation
 #' @param p the number of hypotheses
@@ -19,12 +18,13 @@
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
 #' \item{p0}{The proportion of true null hypotheses}
-getFdr = function(statObs, G0, g0, fdr, zSeq, p, p0, zValsDensObs,
+getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs,
                   smoothObs, ...)
 {
   #Null
-  G0[G0>0.5] = 1-G0[G0>0.5]
-  G0cumDefInterp = approx(x = zSeq, y = G0, xout = statObs)$y
+  G0 = pnorm(statObs, mean = fitAll["mean"], sd = fitAll["sd"])
+  G0[G0>0.5] = pnorm(statObs[G0>0.5], mean = fitAll["mean"], sd = fitAll["sd"],
+                     lower.tail = FALSE)
 
   #Observed
   zcum = if(smoothObs) {
@@ -33,16 +33,15 @@ getFdr = function(statObs, G0, g0, fdr, zSeq, p, p0, zValsDensObs,
    } else {ecdf(statObs)(statObs)}
   zcum[zcum>0.5] = 1-zcum[zcum>0.5]+1/p
 
-
   #Fdr
-  Fdr = G0cumDefInterp/zcum*p0
+  Fdr = G0/zcum*p0
   Fdr[Fdr>1] = 1
   #fdr
   if(is.null(fdr)){
-    fdr  = g0/zValsDensObs*p0
-    fdr = approx(y = fdr, x = zSeq, xout = statObs)$y
+    fdr  = dnorm(statObs, mean = fitAll["mean"], sd = fitAll["sd"])/
+        zValsDensObs*p0
     fdr[fdr>1] = 1
   }
 
-return(list(Fdr = Fdr, fdr = fdr, p0 = p0))
+return(list(Fdr = Fdr, fdr = fdr))
 }
