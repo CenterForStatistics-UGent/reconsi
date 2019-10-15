@@ -18,7 +18,7 @@
 #' matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 #' )
 #' mat = mat = mat + rnorm(n, sd = 0.3) #Introduce some dependence
-#' fdrRes = rransi(mat, x, B = B)
+#' fdrRes = reconsi(mat, x, B = B)
 #' corMat = getCperm(fdrRes$statsPerm)
 getCperm = function(statsPerm, nBins = 82L, binEdges = c(-4.1,4.1)){
   Breaks = c(-Inf, seq(binEdges[1], binEdges[2], length.out = nBins+1), Inf)

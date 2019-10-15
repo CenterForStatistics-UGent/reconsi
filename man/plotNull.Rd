@@ -9,7 +9,7 @@ plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE,
   idDA = NULL, nResampleCurves = length(fit$weights), hSize = 0.5)
 }
 \arguments{
-\item{fit}{an object returned by the rransi() (or testDAA()) function}
+\item{fit}{an object returned by the reconsi() (or testDAA()) function}
 
 \item{lowColor, highColor}{The low and high ends of the colour scale}
 
@@ -35,6 +35,6 @@ statistics
  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
  )
-fdrRes = rransi(mat, x, B = B)
+fdrRes = reconsi(mat, x, B = B)
 plotNull(fdrRes)
 }

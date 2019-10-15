@@ -1,6 +1,6 @@
 #' Plot the obtained null distribution along with a histogram of observed test
 #' statistics
-#' @param fit an object returned by the rransi() (or testDAA()) function
+#' @param fit an object returned by the reconsi() (or testDAA()) function
 #' @param lowColor,highColor The low and high ends of the colour scale
 #' @param dens a boolean, should fdr and Fdr be plotted?
 #' @param idDA indices of known null taxa
@@ -20,7 +20,7 @@
 #'  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 #'  )
 #Provide just the matrix and grouping factor, and test using the random null
-#' fdrRes = rransi(mat, x, B = B)
+#' fdrRes = reconsi(mat, x, B = B)
 #' plotNull(fdrRes)
 plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                     idDA = NULL, nResampleCurves = length(fit$weights),

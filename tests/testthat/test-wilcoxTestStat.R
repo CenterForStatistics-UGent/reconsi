@@ -5,7 +5,7 @@ mat = matrix(rnorm(n*p), n, p)
 x = sample(c(0,1), n , replace = TRUE)
 
 test_that("Wilcoxon rank sum test yields same result as built in version", {
-    expect_equal(rransi:::getTestStats(mat, center = FALSE,
+    expect_equal(reconsi:::getTestStats(mat, center = FALSE,
                                          x = x, B = 2L)$statObs,
                  apply(mat, 2, function(y){
                      wilcox.test(y~x)$statistic

@@ -3,7 +3,7 @@
 export(getCperm)
 export(plotCperm)
 export(plotNull)
-export(rransi)
+export(reconsi)
 export(testDAA)
 exportMethods(testDAA)
 import(ggplot2)

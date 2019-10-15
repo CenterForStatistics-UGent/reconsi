@@ -2,7 +2,7 @@
 Introduction
 ============
 
-Dependence between test statistic is known to render statistical inference more variable. This is caused by the random nature of the null distribution under dependence. The aim of this *rransi* pacakage is to provide Resampling RAndom Null distributions for Simultaneous Inference to estimate these random functions for improved inference. It can reduce the variability of the false discovery proportion, while increasing the power. Any type of test statistic can be supplied, only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
+Dependence between test statistic is known to render statistical inference more variable. This is caused by the random nature of the null distribution under dependence. The aim of this *reconsi* pacakage is to provide Resampling RAndom Null distributions for Simultaneous Inference to estimate these random functions for improved inference. It can reduce the variability of the false discovery proportion, while increasing the power. Any type of test statistic can be supplied, only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
 
 A short tutorial is given here, more detailed instructions can be found in the vignette.
 
@@ -13,13 +13,13 @@ The package can be installed using the following commands:
 
 ``` r
 library(devtools)
-install_github("CenterForStatistics-Ugent/rransi")
+install_github("CenterForStatistics-Ugent/reconsi")
 ```
 
 and loaded as
 
 ``` r
-library(rransi)
+library(reconsi)
 ```
 
 General use
@@ -36,7 +36,7 @@ mat = cbind(matrix(rnorm(n * p/10, mean = 5 + x), n, p/10), matrix(rnorm(n *
     p * 9/10, mean = 5), n, p * 9/10))
 # Provide just the matrix and grouping factor, and test using the random
 # null
-fdrRes = rransi(mat, x)
+fdrRes = reconsi(mat, x)
 # The estimated tail-area false discovery rates.
 estFdr = fdrRes$Fdr
 ```
@@ -61,7 +61,7 @@ It is also possible to provide a custom test function, which must accept at leas
 
 ``` r
 # With another type of test
-fdrResLm = rransi(mat, x, B = 50, test = function(x, y) {
+fdrResLm = reconsi(mat, x, B = 50, test = function(x, y) {
     fit = lm(y ~ x)
     c(summary(fit)$coef["x", "t value"], fit$df.residual)
 }, distFun = function(q) {

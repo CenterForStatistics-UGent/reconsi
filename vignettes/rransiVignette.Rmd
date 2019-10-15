@@ -9,7 +9,7 @@ vignette: >
     %\VignetteEncoding{UTF-8}
 ---
 
-# rransi package: vignette
+# reconsi package: vignette
 
 \setcounter{tocdepth}{5}
 \tableofcontents
@@ -26,8 +26,8 @@ are natively implemented, but any other test can be used.
 ## Installing and loading the package
 
 ```{r installAndLoad}
-#install.packages("rransi")
-library(rransi)
+#install.packages("reconsi")
+library(reconsi)
 ```
 
 ## General use
@@ -44,7 +44,7 @@ x = rep(c(0,1), each = n/2)
  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
  )
  #Provide just the matrix and grouping factor, and test using the random null
- fdrRes = rransi(mat, x)
+ fdrRes = reconsi(mat, x)
   #The estimated tail-area false discovery rates.
   estFdr = fdrRes$Fdr
 
@@ -68,7 +68,7 @@ least a 'y' response variable and a 'x' grouping factor. Additionally, quantile,
 
 ```{r customFunction}
  #With a custom function, here linera regression
-fdrResLm = rransi(mat, x, B = 5e1,
+fdrResLm = reconsi(mat, x, B = 5e1,
                       test = function(x, y){
 fit = lm(y~x)
 c(summary(fit)$coef["x","t value"], fit$df.residual)},
@@ -90,7 +90,7 @@ x = rep(c(0,1,2), each = n/3)
  )
  #Provide an additional covariate through the 'argList' argument
  z = rpois(n , lambda = 2)
- fdrResLmZ = rransi(mat, x, B = 5e1,
+ fdrResLmZ = reconsi(mat, x, B = 5e1,
  test = function(x, y, z){
  fit = lm(y~x+z)
  c(summary(fit)$coef["x","t value"], fit$df.residual)},
@@ -104,7 +104,7 @@ to execute the procedure on the scale of the original test statistics, rather
 than z-values by setting zValues = FALSE. This may be numerically less stable.
 
 ```{r kruskal}
-fdrResKruskal = rransi(mat, x, B = 5e1,
+fdrResKruskal = reconsi(mat, x, B = 5e1,
 test = function(x, y){
  kruskal.test(y~x)$statistic}, zValues = FALSE)
 ```
@@ -112,7 +112,7 @@ test = function(x, y){
 Alternatively, the same permutations may be used to determine the marginal null distributions as to estimate the random null distribution, by setting the "permZvals" flag to true.
 
 ```{r permZvals}
-fdrResKruskal = rransi(mat, x, B = 5e1,
+fdrResKruskal = reconsi(mat, x, B = 5e1,
 test = function(x, y){
  kruskal.test(y~x)$statistic}, permZvals = TRUE)
 ```

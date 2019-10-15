@@ -18,7 +18,7 @@ testDAA(Y, ...)
 \item{Y}{A phyloseq object, or a data matrix with samples in the rows and
 OTUs in the columns}
 
-\item{...}{passed on to the rransi() function}
+\item{...}{passed on to the reconsi() function}
 
 \item{groupName}{A character string, the name of a variable in physeq
 indicating the grouping factor}
@@ -35,7 +35,7 @@ containing the total cell count}
 \item{tieBreak}{A character string, specifying the tie break doctrine to use.}
 }
 \value{
-See the rransi() function
+See the reconsi() function
 }
 \description{
 A function to test for differential absolute abundance on a phyloseq object

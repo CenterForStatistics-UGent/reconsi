@@ -1,4 +1,4 @@
-Package: rransi
+Package: reconsi
 Type: Package
 Title: Resample RAndom Null distributions for Simultaneous inference
 Version: 0.1.1

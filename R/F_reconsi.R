@@ -67,27 +67,27 @@
 #' matrix(rnorm(n*p/10, mean = 5+x), n, p/10), #DA
 #' matrix(rnorm(n*p*9/10, mean = 5), n, p*9/10) #Non DA
 #' )
-#' fdrRes = rransi(mat, x, B = B)
+#' fdrRes = reconsi(mat, x, B = B)
 #' fdrRes$p0
 #' #Indeed close to 0.9
 #' estFdr = fdrRes$Fdr
 #' #The estimated tail-area false discovery rates.
 #'
 #' #With another type of test. Need to supply quantile function in this case
-#' fdrResLm = rransi(mat, x, B = B,
+#' fdrResLm = reconsi(mat, x, B = B,
 #' test = function(x, y){
 #' fit = lm(y~x)
 #' c(summary(fit)$coef["x","t value"], fit$df.residual)},
 #' distFun = function(q){pt(q = q[1], df = q[2])})
 #'
 #' #With a test statistic without known null distribution(for small samples)
-#' fdrResKruskal = rransi(mat, x, B = B,
+#' fdrResKruskal = reconsi(mat, x, B = B,
 #' test = function(x, y){
 #' kruskal.test(y~x)$statistic}, zValues = FALSE)
 #'
 #' #Provide an additional covariate through the 'argList' argument
 #' z = rpois(n , lambda = 2)
-#' fdrResLmZ = rransi(mat, x, B = B,
+#' fdrResLmZ = reconsi(mat, x, B = B,
 #' test = function(x, y, z){
 #' fit = lm(y~x+z)
 #' c(summary(fit)$coef["x","t value"], fit$df.residual)},
@@ -99,12 +99,12 @@
 #' matrix(rnorm(n*p/10, mean = 1), n, p/10), #DA
 #' matrix(rnorm(n*p*9/10, mean = 0), n, p*9/10) #Non DA
 #' )
-#' fdrResBoot = rransi(matBoot, B = B,
+#' fdrResBoot = reconsi(matBoot, B = B,
 #' test = function(y, x){testRes = t.test(y, mu = 0, var.equal = TRUE);
 #' c(testRes$statistic, testRes$parameter)},
 #' distFun = function(q){pt(q = q[1], df = q[2])},
 #' center = TRUE, replace = TRUE)
-rransi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
+reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
                       distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,

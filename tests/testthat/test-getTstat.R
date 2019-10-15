@@ -11,6 +11,6 @@ tTestBuiltIn[["parameter"]])
 names(resultVec) = c("tstat", "df")
 
 test_that("T-test yields same result as built in version", {
-    expect_equal(rransi:::getTstat(y1, y2, mm, nn),
+    expect_equal(reconsi:::getTstat(y1, y2, mm, nn),
                  resultVec)
 })
