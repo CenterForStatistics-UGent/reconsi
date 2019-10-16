@@ -16,11 +16,9 @@ vignette: >
 
 # Introduction
 
-## Introduction
-
-The aim of this pacakage is to provide simultenous inference for correlated 
-hypotheses using random null distributions. These random null distributions 
-are estimated through permutations. Wilcoxon rank sum test and two sample t-test
+The aim of this pacakage is to provide simultaneous inference for correlated 
+hypotheses using collapsed null distributions. These collapsed null distributions 
+are estimated through resampling. Wilcoxon rank sum test and two sample t-test
 are natively implemented, but any other test can be used.
 
 ## Installing and loading the package
@@ -43,7 +41,7 @@ x = rep(c(0,1), each = n/2)
  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
  )
- #Provide just the matrix and grouping factor, and test using the random null
+ #Provide just the matrix and grouping factor, and test using the collapsed null
  fdrRes = reconsi(mat, x)
   #The estimated tail-area false discovery rates.
   estFdr = fdrRes$Fdr
@@ -109,7 +107,7 @@ test = function(x, y){
  kruskal.test(y~x)$statistic}, zValues = FALSE)
 ```
 
-Alternatively, the same permutations may be used to determine the marginal null distributions as to estimate the random null distribution, by setting the "permZvals" flag to true.
+Alternatively, the same resamples may be used to determine the marginal null distributions as to estimate the collapsed null distribution, by setting the "permZvals" flag to true.
 
 ```{r permZvals}
 fdrResKruskal = reconsi(mat, x, B = 5e1,
@@ -127,8 +125,7 @@ Next, the obtained species compositions can multiplied by the total population
 size to yield approximate absolute cell counts per species. Evidently, this 
 introduces strong correlation between the tests due to the common factor. In 
 other words: random noise in the estimation of the total cell counts will affect 
-all hypotheses. Therefore, we employ permutations to estimate an 
-experiment-specific random null distribution, that will account for this 
+all hypotheses. Therefore, we employ resampling to estimate the collapsed null distribution, that will account for this 
 dependence.
 
 The dataset used is taken from Vandeputte _et al._, 2017 (see [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/29143816)), a study on gut microbiome 

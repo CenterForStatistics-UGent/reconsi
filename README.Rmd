@@ -8,8 +8,7 @@ knitr::opts_chunk$set(cache = FALSE, autodep = TRUE,  warning=FALSE, message=FAL
 
 # Introduction
 
-Dependence between test statistic is known to render statistical inference more variable. This is caused by the random nature of the null distribution under dependence. The aim of this _reconsi_ pacakage is to provide Resampling RAndom Null distributions 
-for Simultaneous Inference to estimate these random functions for improved inference. It can reduce the variability of the false discovery proportion, while increasing the power. Any type of test statistic can be supplied, only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
+Dependence between test statistic is known to render statistical inference more variable. This is caused by the variability of the estimator of the null distribution under dependence. The aim of this _reconsi_ pacakage is to provide REsampling COllapsed Null distributions for Simultaneous Inference to estimate these null density functions for improved inference. It can reduce the variability of the false discovery proportion, while increasing the power. Any type of test statistic can be supplied, only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
 
 A short tutorial is given here, more detailed instructions can be found in the vignette.
 
@@ -41,7 +40,7 @@ Wilcoxon rank-sum test is used.
  matrix(rnorm(n*p/10, mean = 5+x),n,p/10),
  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10)
  )
- #Provide just the matrix and grouping factor, and test using the random null
+ #Provide just the matrix and grouping factor, and test using the collapsed null
  fdrRes = reconsi(mat, x)
  #The estimated tail-area false discovery rates.
  estFdr = fdrRes$Fdr
@@ -81,8 +80,7 @@ Next, the obtained species compositions can multiplied by the total population
 size to yield approximate absolute cell counts per species. Evidently, this 
 introduces strong correlation between the tests due to the common factor. In 
 other words: random noise in the estimation of the total cell counts will affect 
-all hypotheses. Therefore, we employ permutations to estimate an 
-experiment-specific random null distribution, that will account for this 
+all hypotheses. Therefore, we employ permutations to estimate the collapsed null distribution, that will account for this 
 dependence.
 
 The dataset used is taken from Vandeputte _et al._, 2017 (see [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/29143816)), a study on gut microbiome 
@@ -105,4 +103,4 @@ An approximation of the correlation matrix of the test statistics can be drawn a
 plotCperm(testVanDePutte$statsPerm)
 ```
 
-This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated. This is a consequence of the random null distribution shifting left and right.
+This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated. This is a consequence of the collapsed null distribution being more variable.

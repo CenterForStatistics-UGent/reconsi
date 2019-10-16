@@ -2,7 +2,7 @@
 Introduction
 ============
 
-Dependence between test statistic is known to render statistical inference more variable. This is caused by the random nature of the null distribution under dependence. The aim of this *reconsi* pacakage is to provide Resampling RAndom Null distributions for Simultaneous Inference to estimate these random functions for improved inference. It can reduce the variability of the false discovery proportion, while increasing the power. Any type of test statistic can be supplied, only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
+Dependence between test statistic is known to render statistical inference more variable. This is caused by the variability of the estimator of the null distribution under dependence. The aim of this *reconsi* pacakage is to provide REsampling COllapsed Null distributions for Simultaneous Inference to estimate these null density functions for improved inference. It can reduce the variability of the false discovery proportion, while increasing the power. Any type of test statistic can be supplied, only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
 
 A short tutorial is given here, more detailed instructions can be found in the vignette.
 
@@ -34,7 +34,7 @@ n = 50
 x = rep(c(0, 1), each = n/2)
 mat = cbind(matrix(rnorm(n * p/10, mean = 5 + x), n, p/10), matrix(rnorm(n * 
     p * 9/10, mean = 5), n, p * 9/10))
-# Provide just the matrix and grouping factor, and test using the random
+# Provide just the matrix and grouping factor, and test using the collapsed
 # null
 fdrRes = reconsi(mat, x)
 # The estimated tail-area false discovery rates.
@@ -47,7 +47,7 @@ The method provides an estimate of the proportion of true null hypothesis, which
 fdrRes$p0
 ```
 
-    ## [1] 0.88195
+    ## [1] 0.9262337
 
 The result of the procedure can be represented graphically as follows:
 
@@ -72,7 +72,7 @@ fdrResLm = reconsi(mat, x, B = 50, test = function(x, y) {
 Case study
 ----------
 
-We illustrate the package using an application from microbiology. The species composition of a community of microorganisms can be determined through sequencing. However, this only yields compositional information, and knowledge of the population size can be acquired by cell counting through flow cytometry. Next, the obtained species compositions can multiplied by the total population size to yield approximate absolute cell counts per species. Evidently, this introduces strong correlation between the tests due to the common factor. In other words: random noise in the estimation of the total cell counts will affect all hypotheses. Therefore, we employ permutations to estimate an experiment-specific random null distribution, that will account for this dependence.
+We illustrate the package using an application from microbiology. The species composition of a community of microorganisms can be determined through sequencing. However, this only yields compositional information, and knowledge of the population size can be acquired by cell counting through flow cytometry. Next, the obtained species compositions can multiplied by the total population size to yield approximate absolute cell counts per species. Evidently, this introduces strong correlation between the tests due to the common factor. In other words: random noise in the estimation of the total cell counts will affect all hypotheses. Therefore, we employ permutations to estimate the collapsed null distribution, that will account for this dependence.
 
 The dataset used is taken from Vandeputte *et al.*, 2017 (see [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/29143816)), a study on gut microbiome in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the [phyloseq](https://bioconductor.org/packages/release/bioc/html/phyloseq.html) package, which is the preferred way to interact with our machinery for microbiome data.
 
@@ -88,7 +88,7 @@ quantile(FdrVDP)
 ```
 
     ##           0%          25%          50%          75%         100% 
-    ## 0.0000000000 0.0003678914 0.2490903062 0.7022028119 0.8779864469
+    ## 1.939116e-23 3.897312e-04 2.213271e-01 7.506625e-01 9.177288e-01
 
 An approximation of the correlation matrix of the test statistics can be drawn as follows:
 
@@ -98,4 +98,4 @@ plotCperm(testVanDePutte$statsPerm)
 
 ![](README_figs/README-approxCor-1.png)
 
-This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated. This is a consequence of the random null distribution shifting left and right.
+This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated. This is a consequence of the collapsed null distribution being more variable.

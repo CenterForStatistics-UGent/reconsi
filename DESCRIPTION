@@ -1,11 +1,11 @@
 Package: reconsi
 Type: Package
-Title: Resample RAndom Null distributions for Simultaneous inference
+Title: REsample COllapsed Null distributions for Simultaneous Inference
 Version: 0.1.1
 Author: Stijn Hawinkel <stijn.hawinkel@ugent.be>
 Maintainer: Joris Meys <joris.meys@ugent.be>
 Description: Improves simultaneous inference under dependence of tests by
-    estimating a random null distribution through permuations. Accounting for 
+    estimating a collapsed null distribution through resampling. Accounting for 
     the dependence between tests increases the power while reducing the
     variability of the false discovery proportion.
 License: GPL-2
