@@ -47,7 +47,7 @@ The method provides an estimate of the proportion of true null hypothesis, which
 fdrRes$p0
 ```
 
-    ## [1] 0.9262337
+    ## [1] 0.8267394
 
 The result of the procedure can be represented graphically as follows:
 
@@ -88,12 +88,12 @@ quantile(FdrVDP)
 ```
 
     ##           0%          25%          50%          75%         100% 
-    ## 1.939116e-23 3.897312e-04 2.213271e-01 7.506625e-01 9.177288e-01
+    ## 1.109305e-18 2.431294e-03 3.095229e-01 8.053481e-01 9.302977e-01
 
 An approximation of the correlation matrix of the test statistics can be drawn as follows:
 
 ``` r
-plotCperm(testVanDePutte$statsPerm)
+plotCperm(testVanDePutte)
 ```
 
 ![](README_figs/README-approxCor-1.png)
