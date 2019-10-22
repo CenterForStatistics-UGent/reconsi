@@ -4,13 +4,13 @@
 \alias{plotCperm}
 \title{Plot an approximatio of the correlation structure of the test statistics}
 \usage{
-plotCperm(statsPerm, col = colorRampPalette(c("yellow", "blue"))(12),
+plotCperm(reconsiFit, col = colorRampPalette(c("yellow", "blue"))(12),
   x = seq(-4.2, 4.2, 0.1), y = seq(-4.2, 4.2, 0.1),
   xlab = "Z-values", ylab = "Z-values", nBins = 82L,
   binEdges = c(-4.1, 4.1), ...)
 }
 \arguments{
-\item{statsPerm}{The matrix of resample test statistics}
+\item{reconsiFit}{The reconsi fit}
 
 \item{col, x, y, xlab, ylab, ...}{A list of arguments for the image() function.}
 
@@ -40,5 +40,5 @@ matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 )
 mat = mat = mat + rnorm(n, sd = 0.3) #Introduce some dependence
 fdrRes = reconsi(mat, x, B = B)
-plotCperm(fdrRes$statsPerm)
+plotCperm(fdrRes)
 }

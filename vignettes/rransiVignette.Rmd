@@ -45,7 +45,6 @@ x = rep(c(0,1), each = n/2)
  fdrRes = reconsi(mat, x)
   #The estimated tail-area false discovery rates.
   estFdr = fdrRes$Fdr
-
 ```
 
 The method provides an estimate of the proportion of true null hypothesis, which 
@@ -59,6 +58,12 @@ The result of the procedure can be represented graphically as follows:
 
 ```{r plotNull}
 plotNull(fdrRes)
+```
+
+The approximate correlation matrix of test statistic can be visualized as follows:
+
+```{r plotCperm}
+plotCperm(fdrRes)
 ```
 
 It is also possible to provide a custom test function, which must accept at
