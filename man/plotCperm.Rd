@@ -4,16 +4,17 @@
 \alias{plotCperm}
 \title{Plot an approximatio of the correlation structure of the test statistics}
 \usage{
-plotCperm(statsPerm, imageList = list(col = colorRampPalette(c("yellow",
-  "blue"))(12), x = seq(-4.2, 4.2, 0.1), y = seq(-4.2, 4.2, 0.1), xlab =
-  "Z-values", ylab = "Z-values"), ...)
+plotCperm(statsPerm, col = colorRampPalette(c("yellow", "blue"))(12),
+  x = seq(-4.2, 4.2, 0.1), y = seq(-4.2, 4.2, 0.1),
+  xlab = "Z-values", ylab = "Z-values", nBins = 82L,
+  binEdges = c(-4.1, 4.1), ...)
 }
 \arguments{
 \item{statsPerm}{The matrix of resample test statistics}
 
-\item{imageList}{A list of arguments for the image() function.}
+\item{col, x, y, xlab, ylab, ...}{A list of arguments for the image() function.}
 
-\item{...}{passed on to the getCperm function}
+\item{nBins, binEdges}{passed on to the getCperm function}
 }
 \value{
 invisible()

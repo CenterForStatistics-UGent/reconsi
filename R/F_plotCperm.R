@@ -11,8 +11,8 @@
 #' plotCperm(fdrRes$statsPerm)
 #' @export
 #' @param statsPerm The matrix of resample test statistics
-#' @param imageList A list of arguments for the image() function.
-#' @param ... passed on to the getCperm function
+#' @param col,x,y,xlab,ylab,... A list of arguments for the image() function.
+#' @param nBins,binEdges passed on to the getCperm function
 #' @importFrom graphics image
 #' @importFrom grDevices colorRampPalette
 #' @details By default, yellow indicates negative correlaton between bin counts,
@@ -21,13 +21,15 @@
 #'    data! It is an approximate covariance matrix of binned test statistics for
 #'    visualization purposes.
 #' @return invisible()
-plotCperm = function(statsPerm,
-                     imageList = list(
-                         col = colorRampPalette(
+plotCperm = function(statsPerm, col = colorRampPalette(
                          c("yellow","blue"))(12),
                          x = seq(-4.2, 4.2, 0.1),
                          y = seq(-4.2, 4.2, 0.1),
-                         xlab = "Z-values", ylab = "Z-values"), ...){
-    do.call(what = image, args = c(list(z = getCperm(statsPerm, ...)),
-                                   imageList))
+                         xlab = "Z-values",
+                         ylab = "Z-values",
+                         nBins = 82L, binEdges = c(-4.1,4.1),
+                     ...){
+    image(z = getCperm(statsPerm, nBins = nBins, binEdges = binEdges),
+    x = x, y = y, xlab = xlab, ylab = ylab, col = col, ...)
+
 }
