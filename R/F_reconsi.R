@@ -1,9 +1,8 @@
-#' Perform simultaneous inference, correcting for correlation between tests
-#' through resample random null distributions
+#' Perform simultaneous inference through collapsed resample null distributions
 #' @param Y the matrix of sequencing counts
 #' @param x a grouping factor. If provided, this grouping factor is permuted.
 #' Otherwise a bootstrap procedure is performed
-#' @param B the number of permutations
+#' @param B the number of resamples
 #' @param test Character string, giving the name of the function
 #'  to test for differential absolute abundance.
 #'  Must accept the formula interface
@@ -26,28 +25,28 @@
 #' @param replace A boolean. Should resampling occur with replacement (boostrap)
 #' or without replacement (permutation)
 #' @param zVals An optional list of observed (statObs) and
-#' permutation (statsPerm) z-values. If supplied, the calculation
-#'    of the observed and permutation test statistics is skipped
+#' resample (statsPerm) z-values. If supplied, the calculation
+#'    of the observed and resample test statistics is skipped
 #'    and the algorithm proceeds with calculation
 #'    of the consensus null distribution
 #' @param estP0args A list of arguments passed on to the estP0 function
-#' @param permZvals A boolean, should permutations rather than theoretical null
+#' @param permZvals A boolean, should resamples rather than theoretical null
 #' distributions be used?
 #' @param smoothObs A boolean, should the fitted rather than estimated observed
 #' distribution be used in the Fdr calculation?
-#' @param tieBreakRan A boolean, should ties of permutation test statistics
+#' @param tieBreakRan A boolean, should ties of resample test statistics
 #'  be broken randomly? If not, midranks are used
 #' @param warnConvergence Should a warning be thrown when the estimation
 #' of the random null does not converge?
 #' @details Efron (2007) centers the observations in each group prior
 #'  to permutation. As permutations will remove any genuine group differences
-#'   anyway, we skip this step by default.\\ If zValues = FALSE,
+#'   anyway, we skip this step by default. If zValues = FALSE,
 #'   the density is fitted on the original test statistics rather than converted
 #'   to z-values. This unlocks the procedure for test statistics with unknown
 #'   distributions, but may be numerically less stable.
 #'
 #' @return A list with entries
-#' \item{statsPerm}{Permutation Z-values}
+#' \item{statsPerm}{Resample Z-values}
 #' \item{statObs}{Observed Z-values}
 #' \item{weightsStrat}{Weighting strategy used}
 #' \item{densFun,distFun,quantileFun}{Density, distribution and
@@ -55,7 +54,7 @@
 #' \item{testPargs}{Same as given}
 #' \item{weightStrat}{The weighting strategy}
 #' \item{zValues}{z-values}
-#' \item{permZvals}{Permutation z-values}
+#' \item{permZvals}{z-values from resample null distribution}
 #' \item{cdfValObs}{Cumulative distribution function evaluation
 #' of observed test statistics}
 #' @export
@@ -109,7 +108,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list()
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       maxIter = 1000L, tol = 1e-8,
-                      center = FALSE, replace = FALSE, zVals = NULL,
+                      center = FALSE, replace = is.null(x), zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), permZvals = FALSE,
                       smoothObs = TRUE,
@@ -139,6 +138,9 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list()
  if(!is.null(densFun) && !"x" %in% names(formals(densFun))){
      stop("Density function must accept arguments named 'q'\n")
  }
+    if(!"y" %in% names(formals(test)) && !test %in% c("t.test", "wilcox.test")){
+        stop("Test function must accept 'y' argument\n")
+    }
 if(!is.matrix(Y)){
     stop(paste("Please provide a data matrix as imput!\n",
                if(is.vector(Y)) "Multiplicity correction only needed when
@@ -166,7 +168,7 @@ cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
 if(zValues){
 #If procedure works with z-values rather than raw test statistics,
     #convert to z-values
-#Permutation cdf-values
+#Resample cdf-values
 cdfValsMat =  apply(testStats$statsPerm,
                   MARGIN = if(length(dim(testStats$statsPerm))==3) c(2,3)
                   else 2, function(stats){
@@ -181,7 +183,7 @@ statObs = qnorm(
         (sum(cdfValObs[i] > cdfValsMat[i,])+1L)/(B+2L)
     })) else cdfValObs
 )
-#Permuation z-values
+#Resample z-values
 statsPerm = qnorm(
     if(permZvals) vapply(seq_len(B), FUN.VALUE = statObs, function(b){
         quantCorrect(vapply(seq_along(cdfValObs), FUN.VALUE = double(1),

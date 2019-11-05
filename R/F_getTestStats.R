@@ -41,7 +41,7 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
       Ycenter = Y
       }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
-    if(NCOL(x)!=1){
+    if(is.null(x) || NCOL(x)!=1){
         stop("Provide single grouping variable for Wilcoxon rank sum test
              or t-test")
     }
@@ -58,7 +58,6 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     statObs = colSums(YRanked[xLog,]) - nFac
     #Permuation test statistics
     mmSeries = seq_len(mm)
-    #YRankedCenter = t(if(center) apply(Ycenter, 2, rank) else YRanked)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
       if(tieBreakRan){YRanked = t(apply(Y, 2, rank, ties.method = "random"))
       #Random tiebreaking, important to combat test statistic discreteness

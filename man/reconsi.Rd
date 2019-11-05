@@ -2,16 +2,15 @@
 % Please edit documentation in R/F_reconsi.R
 \name{reconsi}
 \alias{reconsi}
-\title{Perform simultaneous inference, correcting for correlation between tests
-through resample random null distributions}
+\title{Perform simultaneous inference through collapsed resample null distributions}
 \usage{
 reconsi(Y, x = NULL, B = 1000L, test = "wilcox.test",
   argList = list(), distFun = "pnorm", quantileFun = "qnorm",
   densFun = NULL, zValues = TRUE, testPargs = list(),
   z0Quant = pnorm(c(-1, 1)), gridsize = 801L, maxIter = 1000L,
-  tol = 1e-08, center = FALSE, replace = FALSE, zVals = NULL,
-  estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
-  3), permZvals = FALSE, smoothObs = TRUE,
+  tol = 1e-08, center = is.null(x), replace = is.null(x),
+  zVals = NULL, estP0args = list(z0quantRange = seq(0.05, 0.45,
+  0.0125), smooth.df = 3), permZvals = FALSE, smoothObs = TRUE,
   tieBreakRan = identical(test, "wilcox.test"), warnConvergence = TRUE)
 }
 \arguments{
@@ -20,7 +19,7 @@ reconsi(Y, x = NULL, B = 1000L, test = "wilcox.test",
 \item{x}{a grouping factor. If provided, this grouping factor is permuted.
 Otherwise a bootstrap procedure is performed}
 
-\item{B}{the number of permutations}
+\item{B}{the number of resamples}
 
 \item{test}{Character string, giving the name of the function
 to test for differential absolute abundance.
@@ -55,20 +54,20 @@ in each group prior to permuations? See details.}
 or without replacement (permutation)}
 
 \item{zVals}{An optional list of observed (statObs) and
-permutation (statsPerm) z-values. If supplied, the calculation
-   of the observed and permutation test statistics is skipped
+resample (statsPerm) z-values. If supplied, the calculation
+   of the observed and resample test statistics is skipped
    and the algorithm proceeds with calculation
    of the consensus null distribution}
 
 \item{estP0args}{A list of arguments passed on to the estP0 function}
 
-\item{permZvals}{A boolean, should permutations rather than theoretical null
+\item{permZvals}{A boolean, should resamples rather than theoretical null
 distributions be used?}
 
 \item{smoothObs}{A boolean, should the fitted rather than estimated observed
 distribution be used in the Fdr calculation?}
 
-\item{tieBreakRan}{A boolean, should ties of permutation test statistics
+\item{tieBreakRan}{A boolean, should ties of resample test statistics
 be broken randomly? If not, midranks are used}
 
 \item{warnConvergence}{Should a warning be thrown when the estimation
@@ -76,7 +75,7 @@ of the random null does not converge?}
 }
 \value{
 A list with entries
-\item{statsPerm}{Permutation Z-values}
+\item{statsPerm}{Resample Z-values}
 \item{statObs}{Observed Z-values}
 \item{weightsStrat}{Weighting strategy used}
 \item{densFun,distFun,quantileFun}{Density, distribution and
@@ -84,18 +83,18 @@ quantile function as given}
 \item{testPargs}{Same as given}
 \item{weightStrat}{The weighting strategy}
 \item{zValues}{z-values}
-\item{permZvals}{Permutation z-values}
+\item{permZvals}{z-values from resample null distribution}
 \item{cdfValObs}{Cumulative distribution function evaluation
 of observed test statistics}
 }
 \description{
-Perform simultaneous inference, correcting for correlation between tests
-through resample random null distributions
+Perform simultaneous inference through collapsed resample null distributions
 }
 \details{
 Efron (2007) centers the observations in each group prior
  to permutation. As permutations will remove any genuine group differences
-  anyway, we skip this step by default.\\ If zValues = FALSE,
+  anyway, we skip this step by default. For bootstrapping it is TRUE
+  by default to create data in accordance with the null hypothesis. If zValues = FALSE,
   the density is fitted on the original test statistics rather than converted
   to z-values. This unlocks the procedure for test statistics with unknown
   distributions, but may be numerically less stable.

@@ -87,9 +87,10 @@ through the "argList" argument.
  #3 groups
  p = 100; n = 60
 x = rep(c(0,1,2), each = n/3)
+mu0 = 5
  mat = cbind(
- matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
- matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+ matrix(rnorm(n*p/10, mean = mu0+x),n,p/10), #DA
+ matrix(rnorm(n*p*9/10, mean = mu0),n,p*9/10) #Non DA
  )
  #Provide an additional covariate through the 'argList' argument
  z = rpois(n , lambda = 2)
@@ -115,9 +116,19 @@ test = function(x, y){
 Alternatively, the same resamples may be used to determine the marginal null distributions as to estimate the collapsed null distribution, by setting the "permZvals" flag to true.
 
 ```{r permZvals}
-fdrResKruskal = reconsi(mat, x, B = 5e1,
+fdrResKruskalPerm = reconsi(mat, x, B = 5e1,
 test = function(x, y){
  kruskal.test(y~x)$statistic}, permZvals = TRUE)
+```
+
+When no grouping variable is available, one can perform a bootstrap as resampling procedure. This is achieved by simply not supplying a grouping variable "x". Here we perform a one sample Wilcoxon rank sum test for equality of the means to 0.
+
+```{r bootstrap}
+fdrResBootstrap = reconsi(Y = mat, B = 5e1, test = function(y, x, mu){
+                                      testRes = t.test(y, mu = mu)
+                                      c(testRes$statistic, testRes$parameter)}, argList = list(mu = mu0), center = FALSE,
+                                  distFun = function(q){pt(q = q[1],
+                                                           df = q[2])})
 ```
 
 ## Case study
@@ -137,7 +148,8 @@ The dataset used is taken from Vandeputte _et al._, 2017 (see [manuscript](https
 in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the _phyloseq_ package, which is the preferred way to interact with our machinery for microbiome data.
 
 ```{r Vandeputte}
-testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen", B = 5e1)
+#The grouping and flow cytometry variables are present in the phyloseq object, they only need to be called by their name.
+testVanDePutte = testDAA(Vandeputte, groupName = "Health.status", FCname = "absCountFrozen", B = 1e2L)
 ```
 
 The estimated tail-area false discovery rates can then simply be extracted as

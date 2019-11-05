@@ -28,19 +28,15 @@ test_that("reconsi throws warnings where necessary", {
                             x = sample(x, p, replace = TRUE)))
     #Few hypotheses
 })
-
-test_that("reconsi throws an error when no grouping variable is provided
-          and no bootstrap requested", {
-    expect_error(reconsi(Y = mat, x = NULL))
-})
 test_that("reconsi works when bootstrap is requested", {
-              expect_silent(reconsi(Y = mat, x = NULL,
-                                  replace = TRUE, center = TRUE,
-                                  test = function(y, x){
-                                      testRes = t.test(y, mu = 0,
-                                                       var.equal = TRUE)
-                                      c(testRes$statistic, testRes$parameter)},
-                                  distFun = function(q){pt(q = q[1],
-                                                           df = q[2])},
+              expect_silent(reconsi(Y = mat, function(y, x, mu){
+                  testRes = t.test(y, mu = mu)
+                  c(testRes$statistic, testRes$parameter)}, argList = list(mu = 0), center = FALSE,
+                  distFun = function(q){pt(q = q[1],
+                                           df = q[2])},
                                   warnConvergence = FALSE))
+    expect_silent(reconsi(Y = mat, test = function(y, x){
+        wilcox.test(y, mu = 0, exact = FALSE)$statistic
+    }, distFun = "psignrank", testPargs = list(n = nrow(mat)),
+        warnConvergence = FALSE))
           })

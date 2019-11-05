@@ -2,7 +2,7 @@
 Introduction
 ============
 
-Dependence between test statistic is known to render statistical inference more variable. This is caused by the variability of the estimator of the null distribution under dependence. The aim of this *reconsi* pacakage is to provide REsampling COllapsed Null distributions for Simultaneous Inference to estimate these null density functions for improved inference. It can reduce the variability of the false discovery proportion, while increasing the power. Any type of test statistic can be supplied, only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
+Dependence between test statistic is known to render the fasle discovery proportion more variable. This is caused by the greater sampling variability of the test statistics under dependence. The aim of this *reconsi* pacakage is to provide REsampling COllapsed Null distributions for Simultaneous Inference to estimate the null density functions more precisely for improved inference. It can reduce the variability of the false discovery proportion, while increasing the sensitivity. Many types of test statistic can be supplied, but only Wilcoxon rank sum test and two sample t-test are natively implemented. Both **permutations** and **bootstrapping** are implemented.
 
 A short tutorial is given here, more detailed instructions can be found in the vignette.
 
@@ -47,7 +47,7 @@ The method provides an estimate of the proportion of true null hypothesis, which
 fdrRes$p0
 ```
 
-    ## [1] 0.8267394
+    ## [1] 0.8661424
 
 The result of the procedure can be represented graphically as follows:
 
@@ -60,11 +60,13 @@ plotNull(fdrRes)
 It is also possible to provide a custom test function, which must accept at least a 'y' response variable and a 'x' grouping factor. Additionally, a distribution function should be supplied for transformation through quantiles to z-values.
 
 ``` r
-# With another type of test
-fdrResLm = reconsi(mat, x, B = 50, test = function(x, y) {
+# Define a custom test function
+testFun = function(x, y) {
     fit = lm(y ~ x)
     c(summary(fit)$coef["x", "t value"], fit$df.residual)
-}, distFun = function(q) {
+}
+# Supply it to the reconsi algorithm
+fdrResLm = reconsi(mat, x, B = 50, test = testFun, distFun = function(q) {
     pt(q = q[1], df = q[2])
 })
 ```
@@ -72,12 +74,15 @@ fdrResLm = reconsi(mat, x, B = 50, test = function(x, y) {
 Case study
 ----------
 
-We illustrate the package using an application from microbiology. The species composition of a community of microorganisms can be determined through sequencing. However, this only yields compositional information, and knowledge of the population size can be acquired by cell counting through flow cytometry. Next, the obtained species compositions can multiplied by the total population size to yield approximate absolute cell counts per species. Evidently, this introduces strong correlation between the tests due to the common factor. In other words: random noise in the estimation of the total cell counts will affect all hypotheses. Therefore, we employ permutations to estimate the collapsed null distribution, that will account for this dependence.
+We illustrate the package using an application from microbiology. The species composition of a community of microorganisms can be determined through sequencing. However, this only yields compositional information, and knowledge of the population size can be acquired by cell counting through flow cytometry. Next, the obtained species compositions can multiplied by the total population size to yield approximate absolute cell counts per species. Evidently, this introduces strong correlation between the tests due to the common factor. In other words: random noise in the estimation of the total cell counts will affect all hypotheses. Also biological interactions between the species (e.g. due to competition or crossfeeding) can cause the outcome values to be correlated. Therefore, we employ permutations to estimate the collapsed null distribution, that will account for this dependence.
 
 The dataset used is taken from Vandeputte *et al.*, 2017 (see [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/29143816)), a study on gut microbiome in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the [phyloseq](https://bioconductor.org/packages/release/bioc/html/phyloseq.html) package, which is the preferred way to interact with our machinery for microbiome data.
 
 ``` r
-testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen", B = 100L)
+# The grouping and flow cytometry variables are present in the phyloseq
+# object, they only need to be called by their name.
+testVanDePutte = testDAA(Vandeputte, groupName = "Health.status", FCname = "absCountFrozen", 
+    B = 100L)
 ```
 
 The estimated tail-area false discovery rates can then simply be extracted as
@@ -88,7 +93,7 @@ quantile(FdrVDP)
 ```
 
     ##           0%          25%          50%          75%         100% 
-    ## 1.109305e-18 2.431294e-03 3.095229e-01 8.053481e-01 9.302977e-01
+    ## 6.558191e-19 2.023308e-03 2.629081e-01 8.130213e-01 9.544556e-01
 
 An approximation of the correlation matrix of the test statistics can be drawn as follows:
 
@@ -98,4 +103,4 @@ plotCperm(testVanDePutte)
 
 ![](README_figs/README-approxCor-1.png)
 
-This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated. This is a consequence of the collapsed null distribution being more variable.
+This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated.
