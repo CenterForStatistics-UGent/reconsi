@@ -29,7 +29,7 @@ test_that("reconsi throws warnings where necessary", {
     #Few hypotheses
 })
 test_that("reconsi works when bootstrap is requested", {
-              expect_silent(reconsi(Y = mat, function(y, x, mu){
+              expect_silent(reconsi(Y = mat, test = function(y, x, mu){
                   testRes = t.test(y, mu = mu)
                   c(testRes$statistic, testRes$parameter)}, argList = list(mu = 0), center = FALSE,
                   distFun = function(q){pt(q = q[1],

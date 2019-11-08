@@ -113,7 +113,7 @@ test = function(x, y){
  kruskal.test(y~x)$statistic}, zValues = FALSE)
 ```
 
-Alternatively, the same resamples may be used to determine the marginal null distributions as to estimate the collapsed null distribution, by setting the "permZvals" flag to true.
+Alternatively, the same resampling instances may be used to determine the marginal null distributions as to estimate the collapsed null distribution, by setting the "permZvals" flag to true.
 
 ```{r permZvals}
 fdrResKruskalPerm = reconsi(mat, x, B = 5e1,

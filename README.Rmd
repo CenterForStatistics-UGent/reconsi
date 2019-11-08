@@ -55,7 +55,7 @@ fdrRes$p0
 
 The result of the procedure can be represented graphically as follows:
 
-```{r plotNull, fig.cap = "Illustration of the estimation of the collapsed null distribution through resampling. The observed test statistics are shown as a green histogram. The resample null candidates are plotted as dashed curves, with their colour indicating how much they contribute to the estimation of the collapsed null distribution. This estimated collapsed null density is shown as a solid curve. The standard normal density is shown as a dashed black line as a reference. The red dots represent observed test statistic, their height reflects their estimated tail-area false discovery rate. The black dot-dashed line is the estimated local false discoery rate."}
+```{r plotNull, fig.cap = "Illustration of the estimation of the collapsed null distribution through resampling. The observed test statistics are shown as a green histogram. The resampling null candidates are plotted as dashed curves, with their colour indicating how much they contribute to the estimation of the collapsed null distribution. This estimated collapsed null density is shown as a solid curve. The standard normal density is shown as a dashed black line as a reference. The red dots represent observed test statistic, their height reflects their estimated tail-area false discovery rate. The black dot-dashed line is the estimated local false discoery rate."}
 plotNull(fdrRes)
 ```
 

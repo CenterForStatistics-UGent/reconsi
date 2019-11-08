@@ -1,8 +1,8 @@
-#' Perform simultaneous inference through collapsed resample null distributions
+#' Perform simultaneous inference through collapsed resampling null distributions
 #' @param Y the matrix of sequencing counts
 #' @param x a grouping factor. If provided, this grouping factor is permuted.
 #' Otherwise a bootstrap procedure is performed
-#' @param B the number of resamples
+#' @param B the number of resampling instances
 #' @param test Character string, giving the name of the function
 #'  to test for differential absolute abundance.
 #'  Must accept the formula interface
@@ -25,16 +25,16 @@
 #' @param replace A boolean. Should resampling occur with replacement (boostrap)
 #' or without replacement (permutation)
 #' @param zVals An optional list of observed (statObs) and
-#' resample (statsPerm) z-values. If supplied, the calculation
-#'    of the observed and resample test statistics is skipped
+#' resampling (statsPerm) z-values. If supplied, the calculation
+#'    of the observed and resampling test statistics is skipped
 #'    and the algorithm proceeds with calculation
 #'    of the consensus null distribution
 #' @param estP0args A list of arguments passed on to the estP0 function
-#' @param permZvals A boolean, should resamples rather than theoretical null
+#' @param permZvals A boolean, should resampling rather than theoretical null
 #' distributions be used?
 #' @param smoothObs A boolean, should the fitted rather than estimated observed
 #' distribution be used in the Fdr calculation?
-#' @param tieBreakRan A boolean, should ties of resample test statistics
+#' @param tieBreakRan A boolean, should ties of resampling test statistics
 #'  be broken randomly? If not, midranks are used
 #' @param warnConvergence Should a warning be thrown when the estimation
 #' of the random null does not converge?
@@ -46,7 +46,7 @@
 #'   distributions, but may be numerically less stable.
 #'
 #' @return A list with entries
-#' \item{statsPerm}{Resample Z-values}
+#' \item{statsPerm}{Resampling Z-values}
 #' \item{statObs}{Observed Z-values}
 #' \item{weightsStrat}{Weighting strategy used}
 #' \item{densFun,distFun,quantileFun}{Density, distribution and
@@ -54,7 +54,7 @@
 #' \item{testPargs}{Same as given}
 #' \item{weightStrat}{The weighting strategy}
 #' \item{zValues}{z-values}
-#' \item{permZvals}{z-values from resample null distribution}
+#' \item{permZvals}{z-values from resampling null distribution}
 #' \item{cdfValObs}{Cumulative distribution function evaluation
 #' of observed test statistics}
 #' @export

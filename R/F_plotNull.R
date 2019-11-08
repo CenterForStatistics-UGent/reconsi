@@ -4,7 +4,7 @@
 #' @param lowColor,highColor The low and high ends of the colour scale
 #' @param dens a boolean, should fdr and Fdr be plotted?
 #' @param idDA indices of known null taxa
-#' @param nResampleCurves The number of resample null distributions to plot
+#' @param nResampleCurves The number of resampling null distributions to plot
 #' @param hSize A double, the size of the line of the collapsed null estimate
 #'
 #' @return a ggplot2 plot object

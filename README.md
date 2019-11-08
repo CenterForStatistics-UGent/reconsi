@@ -47,7 +47,7 @@ The method provides an estimate of the proportion of true null hypothesis, which
 fdrRes$p0
 ```
 
-    ## [1] 0.9019651
+    ## [1] 0.8907524
 
 The result of the procedure can be represented graphically as follows:
 
@@ -55,9 +55,9 @@ The result of the procedure can be represented graphically as follows:
 plotNull(fdrRes)
 ```
 
-![Illustration of the estimation of the collapsed null distribution through resampling. The observed test statistics are shown as a green histogram. The resample null candidates are plotted as dashed curves, with their colour indicating how much they contribute to the estimation of the collapsed null distribution. This estimated collapsed null density is shown as a solid curve. The standard normal density is shown as a dashed black line as a reference. The red dots represent observed test statistic, their height reflects their estimated tail-area false discovery rate. The black dot-dashed line is the estimated local false discoery rate.](README_figs/README-plotNull-1.png)
+![Illustration of the estimation of the collapsed null distribution through resampling. The observed test statistics are shown as a green histogram. The resampling null candidates are plotted as dashed curves, with their colour indicating how much they contribute to the estimation of the collapsed null distribution. This estimated collapsed null density is shown as a solid curve. The standard normal density is shown as a dashed black line as a reference. The red dots represent observed test statistic, their height reflects their estimated tail-area false discovery rate. The black dot-dashed line is the estimated local false discoery rate.](README_figs/README-plotNull-1.png)
 
-It is also possible to provide a custom test function, which must accept at least a 'y' response variable and a 'x' grouping factor. Additionally, a distribution function should be supplied for transformation through quantiles to z-values.
+It is also possible to provide a custom test function, which must accept at least a 'y' response variable and a 'x' grouping factor. Additionally, a distribution function should be supplied for the transformation to z-values.
 
 ``` r
 # Define a custom test function
@@ -93,7 +93,7 @@ quantile(FdrVDP)
 ```
 
     ##           0%          25%          50%          75%         100% 
-    ## 2.675925e-20 1.493440e-03 2.834575e-01 7.854286e-01 9.189947e-01
+    ## 8.467117e-20 2.208986e-03 3.373756e-01 7.400545e-01 8.956764e-01
 
 An approximation of the correlation matrix of the test statistics can be drawn as follows:
 
