@@ -1,4 +1,5 @@
-#' Perform simultaneous inference through collapsed resampling null distributions
+#' Perform simultaneous inference through
+#' collapsed resampling null distributions
 #' @param Y the matrix of sequencing counts
 #' @param x a grouping factor. If provided, this grouping factor is permuted.
 #' Otherwise a bootstrap procedure is performed
@@ -103,7 +104,8 @@
 #' c(testRes$statistic, testRes$parameter)},
 #' distFun = function(q){pt(q = q[1], df = q[2])},
 #' center = TRUE, replace = TRUE)
-reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test", argList = list(),
+reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
+                   argList = list(),
                       distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,

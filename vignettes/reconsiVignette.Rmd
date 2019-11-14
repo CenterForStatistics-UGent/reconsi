@@ -16,16 +16,23 @@ vignette: >
 
 # Introduction
 
-The aim of this pacakage is to provide simultaneous inference for correlated 
+The aim of this pacakage is to improve simultaneous inference for correlated 
 hypotheses using collapsed null distributions. These collapsed null distributions 
-are estimated through resampling. Wilcoxon rank sum test and two sample t-test
+are estimated in an empirical Bayes framework through resampling. Wilcoxon rank sum test and two sample t-test
 are natively implemented, but any other test can be used.
 
 ## Installing and loading the package
 
+```{r installBioConductor, eval = FALSE}
+library(BiocManager)
+install("reconsi")
+```
+
 ```{r installAndLoad}
-#install.packages("reconsi")
-library(reconsi)
+library(devtools)
+install_github("CenterForStatistics-UGent/reconsi")
+suppressPackageStartupMessages(library(reconsi))
+cat("reconsi package version", as.character(packageVersion("reconsi")), "\n")
 ```
 
 ## General use
@@ -157,4 +164,12 @@ The estimated tail-area false discovery rates can then simply be extracted as
 ```{r vandeputteFdr}
 FdrVDP = testVanDePutte$Fdr
 quantile(FdrVDP)
+```
+
+# Session info
+
+Finally all info on R and package version is shown
+
+```{r sessionInfo}
+sessionInfo()
 ```

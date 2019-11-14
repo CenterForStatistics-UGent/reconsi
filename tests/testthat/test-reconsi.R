@@ -28,6 +28,9 @@ test_that("reconsi throws warnings where necessary", {
                             x = sample(x, p, replace = TRUE)))
     #Few hypotheses
 })
+test_that("reconsi works smoothly when all is fine", {
+    expect_silent(reconsi(Y = mat, x = x))
+})
 test_that("reconsi works when bootstrap is requested", {
               expect_silent(reconsi(Y = mat, test = function(y, x, mu){
                   testRes = t.test(y, mu = mu)

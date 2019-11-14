@@ -2,7 +2,8 @@
 % Please edit documentation in R/F_reconsi.R
 \name{reconsi}
 \alias{reconsi}
-\title{Perform simultaneous inference through collapsed resampling null distributions}
+\title{Perform simultaneous inference through
+collapsed resampling null distributions}
 \usage{
 reconsi(Y, x = NULL, B = 1000L, test = "wilcox.test",
   argList = list(), distFun = "pnorm", quantileFun = "qnorm",
@@ -88,7 +89,8 @@ quantile function as given}
 of observed test statistics}
 }
 \description{
-Perform simultaneous inference through collapsed resampling null distributions
+Perform simultaneous inference through
+collapsed resampling null distributions
 }
 \details{
 Efron (2007) centers the observations in each group prior
