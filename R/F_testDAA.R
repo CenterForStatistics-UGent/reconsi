@@ -8,7 +8,6 @@
 #' @param FC a vector of length n with total flow cytometry cell counts
 #' @param x a grouping factor of length n
 #' @param S a vector of library sizes. Will be calculated f
-#' @param tieBreak A character string, specifying the tie break doctrine to use.
 #' @param ... passed on to the reconsi() function
 #'
 #'@return See the reconsi() function
@@ -40,12 +39,8 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 #' testMat = testDAA(as(otu_table(Vandeputte), "matrix"),
 #' get_variable(Vandeputte, "Health.status"),
 #' get_variable(Vandeputte,"absCountFrozen"), B = 5e1)
-setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y),
-                                        tieBreak = "none", ...){
+setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y), ...){
     idSam = S>0
-    tieBrokenY = tiebreak(Y = Y[idSam, ],
-                          FC = if(length(FC)==1) FC else FC[idSam],
-                          tieBreak = tieBreak, S = S[idSam])
     if(min(table(x[idSam]))<2L) {return(NULL)}
-    reconsi(tieBrokenY[,colSums(tieBrokenY)>0], x=x[idSam], ...)
+    reconsi(Y[,colSums(Y)>0], x=x[idSam], ...)
 })
