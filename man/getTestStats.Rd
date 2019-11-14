@@ -24,9 +24,9 @@ getTestStats(Y, center, test = "wilcox.test", x, B, argList,
 \item{tieBreakRan}{A boolean, should ties of permutation test statistics
 be broken randomly? If not, midranks are used}
 
-\item{replace}{A boolean. If FALSE, samples are permuated
-(sampled without replacement), if TRUE the samples are bootstrapped
-(sampled with replacement)}
+\item{replace}{A boolean. If FALSE, samples are permuted
+(resampled without replacement), if TRUE the samples are bootstrapped
+(resampled with replacement)}
 }
 \value{
 A list with components

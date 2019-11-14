@@ -9,9 +9,9 @@
 #' @param argList A list of further arguments passed on to the test function
 #' @param tieBreakRan A boolean, should ties of permutation test statistics
 #'  be broken randomly? If not, midranks are used
-#' @param replace A boolean. If FALSE, samples are permuated
-#' (sampled without replacement), if TRUE the samples are bootstrapped
-#' (sampled with replacement)
+#' @param replace A boolean. If FALSE, samples are permuted
+#' (resampled without replacement), if TRUE the samples are bootstrapped
+#' (resampled with replacement)
 #'
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}

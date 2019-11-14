@@ -28,9 +28,12 @@ library(BiocManager)
 install("reconsi")
 ```
 
-```{r installAndLoad}
+```{r installAndLoadGitHub, eval = FALSE}
 library(devtools)
 install_github("CenterForStatistics-UGent/reconsi")
+```
+
+```{r loadReconsi}
 suppressPackageStartupMessages(library(reconsi))
 cat("reconsi package version", as.character(packageVersion("reconsi")), "\n")
 ```

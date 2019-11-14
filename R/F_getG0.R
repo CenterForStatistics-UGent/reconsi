@@ -37,27 +37,20 @@ getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, quantileFun,
                  testPargs, B, p, warnConvergence){
   if(length(statObs)!=nrow(statsPerm)){
-    stop("Dimensions of observed and permutation test statistics don't match!
-         ")
+    stop("Dimensions of observed and permutation test statistics don't match!")
   }
 if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
   #The starting values are CRUCIAL!
   Range = range(c(statsPerm, statObs))
-
   #Estimate observed densities
   zValsDensObs0 = bkde(statObs, range.x = Range, gridsize = gridsize,
                        truncate = FALSE)
   zValsDensObs = zValsDensObs0$y
   zSeq = zValsDensObs0$x #The support
   zValsDensObsInterp = approx(y = zValsDensObs, x = zSeq, xout = statObs)$y
-
-  zValsDensPerm = apply(statsPerm, 2, function(zz){
-      bkde(zz, range.x = Range, gridsize = gridsize, truncate = FALSE)$y})
   zValsDensObs[zValsDensObs<=0] =
-      zValsDensPerm[zValsDensPerm<=0] =
       .Machine$double.eps #Remove negative densities
-
   #Estimate permutation densities
   PermDensFits = apply(statsPerm, 2, estNormal)
   LogPermDensEvals = apply(PermDensFits, 2, function(fit){
@@ -69,16 +62,12 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   fdr[fdr==0] = .Machine$double.eps
   while(iter <= maxIter && !convergence){
     fdrOld = fdr; p0old = p0
-    weights = calcWeights(logDensPerm = LogPermDensEvals,
-                          fdr = fdr)
+    weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
     #Null distribution
     fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
-    g0 = dnorm(statObs, mean = fitAll[1],
-               sd = fitAll[2])
-    G0 = pnorm(zSeq, mean = fitAll[1],
-               sd = fitAll[2])
+    g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
+    G0 = pnorm(zSeq, mean = fitAll[1], sd = fitAll[2])
     fdr = g0/zValsDensObsInterp*p0
-    #fdr = approx(y = fdr, x = zSeq, xout = statObs)$y
     fdr[fdr>1] = 1 #Normalize here already!
     p0 = do.call(estP0,
                  c(list(statObs = statObs, nullDensCum = G0, zSeq = zSeq),
