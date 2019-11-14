@@ -59,12 +59,11 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     #Permuation test statistics
     mmSeries = seq_len(mm)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
-      if(tieBreakRan){YRanked = t(apply(Y, 2, rank, ties.method = "random"))
+      if(tieBreakRan){
+          YRanked = apply(Y, 2, rank, ties.method = "random")
       #Random tiebreaking, important to combat test statistic discreteness
-      rowSums(YRanked[,permDesign[mmSeries,ii]])
-      } else {
-      colSums(YRanked[permDesign[mmSeries,ii],])
       }
+        colSums(YRanked[permDesign[mmSeries,ii],])
     }, FUN.VALUE = statObs)
   } else if(test == "t.test"){
     statObs = apply(Y, 2, function(dat){
@@ -83,7 +82,6 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
   statObs = apply(Y,2, function(y){
       do.call(testFun, c(list(y = y, x = x), argList))
   })
-  n = nrow(Y)
   statsPerm = vapply(seq_len(B),
                      FUN.VALUE = statObs,
                      function(ii){
