@@ -46,15 +46,12 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                                 low = lowColor, name = "Weights") +
         scale_alpha_continuous(guide = FALSE, range = c(0.5,1)) +
         xlab(if(zValues) "z-value" else "Test statistic") +
-        ylab("Density/Fdr")  +
-        theme_bw()
-
+        ylab("Density/Fdr")  + theme_bw()
     #Histogram of observed z-values
     plot = plot + geom_histogram(data = data.frame(statObs = statObs),
                              aes(x = statObs, y = ..density..),
                              inherit.aes = FALSE, bins = 50, alpha = 0.5,
                              fill = "mediumseagreen")
-
     # Add density functions
     g0 = dnorm(zSeq,  mean = fitAll["mean"], sd = fitAll["sd"])
     lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
@@ -85,7 +82,6 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
                    aes(x = statObs, y = Fdr), col = "red", size = hSize)
     }
-
     return(plot)
 })
 }

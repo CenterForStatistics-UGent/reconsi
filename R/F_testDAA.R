@@ -13,7 +13,6 @@
 #'
 #'@return See the reconsi() function
 
-
 #' @rdname testDAA
 #' @export
 setGeneric("testDAA", function(Y, ...) standardGeneric("testDAA"))

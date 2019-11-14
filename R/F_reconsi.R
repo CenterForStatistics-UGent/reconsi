@@ -194,7 +194,6 @@ statsPerm = qnorm(
         }))
     }) else cdfValsMat
 )
-#No additional arguments needed
 } else {
     #If procedure works on raw test statistics, not many conversions are needed
 #Observed statistics
@@ -218,7 +217,6 @@ consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   quantileFun = quantileFun,
                   testPargs = testPargs,
                   B = B, p = p, warnConvergence = warnConvergence)
-
 #False discovery Rates
 FdrList = do.call(getFdr,
                   c(list(statObs = statObs,
