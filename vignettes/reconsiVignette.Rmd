@@ -72,8 +72,8 @@ plotNull(fdrRes)
 
 The approximate correlation matrix of test statistic can be visualized as follows:
 
-```{r plotCperm}
-plotCperm(fdrRes)
+```{r plotApproxCovar}
+plotApproxCovar(fdrRes)
 ```
 
 It is also possible to provide a custom test function, which must accept at

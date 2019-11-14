@@ -19,8 +19,8 @@
 #' )
 #' mat = mat = mat + rnorm(n, sd = 0.3) #Introduce some dependence
 #' fdrRes = reconsi(mat, x, B = B)
-#' corMat = getCperm(fdrRes$statsPerm)
-getCperm = function(statsPerm, nBins = 82L, binEdges = c(-4.1,4.1)){
+#' corMat = getApproxCovar(fdrRes$statsPerm)
+getApproxCovar = function(statsPerm, nBins = 82L, binEdges = c(-4.1,4.1)){
   Breaks = c(-Inf, seq(binEdges[1], binEdges[2], length.out = nBins+1), Inf)
   bootYs = apply(statsPerm, 2, function(xx){table(cut(xx, breaks = Breaks))})
   tcrossprod(bootYs-rowMeans(bootYs))/(ncol(statsPerm)-1)

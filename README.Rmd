@@ -103,7 +103,7 @@ quantile(FdrVDP)
 An approximation of the correlation matrix of the test statistics can be drawn as follows:
 
 ```{r approxCor}
-plotCperm(testVanDePutte)
+plotApproxCovar(testVanDePutte)
 ```
 
 This is the correlation matrix of binned test statistics, whereby yellow indicates negative correlations between bin counts and blue positive correlations. Each pixel represents a combination of two bins. It is clear that counts in the left and right tail are negatively correlated, and bin counts close together are positively correlated.
