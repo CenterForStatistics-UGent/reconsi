@@ -18,8 +18,8 @@
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
 #' \item{p0}{The proportion of true null hypotheses}
-getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs,
-                  smoothObs, ...)
+getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
+                  ...)
 {
   #Null
   G0 = pnorm(statObs, mean = fitAll["mean"], sd = fitAll["sd"])
@@ -37,7 +37,7 @@ getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs,
   #fdr
   if(is.null(fdr)){
     fdr  = dnorm(statObs, mean = fitAll["mean"], sd = fitAll["sd"])/
-        zValsDensObs*p0
+        approx(y = zValsDensObs, xout = statObs, x = zSeq)$y*p0
     fdr[fdr>1] = 1
   }
 return(list(Fdr = Fdr, fdr = fdr))

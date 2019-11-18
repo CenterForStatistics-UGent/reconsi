@@ -214,13 +214,12 @@ statsPerm = if(length(dim(testStats$statsPerm))==3)
 consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
                   tol = tol, estP0args = estP0args,
-                  quantileFun = quantileFun,
-                  testPargs = testPargs,
+                  quantileFun = quantileFun, testPargs = testPargs,
                   B = B, p = p, warnConvergence = warnConvergence)
 #False discovery Rates
 FdrList = do.call(getFdr,
-                  c(list(statObs = statObs,
-                         p = p, smoothObs = smoothObs), consensus))
+                  c(list(statObs = statObs, p = p, smoothObs = smoothObs),
+                    consensus))
 consensus$fdr = NULL
 
 names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
