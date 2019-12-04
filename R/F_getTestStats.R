@@ -88,6 +88,6 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     apply(Ycenter[permDesign[,ii],],2, function(y){
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
-  }
+    }
   return(list(statObs = statObs, statsPerm = statsPerm))
 }

@@ -24,7 +24,8 @@ Otherwise a bootstrap procedure is performed}
 
 \item{test}{Character string, giving the name of the function
 to test for differential absolute abundance.
-Must accept the formula interface}
+Must accept the formula interface. Features with tests resulting in
+observed NA test statistics will be discarded}
 
 \item{argList}{A list of arguments, passed on to the testing function}
 

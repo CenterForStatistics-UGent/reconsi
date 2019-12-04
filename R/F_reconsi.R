@@ -6,7 +6,8 @@
 #' @param B the number of resampling instances
 #' @param test Character string, giving the name of the function
 #'  to test for differential absolute abundance.
-#'  Must accept the formula interface
+#'  Must accept the formula interface. Features with tests resulting in
+#'  observed NA test statistics will be discarded
 #' @param argList A list of arguments, passed on to the testing function
 #' @param distFun,quantileFun,densFun the distribution, quantile and density
 #' functions of the test statistic, or its name.

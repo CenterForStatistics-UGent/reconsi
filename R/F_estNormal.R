@@ -8,9 +8,9 @@
 #' @importFrom stats sd weighted.mean
 estNormal = function(y, w = NULL, p){
     if(is.null(w)){
-        c(mean = mean(y), sd = sd(y))
+        c(mean = mean(y, na.rm = TRUE), sd = sd(y, na.rm = TRUE))
     } else {
-        wmean = weighted.mean(y, w = w)
-        c(mean = wmean, sd = sqrt(sum((y-wmean)^2*w)*1/(p-1)))
+        wmean = weighted.mean(y, w = w, na.rm = TRUE)
+        c(mean = wmean, sd = sqrt(sum((y-wmean)^2*w, na.rm = TRUE)*1/(p-1)))
     }
 }

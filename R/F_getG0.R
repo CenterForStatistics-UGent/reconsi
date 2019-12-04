@@ -40,9 +40,10 @@ getG0 = function(statObs, statsPerm, z0Quant, gridsize,
     stop("Dimensions of observed and permutation test statistics don't match!")
   }
 if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
+    statObs = statObs[!is.na(statObs)] #ignore NA values
   centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
   #The starting values are CRUCIAL!
-  Range = range(c(statsPerm, statObs))
+  Range = range(c(statsPerm, statObs), na.rm = TRUE)
   #Estimate observed densities
   zValsDensObs0 = bkde(statObs, range.x = Range, gridsize = gridsize,
                        truncate = FALSE)
