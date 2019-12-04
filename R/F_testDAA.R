@@ -42,5 +42,5 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y), ...){
     idSam = S>0
     if(min(table(x[idSam]))<2L) {return(NULL)}
-    reconsi(Y[,colSums(Y)>0], x=x[idSam], ...)
+    reconsi(Y[idSam,colSums(Y)>0], x=x[idSam], ...)
 })
