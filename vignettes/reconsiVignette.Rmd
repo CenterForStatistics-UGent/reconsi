@@ -135,7 +135,7 @@ When no grouping variable is available, one can perform a bootstrap as resamplin
 ```{r bootstrap}
 fdrResBootstrap = reconsi(Y = mat, B = 5e1, test = function(y, x, mu){
                                       testRes = t.test(y, mu = mu)
-                                      c(testRes$statistic, testRes$parameter)}, argList = list(mu = mu0), center = FALSE,
+                                      c(testRes$statistic, testRes$parameter)}, argList = list(mu = mu0),
                                   distFun = function(q){pt(q = q[1],
                                                            df = q[2])})
 ```
