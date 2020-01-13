@@ -16,7 +16,7 @@
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
 #' \item{statsPerm}{A p-by-B matrix of permutation test statistics}
-#' \item{priorProbs}{Prior probabilities of each of the resampling instances}
+#' \item{logPriorProbs}{Prior probabilities of each of the resampling instances}
 #'
 #' @importFrom resample samp.bootstrap samp.permute
 #' @importFrom stats dmultinom
@@ -35,12 +35,12 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
       samp.permute(n,B)
   #For bootstrap samples, find prior densities (up to a constant). Otherwise use
   # even priors for the permuation
-  priorProbs = if(replace){
+  logPriorProbs = if(replace){
     apply(permDesign, 2, function(x){
       #write the outcomes numericall
       tab = table(x)
       #Evaluate the multinomial
-      dmultinom(c(tab, integer(n-length(tab))), prob = rep.int(1,n))
+      dmultinom(c(tab, integer(n-length(tab))), prob = rep.int(1,n), log = TRUE)
     })
     #Evaluate the multinomial
   } else NULL
@@ -104,5 +104,5 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
     }
-  return(list(statObs = statObs, statsPerm = statsPerm, priorProbs = priorProbs))
+  return(list(statObs = statObs, statsPerm = statsPerm, logPriorProbs = logPriorProbs))
 }

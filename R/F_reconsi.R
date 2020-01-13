@@ -40,7 +40,7 @@
 #'  be broken randomly? If not, midranks are used
 #' @param warnConvergence Should a warning be thrown when the estimation
 #' of the random null does not converge?
-#' @details Efron (2007) centers the observations in each group prior
+#'@details Efron (2007) centers the observations in each group prior
 #'  to permutation. As permutations will remove any genuine group differences
 #'   anyway, we skip this step by default. If zValues = FALSE,
 #'   the density is fitted on the original test statistics rather than converted
@@ -59,7 +59,7 @@
 #' \item{permZvals}{z-values from resampling null distribution}
 #' \item{cdfValObs}{Cumulative distribution function evaluation
 #' of observed test statistics}
-#' \item{priorProbs}{Prior probabilities of resampling instances}
+#' \item{logPriorProbs}{Log prior probabilities of resampling instances}
 #' @export
 #' @importFrom stats pnorm qnorm
 #' @examples
@@ -218,7 +218,7 @@ consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   tol = tol, estP0args = estP0args,
                   quantileFun = quantileFun, testPargs = testPargs,
                   B = B, p = p, warnConvergence = warnConvergence,
-                  priorProbs = testStats$priorProbs)
+                  logPriorProbs = testStats$logPriorProbs)
 #False discovery Rates
 FdrList = do.call(getFdr,
                   c(list(statObs = statObs, p = p, smoothObs = smoothObs),
@@ -229,6 +229,6 @@ names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
        permZvals = permZvals, cdfValObs = cdfValObs,
        densFun = densFun, testPargs = testPargs, distFun = distFun,
-       quantileFun = quantileFun, priorProbs = testStats$priorProbs),
+       quantileFun = quantileFun, logPriorProbs = testStats$logPriorProbs),
   FdrList, consensus)
 }

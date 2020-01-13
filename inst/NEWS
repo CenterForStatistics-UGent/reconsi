@@ -4,6 +4,11 @@
 
 -   Enforce normality assumption on resample instances and collapsed null
 
+0.1.2
+=====
+
+-   Prior weights for bootstrap samples modified
+
 0.99.0
 ======
 

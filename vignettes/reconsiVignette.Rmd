@@ -119,8 +119,7 @@ than z-values by setting zValues = FALSE. This may be numerically less stable.
 
 ```{r kruskal}
 fdrResKruskal = reconsi(mat, x, B = 5e1,
-test = function(x, y){
- kruskal.test(y~x)$statistic}, zValues = FALSE)
+test = function(x, y){kruskal.test(y~x)$statistic}, zValues = FALSE)
 ```
 
 Alternatively, the same resampling instances may be used to determine the marginal null distributions as to estimate the collapsed null distribution, by setting the "permZvals" flag to true.

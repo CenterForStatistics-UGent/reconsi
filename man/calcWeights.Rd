@@ -4,7 +4,7 @@
 \alias{calcWeights}
 \title{Obtain weights as posterior probabilities to calculate the consensus null}
 \usage{
-calcWeights(logDensPerm, fdr, priorProbs)
+calcWeights(logDensPerm, fdr, logPriorProbs)
 }
 \arguments{
 \item{logDensPerm}{A matrix with B rows of logged density estimates of the B
@@ -13,7 +13,7 @@ permutation distributions}
 \item{fdr}{A vector of local false discovery rates
 along the support of the kernel}
 
-\item{priorProbs}{A vector of length B with prior probabilities of
+\item{logPriorProbs}{A vector of length B with logged prior probabilities of
 resampling instances}
 }
 \value{
