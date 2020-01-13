@@ -16,8 +16,10 @@
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
 #' \item{statsPerm}{A p-by-B matrix of permutation test statistics}
+#' \item{priorProbs}{Prior probabilities of each of the resampling instances}
 #'
 #' @importFrom resample samp.bootstrap samp.permute
+#' @importFrom stats dmultinom
 #'
 #' @details For test "wilcox.test" and "t.test",
 #' fast custom implementations are used. Other functions can be supplied
@@ -26,16 +28,29 @@
 #' its quantile function if z-values are to be used.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
                         argList, tieBreakRan = FALSE, replace = FALSE){
+  #Sample size
+  n = nrow(Y)
   #enumerate B unique ways to group
-  permDesign = if(replace) samp.bootstrap(nrow(Y), B) else
-      samp.permute(NROW(x),B)
+  permDesign = if(replace) samp.bootstrap(n, B) else
+      samp.permute(n,B)
+  #For bootstrap samples, find prior densities (up to a constant). Otherwise use
+  # even priors for the permuation
+  priorProbs = if(replace){
+    apply(permDesign, 2, function(x){
+      #write the outcomes numericall
+      tab = table(x)
+      #Evaluate the multinomial
+      dmultinom(c(tab, integer(n-length(tab))), prob = rep.int(1,n))
+    })
+    #Evaluate the multinomial
+  } else NULL
   if(center){
     if(replace){
       Ycenter = scale(Y, center = TRUE, scale = FALSE)
     } else {
-    for (ii in unique(x)){Y[x==ii,] = scale(Y[x==ii,],
-                                                  center = TRUE,
-                                                  scale = FALSE)}
+    for (ii in unique(x)){
+      Y[x==ii,] = scale(Y[x==ii,], center = TRUE, scale = FALSE)
+      }
     }
   } else {
       Ycenter = Y
@@ -89,5 +104,5 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
     }
-  return(list(statObs = statObs, statsPerm = statsPerm))
+  return(list(statObs = statObs, statsPerm = statsPerm, priorProbs = priorProbs))
 }

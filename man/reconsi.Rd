@@ -88,6 +88,7 @@ quantile function as given}
 \item{permZvals}{z-values from resampling null distribution}
 \item{cdfValObs}{Cumulative distribution function evaluation
 of observed test statistics}
+\item{priorProbs}{Prior probabilities of resampling instances}
 }
 \description{
 Perform simultaneous inference through

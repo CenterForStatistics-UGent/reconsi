@@ -16,6 +16,8 @@
 #' @param p an integer, the number of hypotheses
 #' @param warnConvergence Should a warning be thrown when the estimation
 #' of the random null does not converge?
+#' @param priorProbs A vector of length B with prior probabilities of
+#' resampling instances
 #'
 #' @importFrom KernSmooth bkde
 #' @importFrom stats qnorm dnorm approx quantile
@@ -35,7 +37,7 @@
 #' \item{fitAll}{The consensus null fit}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, quantileFun,
-                 testPargs, B, p, warnConvergence){
+                 testPargs, B, p, warnConvergence, priorProbs = NULL){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
   }
@@ -63,7 +65,8 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
   fdr[fdr==0] = .Machine$double.eps
   while(iter <= maxIter && !convergence){
     fdrOld = fdr; p0old = p0
-    weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
+    weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr,
+                          priorProbs = priorProbs)
     #Null distribution
     fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
     g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])

@@ -32,6 +32,7 @@ be broken randomly? If not, midranks are used}
 A list with components
 \item{statObs}{A vector of length p of observed test statistics}
 \item{statsPerm}{A p-by-B matrix of permutation test statistics}
+\item{priorProbs}{Prior probabilities of each of the resampling instances}
 }
 \description{
 A function to calculate observed and permuation z-statistics

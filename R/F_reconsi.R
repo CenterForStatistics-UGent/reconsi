@@ -59,6 +59,7 @@
 #' \item{permZvals}{z-values from resampling null distribution}
 #' \item{cdfValObs}{Cumulative distribution function evaluation
 #' of observed test statistics}
+#' \item{priorProbs}{Prior probabilities of resampling instances}
 #' @export
 #' @importFrom stats pnorm qnorm
 #' @examples
@@ -216,7 +217,8 @@ consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
                   tol = tol, estP0args = estP0args,
                   quantileFun = quantileFun, testPargs = testPargs,
-                  B = B, p = p, warnConvergence = warnConvergence)
+                  B = B, p = p, warnConvergence = warnConvergence,
+                  priorProbs = testStats$priorProbs)
 #False discovery Rates
 FdrList = do.call(getFdr,
                   c(list(statObs = statObs, p = p, smoothObs = smoothObs),
@@ -227,6 +229,6 @@ names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
        permZvals = permZvals, cdfValObs = cdfValObs,
        densFun = densFun, testPargs = testPargs, distFun = distFun,
-       quantileFun = quantileFun),
+       quantileFun = quantileFun, priorProbs = testStats$priorProbs),
   FdrList, consensus)
 }
