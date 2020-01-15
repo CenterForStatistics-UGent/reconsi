@@ -29,7 +29,8 @@ Plot the obtained null distribution along with a histogram of observed test
 statistics
 }
 \examples{
- p = 200; n = 50; B = 1e2
+ p = 175; n = 50; B = 1e2
+ #Low number of resamples keeps computation time down
  x = rep(c(0,1), each = n/2)
  mat = cbind(
  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA

@@ -46,7 +46,6 @@
 #'   the density is fitted on the original test statistics rather than converted
 #'   to z-values. This unlocks the procedure for test statistics with unknown
 #'   distributions, but may be numerically less stable.
-#'
 #' @return A list with entries
 #' \item{statsPerm}{Resampling Z-values}
 #' \item{statObs}{Observed Z-values}
@@ -63,7 +62,7 @@
 #' @export
 #' @importFrom stats pnorm qnorm
 #' @examples
-#' p = 200; n = 50; B = 5e1
+#' p = 80; n = 20; B = 2e1
 #' x = rep(c(0,1), each = n/2)
 #' mat = cbind(
 #' matrix(rnorm(n*p/10, mean = 5+x), n, p/10), #DA

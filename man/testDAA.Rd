@@ -39,11 +39,13 @@ A function to test for differential absolute abundance on a phyloseq object
 }
 \examples{
 #Test for phyloseq object
-testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen",
-B = 5e1)
-#Test for matrix
 library(phyloseq)
-testMat = testDAA(as(otu_table(Vandeputte), "matrix"),
-get_variable(Vandeputte, "Health.status"),
-get_variable(Vandeputte,"absCountFrozen"), B = 5e1)
+VandeputtePruned = prune_samples(Vandeputte,
+samples = sample_names(Vandeputte)[20:40])
+testVanDePutte = testDAA(VandeputtePruned, "Health.status", "absCountFrozen",
+B = 15)
+#Test for matrix
+testMat = testDAA(as(otu_table(VandeputtePruned), "matrix"),
+get_variable(VandeputtePruned, "Health.status"),
+get_variable(VandeputtePruned,"absCountFrozen"), B = 15)
 }

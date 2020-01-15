@@ -22,23 +22,24 @@ setGeneric("testDAA", function(Y, ...) standardGeneric("testDAA"))
 #'@rdname testDAA
 #'@examples
 #'#Test for phyloseq object
-#'testVanDePutte = testDAA(Vandeputte, "Health.status", "absCountFrozen",
-#'B = 5e1)
+#'library(phyloseq)
+#'VandeputtePruned = prune_samples(Vandeputte,
+#'samples = sample_names(Vandeputte)[20:40])
+#'testVanDePutte = testDAA(VandeputtePruned, "Health.status", "absCountFrozen",
+#'B = 15)
 setMethod("testDAA", "phyloseq", function(Y, groupName, FCname, ...){
 otuTab  = if(taxa_are_rows(Y)) t(as(otu_table(Y), "matrix")) else
     as(otu_table(Y), "matrix")
 testDAA(Y = otuTab, FC = get_variable(Y, FCname),
         x = factor(get_variable(Y, groupName)), ...)
 })
-
 #' @export
 #' @rdname testDAA
 #' @examples
 #' #Test for matrix
-#' library(phyloseq)
-#' testMat = testDAA(as(otu_table(Vandeputte), "matrix"),
-#' get_variable(Vandeputte, "Health.status"),
-#' get_variable(Vandeputte,"absCountFrozen"), B = 5e1)
+#' testMat = testDAA(as(otu_table(VandeputtePruned), "matrix"),
+#' get_variable(VandeputtePruned, "Health.status"),
+#' get_variable(VandeputtePruned,"absCountFrozen"), B = 15)
 setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y), ...){
     idSam = S>0
     if(min(table(x[idSam]))<2L) {return(NULL)}

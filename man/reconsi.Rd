@@ -103,7 +103,7 @@ Efron (2007) centers the observations in each group prior
   distributions, but may be numerically less stable.
 }
 \examples{
-p = 200; n = 50; B = 5e1
+p = 80; n = 20; B = 2e1
 x = rep(c(0,1), each = n/2)
 mat = cbind(
 matrix(rnorm(n*p/10, mean = 5+x), n, p/10), #DA
