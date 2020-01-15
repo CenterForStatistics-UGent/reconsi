@@ -9,8 +9,8 @@
 #'
 #' @return A vector of weights of length B
 calcWeights = function(logDensPerm, fdr, logPriorProbs){
-  logVec = colSums(logDensPerm*fdr)
-  if(!is.null(logPriorProbs)) logVec = logVec + logPriorProbs
-  weights = exp(stabExp(logVec))
-  weights/sum(weights)
+    logVec = colSums(logDensPerm*fdr)
+    if(!is.null(logPriorProbs)) logVec = logVec + logPriorProbs
+    weights = exp(stabExp(logVec))
+    weights/sum(weights)
 }

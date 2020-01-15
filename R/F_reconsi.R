@@ -224,7 +224,6 @@ FdrList = do.call(getFdr,
                   c(list(statObs = statObs, p = p, smoothObs = smoothObs),
                     consensus))
 consensus$fdr = NULL
-
 names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
        permZvals = permZvals, cdfValObs = cdfValObs,

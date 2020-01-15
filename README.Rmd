@@ -14,7 +14,14 @@ A short tutorial is given here, more detailed instructions can be found in the v
 
 # Installation
 
-The package can be installed using the following commands:
+The package can be installed and loaded using the following commands:
+
+```{r installBioConductor, eval = FALSE}
+library(BiocManager)
+install("reconsi", update = FALSE)
+```
+
+Alternatively, the latest version can be installed directly from this GitHub repo as follows:
 
 ```{r install, eval = FALSE}
 library(devtools)
@@ -23,8 +30,9 @@ install_github("CenterForStatistics-Ugent/reconsi")
 
 and loaded as
 
-```{r loadRransi}
-library(reconsi)
+```{r loadReconsi}
+suppressPackageStartupMessages(library(reconsi, quietly = TRUE, warn.conflicts = FALSE))
+cat("reconsi package version", as.character(packageVersion("reconsi")), "\n")
 ```
 
 # General use

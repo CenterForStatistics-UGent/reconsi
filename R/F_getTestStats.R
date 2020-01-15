@@ -104,5 +104,6 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
     }
-  return(list(statObs = statObs, statsPerm = statsPerm, logPriorProbs = logPriorProbs))
+  return(list(statObs = statObs, statsPerm = statsPerm,
+              logPriorProbs = logPriorProbs))
 }

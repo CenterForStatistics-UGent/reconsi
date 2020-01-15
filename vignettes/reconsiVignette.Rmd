@@ -21,7 +21,7 @@ hypotheses using collapsed null distributions. These collapsed null distribution
 are estimated in an empirical Bayes framework through resampling. Wilcoxon rank sum test and two sample t-test
 are natively implemented, but any other test can be used.
 
-## Installing and loading the package
+# Installation
 
 ```{r installBioConductor, eval = FALSE}
 library(BiocManager)

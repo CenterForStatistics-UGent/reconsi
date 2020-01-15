@@ -24,8 +24,8 @@ getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
   statObsNotNA = statObs[!is.na(statObs)]
   #Null
   G0 = pnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])
-  G0[G0>0.5] = pnorm(statObsNotNA[G0>0.5], mean = fitAll["mean"], sd = fitAll["sd"],
-                     lower.tail = FALSE)
+  G0[G0>0.5] = pnorm(statObsNotNA[G0>0.5], mean = fitAll["mean"],
+                     sd = fitAll["sd"], lower.tail = FALSE)
   #Observed
   zcum = if(smoothObs) {
     approx(y = cumsum(zValsDensObs/sum(zValsDensObs)),

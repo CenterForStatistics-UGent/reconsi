@@ -9,7 +9,14 @@ A short tutorial is given here, more detailed instructions can be found in the v
 Installation
 ============
 
-The package can be installed using the following commands:
+The package can be installed and loaded using the following commands:
+
+``` r
+library(BiocManager)
+install("reconsi", update = FALSE)
+```
+
+Alternatively, the latest version can be installed directly from this GitHub repo as follows:
 
 ``` r
 library(devtools)
@@ -19,8 +26,11 @@ install_github("CenterForStatistics-Ugent/reconsi")
 and loaded as
 
 ``` r
-library(reconsi)
+suppressPackageStartupMessages(library(reconsi, quietly = TRUE, warn.conflicts = FALSE))
+cat("reconsi package version", as.character(packageVersion("reconsi")), "\n")
 ```
+
+    ## reconsi package version 0.99.2
 
 General use
 ===========
@@ -32,10 +42,9 @@ We illustrate the general use of the package on a synthetic dataset. The default
 p = 200
 n = 50
 x = rep(c(0, 1), each = n/2)
-mat = cbind(matrix(rnorm(n * p/10, mean = 5 + x), n, p/10), matrix(rnorm(n * 
-    p * 9/10, mean = 5), n, p * 9/10))
-# Provide just the matrix and grouping factor, and test using the collapsed
-# null
+mat = cbind(matrix(rnorm(n * p/10, mean = 5 + x), n, p/10), matrix(rnorm(n * p * 
+    9/10, mean = 5), n, p * 9/10))
+# Provide just the matrix and grouping factor, and test using the collapsed null
 fdrRes = reconsi(mat, x)
 # The estimated tail-area false discovery rates.
 estFdr = fdrRes$Fdr
@@ -47,7 +56,7 @@ The method provides an estimate of the proportion of true null hypothesis, which
 fdrRes$p0
 ```
 
-    ## [1] 0.8751848
+    ## [1] 0.8466768
 
 The result of the procedure can be represented graphically as follows:
 
@@ -79,8 +88,8 @@ We illustrate the package using an application from microbiology. The species co
 The dataset used is taken from Vandeputte *et al.*, 2017 (see [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/29143816)), a study on gut microbiome in healthy and Crohn's disease patients. The test looks for differences in absolute abundance between healthy and diseased patients. It relies on the [phyloseq](https://bioconductor.org/packages/release/bioc/html/phyloseq.html) package, which is the preferred way to interact with our machinery for microbiome data.
 
 ``` r
-# The grouping and flow cytometry variables are present in the phyloseq
-# object, they only need to be called by their name.
+# The grouping and flow cytometry variables are present in the phyloseq object,
+# they only need to be called by their name.
 testVanDePutte = testDAA(Vandeputte, groupName = "Health.status", FCname = "absCountFrozen", 
     B = 100L)
 ```
@@ -93,7 +102,7 @@ quantile(FdrVDP)
 ```
 
     ##           0%          25%          50%          75%         100% 
-    ## 1.554661e-18 1.455041e-02 3.015831e-01 7.276982e-01 8.680592e-01
+    ## 1.238700e-18 1.423598e-02 3.001290e-01 7.287774e-01 8.703789e-01
 
 An approximation of the correlation matrix of the test statistics can be drawn as follows:
 
