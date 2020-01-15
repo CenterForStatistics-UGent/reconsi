@@ -137,10 +137,10 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     stop("Distribution function must accept arguments named 'q'\n")
 }
  if(!"p" %in% names(formals(quantileFun))){
-     stop("Quantile function must accept arguments named 'q'\n")
+     stop("Quantile function must accept arguments named 'p'\n")
  }
  if(!is.null(densFun) && !"x" %in% names(formals(densFun))){
-     stop("Density function must accept arguments named 'q'\n")
+     stop("Density function must accept arguments named 'x'\n")
  }
     if(!"y" %in% names(formals(test)) && !test %in% c("t.test", "wilcox.test")){
         stop("Test function must accept 'y' argument\n")
