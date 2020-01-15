@@ -6,3 +6,4 @@
 *.access^
 README_cache/
 inst/NEWS.Rmd
+/R/.access^
