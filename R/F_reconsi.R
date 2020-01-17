@@ -62,6 +62,8 @@
 #' @export
 #' @importFrom stats pnorm qnorm
 #' @examples
+#' #Important notice: low number of resamples B necessary to keep
+#' computation time down, but not recommended. Pray set B at 200 or higher.
 #' p = 80; n = 20; B = 2e1
 #' x = rep(c(0,1), each = n/2)
 #' mat = cbind(
