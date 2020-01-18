@@ -102,7 +102,11 @@ Efron (2007) centers the observations in each group prior
   distributions, but may be numerically less stable.
 }
 \note{
-Ideally, it would be better to only use unique resamples
+Ideally, it would be better to only use unique resamples, to avoid
+unnecesarry replicated calculations of the same test statistics. Yet this
+issue is almost alwyas ignored in practice; as the sample size grows it also
+becomes irrelevant. Notice also that this would require to place weights in
+case of the bootstrap, as some bootstrap samples are more likely than others.
 }
 \examples{
 #Important notice: low number of resamples B necessary to keep

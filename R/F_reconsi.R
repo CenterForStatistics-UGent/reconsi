@@ -60,7 +60,11 @@
 #' of observed test statistics}
 #' @export
 #' @importFrom stats pnorm qnorm
-#' @note Ideally, it would be better to only use unique resamples
+#' @note Ideally, it would be better to only use unique resamples, to avoid
+#' unnecesarry replicated calculations of the same test statistics. Yet this
+#' issue is almost alwyas ignored in practice; as the sample size grows it also
+#' becomes irrelevant. Notice also that this would require to place weights in
+#' case of the bootstrap, as some bootstrap samples are more likely than others.
 #' @examples
 #' #Important notice: low number of resamples B necessary to keep
 #' # computation time down, but not recommended. Pray set B at 200 or higher.
@@ -159,6 +163,11 @@ if(ncol(Y)<30){
  warning("Less than 30 hypotheses tested, multplicity correction may
          be unreliable.\nConsider using p.adjust(..., method ='BH').",
          immediate. = TRUE)
+}
+if(nrow(Y)<7){
+    warning("Small sample size may not yield sufficient unique resampling
+            instances.\nConsider using p.adjust(..., method ='BH').",
+            immediate. = TRUE)
 }
   p = ncol(Y)
 if(is.null(zVals)){
