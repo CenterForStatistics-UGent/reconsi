@@ -88,7 +88,6 @@ quantile function as given}
 \item{permZvals}{z-values from resampling null distribution}
 \item{cdfValObs}{Cumulative distribution function evaluation
 of observed test statistics}
-\item{logPriorProbs}{Log prior probabilities of resampling instances}
 }
 \description{
 Perform simultaneous inference through
@@ -102,7 +101,12 @@ Efron (2007) centers the observations in each group prior
   to z-values. This unlocks the procedure for test statistics with unknown
   distributions, but may be numerically less stable.
 }
+\note{
+Ideally, it would be better to only use unique resamples
+}
 \examples{
+#Important notice: low number of resamples B necessary to keep
+# computation time down, but not recommended. Pray set B at 200 or higher.
 p = 80; n = 20; B = 2e1
 x = rep(c(0,1), each = n/2)
 mat = cbind(

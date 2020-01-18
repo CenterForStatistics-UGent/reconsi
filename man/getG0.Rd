@@ -5,7 +5,7 @@
 \title{Obtain the consensus null}
 \usage{
 getG0(statObs, statsPerm, z0Quant, gridsize, maxIter, tol, estP0args,
-  quantileFun, testPargs, B, p, warnConvergence, logPriorProbs = NULL)
+  quantileFun, testPargs, B, p, warnConvergence)
 }
 \arguments{
 \item{statObs}{A vector of lenght p with observed test statistics}
@@ -35,9 +35,6 @@ either as a function or as a character string}
 
 \item{warnConvergence}{Should a warning be thrown when the estimation
 of the random null does not converge?}
-
-\item{logPriorProbs}{A vector of length B with logged prior probabilities of
-resampling instances}
 }
 \value{
 A list with following entries

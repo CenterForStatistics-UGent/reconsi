@@ -16,10 +16,7 @@
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
 #' \item{statsPerm}{A p-by-B matrix of permutation test statistics}
-#' \item{logPriorProbs}{Prior probabilities of each of the resampling instances}
-#'
-#' @importFrom resample samp.bootstrap samp.permute
-#' @importFrom stats dmultinom
+#' @importFrom stats runif
 #'
 #' @details For test "wilcox.test" and "t.test",
 #' fast custom implementations are used. Other functions can be supplied
@@ -30,20 +27,10 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
                         argList, tieBreakRan = FALSE, replace = FALSE){
   #Sample size
   n = nrow(Y)
-  #enumerate B unique ways to group
-  permDesign = if(replace) samp.bootstrap(n, B) else
-      samp.permute(n,B)
-  #For bootstrap samples, find prior densities (up to a constant). Otherwise use
-  # even priors for the permuation
-  logPriorProbs = if(replace){
-    apply(permDesign, 2, function(x){
-      #write the outcomes numericall
-      tab = table(x)
-      #Evaluate the multinomial
-      dmultinom(c(tab, integer(n-length(tab))), prob = rep.int(1,n), log = TRUE)
-    })
-    #Evaluate the multinomial
-  } else NULL
+  #enumerate B ways to permute/combine
+  permDesign = if(replace) matrix(ceiling(n*runif(n*B)),
+                                  nrow = n, ncol = B) else
+      vapply(integer(B), FUN.VALUE = integer(n),function(x) sample.int(n = n))
   if(center){
     if(replace){
       Ycenter = scale(Y, center = TRUE, scale = FALSE)
@@ -104,6 +91,5 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
     }
-  return(list(statObs = statObs, statsPerm = statsPerm,
-              logPriorProbs = logPriorProbs))
+  return(list(statObs = statObs, statsPerm = statsPerm))
 }

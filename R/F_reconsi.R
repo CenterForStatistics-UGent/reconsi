@@ -58,12 +58,12 @@
 #' \item{permZvals}{z-values from resampling null distribution}
 #' \item{cdfValObs}{Cumulative distribution function evaluation
 #' of observed test statistics}
-#' \item{logPriorProbs}{Log prior probabilities of resampling instances}
 #' @export
 #' @importFrom stats pnorm qnorm
+#' @note Ideally, it would be better to only use unique resamples
 #' @examples
 #' #Important notice: low number of resamples B necessary to keep
-#' computation time down, but not recommended. Pray set B at 200 or higher.
+#' # computation time down, but not recommended. Pray set B at 200 or higher.
 #' p = 80; n = 20; B = 2e1
 #' x = rep(c(0,1), each = n/2)
 #' mat = cbind(
@@ -218,8 +218,7 @@ consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                   z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
                   tol = tol, estP0args = estP0args,
                   quantileFun = quantileFun, testPargs = testPargs,
-                  B = B, p = p, warnConvergence = warnConvergence,
-                  logPriorProbs = testStats$logPriorProbs)
+                  B = B, p = p, warnConvergence = warnConvergence)
 #False discovery Rates
 FdrList = do.call(getFdr,
                   c(list(statObs = statObs, p = p, smoothObs = smoothObs),
@@ -229,6 +228,6 @@ names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
 c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
        permZvals = permZvals, cdfValObs = cdfValObs,
        densFun = densFun, testPargs = testPargs, distFun = distFun,
-       quantileFun = quantileFun, logPriorProbs = testStats$logPriorProbs),
+       quantileFun = quantileFun),
   FdrList, consensus)
 }
