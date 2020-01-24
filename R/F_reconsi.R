@@ -141,7 +141,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
             if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply to two groups! \n Try 'kruskal.test()' or 'lm()'.")}
         }
       if(test == "t.test"){
-        distFun = "pt.edit"; densFun = "dt"; quantileFun = "qt.edit"
+        distFun = "ptEdit"; densFun = "dt"; quantileFun = "qtEdit"
         if(!zValues) {
             stop("With t-tests, the test statistic must be converted to zValues. Please set zValues = TRUE")
         }
