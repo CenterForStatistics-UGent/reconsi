@@ -3,5 +3,5 @@
 #'
 #' @return the vector with the maximum subtracted
 stabExp = function(exps){
-exps-max(exps)
+    exps-max(exps)
 }

@@ -20,5 +20,5 @@ Suggests:
     rmarkdown,
     testthat
 VignetteBuilder: knitr
-biocViews: Metagenomics, Microbiome, MultipleComparison
+biocViews: Metagenomics, Microbiome, MultipleComparison, FlowCytometry
 BugReports: https://github.com/CenterForStatistics-UGent/reconsi/issues
