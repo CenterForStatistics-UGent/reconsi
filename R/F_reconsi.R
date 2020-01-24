@@ -130,8 +130,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
       if(test == "t.test"){
         distFun = "pt.edit"; densFun = "dt"; quantileFun = "qt.edit"
         if(!zValues) {
-            stop("With t-tests, the test statistic must be converted to zValues.
-                 Please set zValues = TRUE")
+            stop("With t-tests, the test statistic must be converted to zValues. Please set zValues = TRUE")
         }
         } else if(test=="wilcox.test"){
         testPargs = list(m = table(x)[1], n = table(x)[2])
@@ -151,22 +150,18 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
         stop("Test function must accept 'y' argument\n")
     }
 if(!is.matrix(Y)){
-    stop(paste("Please provide a data matrix as imput!\n",
-               if(is.vector(Y)) "Multiplicity correction only needed when
-               testing multiple hypotheses."))
+    stop("Please provide a data matrix as imput!\n",
+               if(is.vector(Y)) "Multiplicity correction only needed when testing multiple hypotheses.")
 }
 if(!is.null(x) && NROW(x)!=nrow(Y)){
-    stop("Length of grouping factor does not correspond to number of
-         rows of data matrix!\n")
+    stop("Length of grouping factor does not correspond to number of rows of data matrix!\n")
 }
 if(ncol(Y)<30){
- warning("Less than 30 hypotheses tested, multplicity correction may
-         be unreliable.\nConsider using p.adjust(..., method ='BH').",
+ warning("Less than 30 hypotheses tested, multplicity correction may be unreliable.\nConsider using p.adjust(..., method ='BH').",
          immediate. = TRUE)
 }
 if(nrow(Y)<7){
-    warning("Small sample size may not yield sufficient unique resampling
-            instances.\nConsider using p.adjust(..., method ='BH').",
+    warning("Small sample size may not yield sufficient unique resampling instances.\nConsider using p.adjust(..., method ='BH').",
             immediate. = TRUE)
 }
   p = ncol(Y)

@@ -78,8 +78,7 @@ if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
     iter = iter + 1L
   }
   if(!convergence && warnConvergence){
-      warning("Consensus null estimation did not converge,
-              please investigate cause! \n")}
+      warning("Consensus null estimation did not converge, please investigate cause! \n")}
   return(list(PermDensFits = PermDensFits, zSeq = zSeq,
               zValsDensObs = zValsDensObs, convergence  = convergence,
               weights = weights, fdr = fdr,
