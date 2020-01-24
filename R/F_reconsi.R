@@ -127,7 +127,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     stopifnot(is.matrix(Y), is.list(argList), is.logical(center),
               is.logical(smoothObs), is.logical(warnConvergence),
               is.logical(permZvals), is.logical(replace), is.numeric(z0Quant),
-              is.numeric(tol), is.numeric(maxIter), is.numeric(gridSize),
+              is.numeric(tol), is.numeric(maxIter), is.numeric(gridsize),
               is.numeric(B), is.list(estP0args))
     if(is.function(test)){
 
@@ -150,101 +150,103 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
         distFun = "pwilcox"; densFun ="dwilcox"; quantileFun = "qwilcox"
         }
     }
- if(!"q" %in% names(formals(distFun))){
-    stop("Distribution function must accept arguments named 'q'\n")
-}
- if(!"p" %in% names(formals(quantileFun))){
-     stop("Quantile function must accept arguments named 'p'\n")
- }
- if(!is.null(densFun) && !"x" %in% names(formals(densFun))){
-     stop("Density function must accept arguments named 'x'\n")
- }
+    if(!"q" %in% names(formals(distFun))){
+        stop("Distribution function must accept arguments named 'q'\n")
+    }
+    if(!"p" %in% names(formals(quantileFun))){
+         stop("Quantile function must accept arguments named 'p'\n")
+    }
+    if(!is.null(densFun) && !"x" %in% names(formals(densFun))){
+         stop("Density function must accept arguments named 'x'\n")
+    }
     if(!"y" %in% names(formals(test)) && !test %in% c("t.test", "wilcox.test")){
         stop("Test function must accept 'y' argument\n")
     }
-if(!is.matrix(Y)){
-    stop("Please provide a data matrix as imput!\n",
+    if(!is.matrix(Y)){
+        stop("Please provide a data matrix as imput!\n",
                if(is.vector(Y)) "Multiplicity correction only needed when testing multiple hypotheses.")
-}
-if(!is.null(x) && NROW(x)!=nrow(Y)){
-    stop("Length of grouping factor does not correspond to number of rows of data matrix!\n")
-}
-if(ncol(Y)<30){
- warning("Less than 30 hypotheses tested, multplicity correction may be unreliable.\nConsider using p.adjust(..., method ='BH').",
-         immediate. = TRUE)
-}
-if(nrow(Y)<7){
-    warning("Small sample size may not yield sufficient unique resampling instances.\nConsider using p.adjust(..., method ='BH').",
-            immediate. = TRUE)
-}
-  p = ncol(Y)
-if(is.null(zVals)){
-#Test statistics
-testStats = getTestStats(Y = Y, center = center, test = test,
-                         x = x, B = B, argList = argList,
-                         tieBreakRan = tieBreakRan, replace = replace)
-#Observed cdf values
-cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
-    quantCorrect(do.call(distFun, c(list(q = stats), testPargs)))
-})
-if(zValues){
-#If procedure works with z-values rather than raw test statistics,
-    #convert to z-values
-#Resample cdf-values
-cdfValsMat =  apply(testStats$statsPerm,
-                  MARGIN = if(length(dim(testStats$statsPerm))==3) c(2,3)
-                  else 2, function(stats){
-                      quantCorrect(do.call(distFun,
-                                           c(list(q = stats), testPargs)))
-                  })
-#Observed z-values
-statObs = qnorm(
-    if(permZvals) quantCorrect(vapply(seq_along(cdfValObs),
-                                      FUN.VALUE = double(1),
-                                      function(i){
-        (sum(cdfValObs[i] > cdfValsMat[i,])+1L)/(B+2L)
-    })) else cdfValObs
-)
-#Resample z-values
-statsPerm = qnorm(
-    if(permZvals) vapply(seq_len(B), FUN.VALUE = statObs, function(b){
-        quantCorrect(vapply(seq_along(cdfValObs), FUN.VALUE = double(1),
-                            function(i){
-            (sum(cdfValsMat[i,b] > cdfValsMat[i,-b])+1L)/(B+2L)
-        }))
-    }) else cdfValsMat
-)
-} else {
-    #If procedure works on raw test statistics, not many conversions are needed
-#Observed statistics
-statObs = if(is.matrix(testStats$statObs)) testStats$statObs[1,] else
-  testStats$statObs
-#Permuation statistics
-statsPerm = if(length(dim(testStats$statsPerm))==3)
-    testStats$statsPerm[1,,] else testStats$statsPerm
-}
-} else {
-    #If test statistics give, recover them
-  statObs = zVals$statObs; statsPerm = zVals$statsPerm
-  cdfValObs = zVals$cdfValObs
- }
-  if(zValues) {quantileFun = "qnorm"; densFun ="dnorm"; distFun = "pnorm";
-  testPargs = list()}
-#Consensus distribution estimation
-consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
-                  z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
-                  tol = tol, estP0args = estP0args,
-                  quantileFun = quantileFun, testPargs = testPargs,
-                  B = B, p = p, warnConvergence = warnConvergence)
-#False discovery Rates
-FdrList = do.call(getFdr,
-                  c(list(statObs = statObs, p = p, smoothObs = smoothObs),
-                    consensus))
-consensus$fdr = NULL
-names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
-c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
-       permZvals = permZvals, cdfValObs = cdfValObs,
-       densFun = densFun, testPargs = testPargs, distFun = distFun,
-       quantileFun = quantileFun),
-  FdrList, consensus)
+    }
+    if(!is.null(x) && NROW(x)!=nrow(Y)){
+        stop("Length of grouping factor does not correspond to number of rows of data matrix!\n")
+    }
+    if(ncol(Y)<30){
+     warning("Less than 30 hypotheses tested, multplicity correction may be unreliable.\nConsider using p.adjust(..., method ='BH').",
+             immediate. = TRUE)
+    }
+    if(nrow(Y)<7){
+        warning("Small sample size may not yield sufficient unique resampling instances.\nConsider using p.adjust(..., method ='BH').",
+                immediate. = TRUE)
+    }
+      p = ncol(Y)
+    if(is.null(zVals)){
+    #Test statistics
+    testStats = getTestStats(Y = Y, center = center, test = test,
+                             x = x, B = B, argList = argList,
+                             tieBreakRan = tieBreakRan, replace = replace)
+    #Observed cdf values
+    cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
+        quantCorrect(do.call(distFun, c(list(q = stats), testPargs)))
+    })
+    if(zValues){
+    #If procedure works with z-values rather than raw test statistics,
+        #convert to z-values
+    #Resample cdf-values
+    cdfValsMat =  apply(testStats$statsPerm,
+                      MARGIN = if(length(dim(testStats$statsPerm))==3) c(2,3)
+                      else 2, function(stats){
+                          quantCorrect(do.call(distFun,
+                                               c(list(q = stats), testPargs)))
+                      })
+    #Observed z-values
+    statObs = qnorm(
+        if(permZvals) quantCorrect(vapply(seq_along(cdfValObs),
+                                          FUN.VALUE = double(1),
+                                          function(i){
+            (sum(cdfValObs[i] > cdfValsMat[i,])+1L)/(B+2L)
+        })) else cdfValObs
+    )
+    #Resample z-values
+    statsPerm = qnorm(
+        if(permZvals) vapply(seq_len(B), FUN.VALUE = statObs, function(b){
+            quantCorrect(vapply(seq_along(cdfValObs), FUN.VALUE = double(1),
+                                function(i){
+                (sum(cdfValsMat[i,b] > cdfValsMat[i,-b])+1L)/(B+2L)
+            }))
+        }) else cdfValsMat
+    )
+    } else {
+        #If procedure works on raw test statistics, not many conversions are needed
+    #Observed statistics
+    statObs = if(is.matrix(testStats$statObs)) testStats$statObs[1,] else
+      testStats$statObs
+    #Permuation statistics
+    statsPerm = if(length(dim(testStats$statsPerm))==3)
+        testStats$statsPerm[1,,] else testStats$statsPerm
+    }
+    } else {
+        #If test statistics give, recover them
+      statObs = zVals$statObs; statsPerm = zVals$statsPerm
+      cdfValObs = zVals$cdfValObs
+     }
+      if(zValues) {
+          quantileFun = "qnorm"; densFun ="dnorm"; distFun = "pnorm"
+          testPargs = list()
+          }
+    #Consensus distribution estimation
+    consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
+                      z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
+                      tol = tol, estP0args = estP0args,
+                      quantileFun = quantileFun, testPargs = testPargs,
+                      B = B, p = p, warnConvergence = warnConvergence)
+    #False discovery Rates
+    FdrList = do.call(getFdr,
+                      c(list(statObs = statObs, p = p, smoothObs = smoothObs),
+                        consensus))
+    consensus$fdr = NULL
+    names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
+    c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
+           permZvals = permZvals, cdfValObs = cdfValObs,
+           densFun = densFun, testPargs = testPargs, distFun = distFun,
+           quantileFun = quantileFun),
+      FdrList, consensus)
 }

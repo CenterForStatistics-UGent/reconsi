@@ -42,6 +42,8 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 #' get_variable(VandeputtePruned,"absCountFrozen"), B = 15)
 setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y), ...){
     idSam = S>0
-    if(min(table(x[idSam]))<2L) {return(NULL)}
+    if(min(table(x[idSam]))<2L){
+        return(NULL)
+        }
     reconsi(Y[idSam,colSums(Y)>0], x=x[idSam], ...)
 })

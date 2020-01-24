@@ -7,11 +7,12 @@
 calcWeights(logDensPerm, fdr)
 }
 \arguments{
-\item{logDensPerm}{A matrix with B rows of logged density estimates of the B
-permutation distributions}
+\item{logDensPerm}{A matrix with B rows  of logged density estimates of the B
+permutation distributions, and p columns for the p observed test
+statistics}
 
-\item{fdr}{A vector of local false discovery rates
-along the support of the kernel}
+\item{fdr}{A vector of local false discovery rates for the observed tests
+statistics of length p}
 }
 \value{
 A vector of weights of length B

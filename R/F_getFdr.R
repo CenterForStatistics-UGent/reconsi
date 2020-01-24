@@ -30,7 +30,9 @@ getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
   zcum = if(smoothObs) {
     approx(y = cumsum(zValsDensObs/sum(zValsDensObs)),
     xout = statObsNotNA, x = zSeq)$y
-   } else {ecdf(statObsNotNA)(statObsNotNA)}
+  } else {
+       ecdf(statObsNotNA)(statObsNotNA)
+      }
   zcum[zcum>0.5] = 1-zcum[zcum>0.5]+1/p
   #Fdr
   Fdr = G0/zcum*p0

@@ -39,8 +39,10 @@ getG0 = function(statObs, statsPerm, z0Quant, gridsize,
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
   }
-if(length(z0Quant)==1) {z0Quant = sort(c(z0Quant, 1-z0Quant))}
-    statObs = statObs[!is.na(statObs)] #ignore NA values
+if(length(z0Quant)==1) {
+    z0Quant = sort(c(z0Quant, 1-z0Quant))
+    }
+  statObs = statObs[!is.na(statObs)] #ignore NA values
   centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
   #The starting values are CRUCIAL!
   Range = range(c(statsPerm, statObs), na.rm = TRUE)

@@ -11,9 +11,7 @@ rowMultiply(matrix, vector)
 \arguments{
 \item{matrix}{a numeric matrix of dimension a-by-b}
 
-\item{vector}{a numeric vector of length b
-
-t(t(matrix)*vector) but then faster}
+\item{vector}{a numeric vector of length b}
 }
 \value{
 a matrix, row multplied by the vector
