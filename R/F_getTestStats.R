@@ -43,13 +43,6 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
       Ycenter = Y
       }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
-    if(is.null(x) || NCOL(x)!=1){
-        stop("Provide single grouping variable for Wilcoxon rank sum test
-             or t-test")
-    }
-    x = factor(x)
-    if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply
-                          to two groups! \n Try 'kruskal.test()' or 'lm()'.")}
     xLog = x==names(table(x))[1]
     nn = table(x)[2]
     mm = table(x)[1]

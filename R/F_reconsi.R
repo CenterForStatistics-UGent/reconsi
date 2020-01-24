@@ -123,10 +123,23 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       smoothObs = TRUE,
                       tieBreakRan = identical(test, "wilcox.test"),
                   warnConvergence = TRUE){
+    #Basic checks
+    stopifnot(is.matrix(Y), is.list(argList), is.logical(center),
+              is.logical(smoothObs), is.logical(warnConvergence),
+              is.logical(permZvals), is.logical(replace), is.numeric(z0Quant),
+              is.numeric(tol), is.numeric(maxIter), is.numeric(gridSize),
+              is.numeric(B), is.list(estP0args))
     if(is.function(test)){
 
     }
     else if(is.character(test)){
+        if(test %in% c("wilcox.test","t.test")){
+            if(is.null(x) || NCOL(x)!=1){
+                stop("Provide single grouping variable for Wilcoxon rank sum test or t-test")
+            }
+            x = factor(x)
+            if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply to two groups! \n Try 'kruskal.test()' or 'lm()'.")}
+        }
       if(test == "t.test"){
         distFun = "pt.edit"; densFun = "dt"; quantileFun = "qt.edit"
         if(!zValues) {
@@ -136,7 +149,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
         testPargs = list(m = table(x)[1], n = table(x)[2])
         distFun = "pwilcox"; densFun ="dwilcox"; quantileFun = "qwilcox"
         }
-  }
+    }
  if(!"q" %in% names(formals(distFun))){
     stop("Distribution function must accept arguments named 'q'\n")
 }
