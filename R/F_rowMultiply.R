@@ -4,7 +4,7 @@
 #' @param matrix a numeric matrix of dimension a-by-b
 #' @param vector a numeric vector of length b
 #'
-#' t(t(matrix)*vector) but then faster
+#' @Details t(t(matrix)*vector) but then faster
 #'
 #' @return a matrix, row multplied by the vector
 rowMultiply = function(matrix, vector){
