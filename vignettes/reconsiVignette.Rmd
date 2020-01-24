@@ -25,7 +25,7 @@ are natively implemented, but any other test can be used.
 
 ```{r installBioConductor, eval = FALSE}
 library(BiocManager)
-install("reconsi")
+BiocManager::install("reconsi")
 ```
 
 ```{r installAndLoadGitHub, eval = FALSE}
