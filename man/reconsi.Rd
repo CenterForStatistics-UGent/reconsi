@@ -11,7 +11,7 @@ reconsi(Y, x = NULL, B = 1000L, test = "wilcox.test",
   z0Quant = pnorm(c(-1, 1)), gridsize = 801L, maxIter = 1000L,
   tol = 1e-08, center = FALSE, replace = is.null(x), zVals = NULL,
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
-  3), permZvals = FALSE, smoothObs = TRUE,
+  3), resamZvals = FALSE, smoothObs = TRUE,
   tieBreakRan = identical(test, "wilcox.test"), warnConvergence = TRUE)
 }
 \arguments{
@@ -63,7 +63,7 @@ resampling (statsPerm) z-values. If supplied, the calculation
 
 \item{estP0args}{A list of arguments passed on to the estP0 function}
 
-\item{permZvals}{A boolean, should resampling rather than theoretical null
+\item{resamZvals}{A boolean, should resampling rather than theoretical null
 distributions be used?}
 
 \item{smoothObs}{A boolean, should the fitted rather than estimated observed
@@ -85,7 +85,7 @@ quantile function as given}
 \item{testPargs}{Same as given}
 \item{weightStrat}{The weighting strategy}
 \item{zValues}{z-values}
-\item{permZvals}{z-values from resampling null distribution}
+\item{resamZvals}{z-values from resampling null distribution}
 \item{cdfValObs}{Cumulative distribution function evaluation
 of observed test statistics}
 }

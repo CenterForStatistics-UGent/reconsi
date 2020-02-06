@@ -32,7 +32,7 @@
 #'    and the algorithm proceeds with calculation
 #'    of the consensus null distribution
 #' @param estP0args A list of arguments passed on to the estP0 function
-#' @param permZvals A boolean, should resampling rather than theoretical null
+#' @param resamZvals A boolean, should resampling rather than theoretical null
 #' distributions be used?
 #' @param smoothObs A boolean, should the fitted rather than estimated observed
 #' distribution be used in the Fdr calculation?
@@ -55,7 +55,7 @@
 #' \item{testPargs}{Same as given}
 #' \item{weightStrat}{The weighting strategy}
 #' \item{zValues}{z-values}
-#' \item{permZvals}{z-values from resampling null distribution}
+#' \item{resamZvals}{z-values from resampling null distribution}
 #' \item{cdfValObs}{Cumulative distribution function evaluation
 #' of observed test statistics}
 #' @export
@@ -119,14 +119,14 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       maxIter = 1000L, tol = 1e-8,
                       center = FALSE, replace = is.null(x), zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
-                                       smooth.df = 3), permZvals = FALSE,
+                                       smooth.df = 3), resamZvals = FALSE,
                       smoothObs = TRUE,
                       tieBreakRan = identical(test, "wilcox.test"),
                   warnConvergence = TRUE){
     #Basic checks
     stopifnot(is.matrix(Y), is.list(argList), is.logical(center),
               is.logical(smoothObs), is.logical(warnConvergence),
-              is.logical(permZvals), is.logical(replace), is.numeric(z0Quant),
+              is.logical(resamZvals), is.logical(replace), is.numeric(z0Quant),
               is.numeric(tol), is.numeric(maxIter), is.numeric(gridsize),
               is.numeric(B), is.list(estP0args))
     if(is.function(test)){
@@ -199,7 +199,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       })
     #Observed z-values
     statObs = qnorm(
-        if(permZvals) quantCorrect(vapply(seq_along(cdfValObs),
+        if(resamZvals) quantCorrect(vapply(seq_along(cdfValObs),
                                           FUN.VALUE = double(1),
                                           function(i){
             (sum(cdfValObs[i] > cdfValsMat[i,])+1L)/(B+2L)
@@ -207,7 +207,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     )
     #Resample z-values
     statsPerm = qnorm(
-        if(permZvals) vapply(seq_len(B), FUN.VALUE = statObs, function(b){
+        if(resamZvals) vapply(seq_len(B), FUN.VALUE = statObs, function(b){
             quantCorrect(vapply(seq_along(cdfValObs), FUN.VALUE = double(1),
                                 function(i){
                 (sum(cdfValsMat[i,b] > cdfValsMat[i,-b])+1L)/(B+2L)
@@ -245,7 +245,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     consensus$fdr = NULL
     names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
     c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
-           permZvals = permZvals, cdfValObs = cdfValObs,
+           resamZvals = resamZvals, cdfValObs = cdfValObs,
            densFun = densFun, testPargs = testPargs, distFun = distFun,
            quantileFun = quantileFun),
       FdrList, consensus)

@@ -75,8 +75,7 @@ if(length(z0Quant)==1) {
     p0 = do.call(estP0,
                  c(list(statObs = statObs, nullDensCum = G0, zSeq = zSeq),
                    estP0args))
-    convergence = sqrt(mean((fdrOld-fdr)^2)) < tol &&
-      (p0-p0old)^2 < tol
+    convergence = sqrt(mean((fdrOld-fdr)^2)) < tol && (p0-p0old)^2 < tol
     iter = iter + 1L
   }
   if(!convergence && warnConvergence){

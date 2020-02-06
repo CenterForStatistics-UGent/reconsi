@@ -122,12 +122,12 @@ fdrResKruskal = reconsi(mat, x, B = 5e1,
 test = function(x, y){kruskal.test(y~x)$statistic}, zValues = FALSE)
 ```
 
-Alternatively, the same resampling instances may be used to determine the marginal null distributions as to estimate the collapsed null distribution, by setting the "permZvals" flag to true.
+Alternatively, the same resampling instances may be used to determine the marginal null distributions as to estimate the collapsed null distribution, by setting the "resamZvals" flag to true.
 
-```{r permZvals}
+```{r resamZvals}
 fdrResKruskalPerm = reconsi(mat, x, B = 5e1,
 test = function(x, y){
- kruskal.test(y~x)$statistic}, permZvals = TRUE)
+ kruskal.test(y~x)$statistic}, resamZvals = TRUE)
 ```
 
 When no grouping variable is available, one can perform a bootstrap as resampling procedure. This is achieved by simply not supplying a grouping variable "x". Here we perform a one sample Wilcoxon rank sum test for equality of the means to 0.
