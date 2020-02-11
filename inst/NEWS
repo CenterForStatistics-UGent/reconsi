@@ -23,3 +23,10 @@
 ======
 
 -   Reducing runtimes examples
+
+1.1.1
+=====
+
+-   Renamed "permZvals" argument to "resamZvals", which is more accurate
+-   Allow pi0 to be provided rather than estimated
+-   Actualized return arguments
