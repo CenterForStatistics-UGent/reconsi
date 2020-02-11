@@ -16,6 +16,7 @@
 #' @param p an integer, the number of hypotheses
 #' @param warnConvergence Should a warning be thrown when the estimation
 #' of the random null does not converge?
+#' @param pi0 A known fraction of true null hypotheses.
 #'
 #' @importFrom KernSmooth bkde
 #' @importFrom stats qnorm dnorm approx quantile
@@ -35,13 +36,14 @@
 #' \item{fitAll}{The consensus null fit}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, quantileFun,
-                 testPargs, B, p, warnConvergence){
+                 testPargs, B, p, warnConvergence, pi0){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
   }
 if(length(z0Quant)==1) {
     z0Quant = sort(c(z0Quant, 1-z0Quant))
-    }
+}
+ estPi0 = is.null(pi0) #Should the fraction of nulls be estimated?
   statObs = statObs[!is.na(statObs)] #ignore NA values
   centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
   #The starting values are CRUCIAL!
@@ -72,9 +74,9 @@ if(length(z0Quant)==1) {
     G0 = pnorm(zSeq, mean = fitAll[1], sd = fitAll[2])
     fdr = g0/zValsDensObsInterp*p0
     fdr[fdr>1] = 1 #Normalize here already!
-    p0 = do.call(estP0,
+    p0 = if(estPi0) do.call(estP0,
                  c(list(statObs = statObs, nullDensCum = G0, zSeq = zSeq),
-                   estP0args))
+                   estP0args)) else pi0
     convergence = sqrt(mean((fdrOld-fdr)^2)) < tol && (p0-p0old)^2 < tol
     iter = iter + 1L
   }

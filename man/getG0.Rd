@@ -5,7 +5,7 @@
 \title{Obtain the consensus null}
 \usage{
 getG0(statObs, statsPerm, z0Quant, gridsize, maxIter, tol, estP0args,
-  quantileFun, testPargs, B, p, warnConvergence)
+  quantileFun, testPargs, B, p, warnConvergence, pi0)
 }
 \arguments{
 \item{statObs}{A vector of lenght p with observed test statistics}
@@ -35,6 +35,8 @@ either as a function or as a character string}
 
 \item{warnConvergence}{Should a warning be thrown when the estimation
 of the random null does not converge?}
+
+\item{pi0}{A known fraction of true null hypotheses.}
 }
 \value{
 A list with following entries

@@ -12,7 +12,8 @@ reconsi(Y, x = NULL, B = 1000L, test = "wilcox.test",
   tol = 1e-08, center = FALSE, replace = is.null(x), zVals = NULL,
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
   3), resamZvals = FALSE, smoothObs = TRUE,
-  tieBreakRan = identical(test, "wilcox.test"), warnConvergence = TRUE)
+  tieBreakRan = identical(test, "wilcox.test"), warnConvergence = TRUE,
+  pi0 = NULL)
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -74,6 +75,10 @@ be broken randomly? If not, midranks are used}
 
 \item{warnConvergence}{Should a warning be thrown when the estimation
 of the random null does not converge?}
+
+\item{pi0}{A known fraction of true null hypotheses. If provided,
+the fraction of true null hypotheses will not be estimated.
+Mainly for oracle purposes.}
 }
 \value{
 A list with entries
