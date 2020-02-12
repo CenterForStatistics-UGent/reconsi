@@ -55,12 +55,21 @@
 #' \item{densFun,distFun,quantileFun}{Density, distribution and
 #' quantile function as given}
 #' \item{testPargs}{Same as given}
-#' \item{zValues}{z-values}
+#' \item{zValues}{Observed z-values}
 #' \item{resamZvals}{z-values from resampling null distribution}
 #' \item{cdfValObs}{Cumulative distribution function evaluation
 #' of observed test statistics}
 #' \item{p0estimated}{A boolean, was the fraction of true null hypotheses
 #' estimated from the data?}
+#' \item{Fdr,fdr}{Estimates of tail-area and local false discovery rates}
+#' \item{p0}{Estimated or supplied fraction of true null hypotheses}
+#' \item{iter}{Number of iterations executed}
+#' \item{fitAll}{Mean and standard deviation estimated collapsed null}
+#' \item{PermDensFits}{Mean and standard deviations of resamples}
+#' \item{convergence}{A boolean, did the iterative algorithm converge?}
+#' \item{zSeq}{Basis for the evaluation of the densities}
+#' \item{weights}{weights of the resampling distributions}
+#' \item{zValsDensObs}{Estimated overall densities, evaluated in zSeq}
 #' @export
 #' @importFrom stats pnorm qnorm
 #' @note Ideally, it would be better to only use unique resamples, to avoid

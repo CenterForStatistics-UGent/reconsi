@@ -20,7 +20,6 @@
 #'
 #' @importFrom KernSmooth bkde
 #' @importFrom stats qnorm dnorm approx quantile
-#' @importFrom MASS fitdistr
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}

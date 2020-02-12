@@ -6,7 +6,7 @@
 #'
 #' @return A vector of length 2 with mean and standard deviation
 #' @importFrom stats sd weighted.mean
-estNormal = function(y, w = NULL, p){
+estNormal = function(y, w = NULL, p = length(y)){
     if(is.null(w)){
         c(mean = mean(y, na.rm = TRUE), sd = sd(y, na.rm = TRUE))
     } else {

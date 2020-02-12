@@ -10,7 +10,7 @@
 #' @return a ggplot2 plot object
 #' @import ggplot2
 #' @importFrom reshape2 melt
-#' @importFrom stats weights density
+#' @importFrom stats density
 #' @export
 #' @examples
 #'  p = 175; n = 50; B = 1e2

@@ -17,7 +17,6 @@
 #' @return A list with components
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
-#' \item{p0}{The proportion of true null hypotheses}
 getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
                   ...)
 {

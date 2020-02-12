@@ -31,7 +31,6 @@ statistics be used in estimating the Fdr}
 A list with components
 \item{Fdr}{Tail are false discovery rate}
 \item{fdr}{Local false discovery rate}
-\item{p0}{The proportion of true null hypotheses}
 }
 \description{
 Calculate tail-area (Fdr) and local (fdr) false discovery rates,
