@@ -9,8 +9,6 @@
 #' @param maxIter An integer, the maximum number of iterations in determining R
 #' @param tol The convergence tolerance.
 #' @param estP0args A list of arguments passed on to the estP0args() function
-#' @param quantileFun The quantile function of the test statistic,
-#' either as a function or as a character string
 #' @param testPargs A list of arguments passed on to quantileFun
 #' @param B an integer, the number of permutations
 #' @param p an integer, the number of hypotheses
@@ -34,8 +32,8 @@
 #' \item{iter}{The number of iterations}
 #' \item{fitAll}{The consensus null fit}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
-                 maxIter, tol, estP0args, quantileFun,
-                 testPargs, B, p, warnConvergence, pi0){
+                 maxIter, tol, estP0args, testPargs, B, p, warnConvergence,
+                 pi0){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
   }

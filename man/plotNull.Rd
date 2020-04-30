@@ -5,8 +5,15 @@
 \title{Plot the obtained null distribution along with a histogram of observed test
 statistics}
 \usage{
-plotNull(fit, lowColor = "yellow", highColor = "blue", dens = TRUE,
-  idDA = NULL, nResampleCurves = length(fit$weights), hSize = 0.5)
+plotNull(
+  fit,
+  lowColor = "yellow",
+  highColor = "blue",
+  dens = TRUE,
+  idDA = NULL,
+  nResampleCurves = length(fit$weights),
+  hSize = 0.5
+)
 }
 \arguments{
 \item{fit}{an object returned by the reconsi() (or testDAA()) function}

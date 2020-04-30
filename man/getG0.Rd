@@ -4,8 +4,20 @@
 \alias{getG0}
 \title{Obtain the consensus null}
 \usage{
-getG0(statObs, statsPerm, z0Quant, gridsize, maxIter, tol, estP0args,
-  quantileFun, testPargs, B, p, warnConvergence, pi0)
+getG0(
+  statObs,
+  statsPerm,
+  z0Quant,
+  gridsize,
+  maxIter,
+  tol,
+  estP0args,
+  testPargs,
+  B,
+  p,
+  warnConvergence,
+  pi0
+)
 }
 \arguments{
 \item{statObs}{A vector of lenght p with observed test statistics}
@@ -23,9 +35,6 @@ of the distribution. If a single number is supplied, then
 \item{tol}{The convergence tolerance.}
 
 \item{estP0args}{A list of arguments passed on to the estP0args() function}
-
-\item{quantileFun}{The quantile function of the test statistic,
-either as a function or as a character string}
 
 \item{testPargs}{A list of arguments passed on to quantileFun}
 

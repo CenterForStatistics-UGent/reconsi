@@ -5,8 +5,16 @@
 \title{A function to calculate observed and permuation z-statistics
 on a n-by-p matrix of observations}
 \usage{
-getTestStats(Y, center, test = "wilcox.test", x, B, argList,
-  tieBreakRan = FALSE, replace = FALSE)
+getTestStats(
+  Y,
+  center,
+  test = "wilcox.test",
+  x,
+  B,
+  argList,
+  tieBreakRan = FALSE,
+  replace = FALSE
+)
 }
 \arguments{
 \item{Y}{The nxp data matrix}

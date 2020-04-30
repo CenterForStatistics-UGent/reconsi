@@ -9,12 +9,11 @@
 #'  Must accept the formula interface. Features with tests resulting in
 #'  observed NA test statistics will be discarded
 #' @param argList A list of arguments, passed on to the testing function
-#' @param distFun,quantileFun,densFun the distribution, quantile and density
-#' functions of the test statistic, or its name.
+#' @param distFun the distribution function of the test statistic, or its name.
 #' Must at least accept an argument named 'q', 'p' and 'x' respectively.
 #' @param zValues A boolean, should test statistics be converted to z-values.
 #' See details
-#' @param testPargs A list of arguments passed on to distFun/quantileFun/densFun
+#' @param testPargs A list of arguments passed on to distFun
 #' @param z0Quant A vector of length 2 of quantiles of the null distribution,
 #'    in between which only null values are expected
 #' @param gridsize The number of bins for the kernel density estimates
@@ -52,11 +51,11 @@
 #' @return A list with entries
 #' \item{statsPerm}{Resampling Z-values}
 #' \item{statObs}{Observed Z-values}
-#' \item{densFun,distFun,quantileFun}{Density, distribution and
+#' \item{distFun}{Density, distribution and
 #' quantile function as given}
 #' \item{testPargs}{Same as given}
-#' \item{zValues}{Observed z-values}
-#' \item{resamZvals}{z-values from resampling null distribution}
+#' \item{zValues}{A boolean, were z-values used?}
+#' \item{resamZvals}{A boolean, were the resampling null distribution used?}
 #' \item{cdfValObs}{Cumulative distribution function evaluation
 #' of observed test statistics}
 #' \item{p0estimated}{A boolean, was the fraction of true null hypotheses
@@ -125,7 +124,7 @@
 #' center = TRUE, replace = TRUE)
 reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                    argList = list(),
-                      distFun ="pnorm", quantileFun =  "qnorm", densFun = NULL,
+                      distFun ="pnorm",
                       zValues = TRUE, testPargs = list(),
                       z0Quant = pnorm(c(-1,1)), gridsize = 801L,
                       maxIter = 1000L, tol = 1e-8,
@@ -153,23 +152,17 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
             if(nlevels(x)>2){stop("Wilcoxon rank sum test and t-test only apply to two groups! \n Try 'kruskal.test()' or 'lm()'.")}
         }
       if(test == "t.test"){
-        distFun = "ptEdit"; densFun = "dt"; quantileFun = "qtEdit"
+        distFun = "ptEdit"
         if(!zValues) {
             stop("With t-tests, the test statistic must be converted to zValues. Please set zValues = TRUE")
         }
         } else if(test=="wilcox.test"){
         testPargs = list(m = table(x)[1], n = table(x)[2])
-        distFun = "pwilcox"; densFun ="dwilcox"; quantileFun = "qwilcox"
+        distFun = "pwilcox"
         }
     }
     if(!"q" %in% names(formals(distFun))){
         stop("Distribution function must accept arguments named 'q'\n")
-    }
-    if(!"p" %in% names(formals(quantileFun))){
-         stop("Quantile function must accept arguments named 'p'\n")
-    }
-    if(!is.null(densFun) && !"x" %in% names(formals(densFun))){
-         stop("Density function must accept arguments named 'x'\n")
     }
     if(!"y" %in% names(formals(test)) && !test %in% c("t.test", "wilcox.test")){
         stop("Test function must accept 'y' argument\n")
@@ -241,14 +234,12 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
       cdfValObs = zVals$cdfValObs
      }
       if(zValues) {
-          quantileFun = "qnorm"; densFun ="dnorm"; distFun = "pnorm"
           testPargs = list()
           }
     #Consensus distribution estimation
     consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                       z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
-                      tol = tol, estP0args = estP0args,
-                      quantileFun = quantileFun, testPargs = testPargs,
+                      tol = tol, estP0args = estP0args, testPargs = testPargs,
                       B = B, p = p, warnConvergence = warnConvergence, pi0 = pi0)
     #False discovery Rates
     FdrList = do.call(getFdr,
@@ -258,7 +249,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     names(statObs) = names(FdrList$Fdr) = names(FdrList$fdr) = colnames(Y)
     c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
            resamZvals = resamZvals, cdfValObs = cdfValObs,
-           densFun = densFun, testPargs = testPargs, distFun = distFun,
-           quantileFun = quantileFun, p0estimated = is.null(pi0)),
+           testPargs = testPargs, distFun = distFun,
+           p0estimated = is.null(pi0)),
       FdrList, consensus)
 }

@@ -85,9 +85,7 @@ fdrResLm = reconsi(mat, x, B = 5e1,
                       test = function(x, y){
 fit = lm(y~x)
 c(summary(fit)$coef["x","t value"], fit$df.residual)},
-quantileFun = function(p){qt(p = p[1], df = p[2])}, 
-distFun = function(q){pt(q = q[1], df = q[2])},
-densFun = function(x){dt(x = x[1], df = x[2])})
+distFun = function(q){pt(q = q[1], df = q[2])})
 ```
 
 This framework also accepts more than 2 groups, and additional covariates 
@@ -108,7 +106,6 @@ mu0 = 5
  test = function(x, y, z){
  fit = lm(y~x+z)
  c(summary(fit)$coef["x","t value"], fit$df.residual)},
-quantileFun = function(p){qt(p = p[1], df = p[2])}, 
 distFun = function(q){pt(q = q[1], df = q[2])},
  argList = list(z = z))
 ```

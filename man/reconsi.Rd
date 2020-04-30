@@ -5,15 +5,29 @@
 \title{Perform simultaneous inference through
 collapsed resampling null distributions}
 \usage{
-reconsi(Y, x = NULL, B = 1000L, test = "wilcox.test",
-  argList = list(), distFun = "pnorm", quantileFun = "qnorm",
-  densFun = NULL, zValues = TRUE, testPargs = list(),
-  z0Quant = pnorm(c(-1, 1)), gridsize = 801L, maxIter = 1000L,
-  tol = 1e-08, center = FALSE, replace = is.null(x), zVals = NULL,
-  estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df =
-  3), resamZvals = FALSE, smoothObs = TRUE,
-  tieBreakRan = identical(test, "wilcox.test"), warnConvergence = TRUE,
-  pi0 = NULL)
+reconsi(
+  Y,
+  x = NULL,
+  B = 1000L,
+  test = "wilcox.test",
+  argList = list(),
+  distFun = "pnorm",
+  zValues = TRUE,
+  testPargs = list(),
+  z0Quant = pnorm(c(-1, 1)),
+  gridsize = 801L,
+  maxIter = 1000L,
+  tol = 1e-08,
+  center = FALSE,
+  replace = is.null(x),
+  zVals = NULL,
+  estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df = 3),
+  resamZvals = FALSE,
+  smoothObs = TRUE,
+  tieBreakRan = identical(test, "wilcox.test"),
+  warnConvergence = TRUE,
+  pi0 = NULL
+)
 }
 \arguments{
 \item{Y}{the matrix of sequencing counts}
@@ -30,14 +44,13 @@ observed NA test statistics will be discarded}
 
 \item{argList}{A list of arguments, passed on to the testing function}
 
-\item{distFun, quantileFun, densFun}{the distribution, quantile and density
-functions of the test statistic, or its name.
+\item{distFun}{the distribution function of the test statistic, or its name.
 Must at least accept an argument named 'q', 'p' and 'x' respectively.}
 
 \item{zValues}{A boolean, should test statistics be converted to z-values.
 See details}
 
-\item{testPargs}{A list of arguments passed on to distFun/quantileFun/densFun}
+\item{testPargs}{A list of arguments passed on to distFun}
 
 \item{z0Quant}{A vector of length 2 of quantiles of the null distribution,
 in between which only null values are expected}
@@ -84,11 +97,11 @@ Mainly for oracle purposes.}
 A list with entries
 \item{statsPerm}{Resampling Z-values}
 \item{statObs}{Observed Z-values}
-\item{densFun,distFun,quantileFun}{Density, distribution and
+\item{distFun}{Density, distribution and
 quantile function as given}
 \item{testPargs}{Same as given}
-\item{zValues}{Observed z-values}
-\item{resamZvals}{z-values from resampling null distribution}
+\item{zValues}{A boolean, were z-values used?}
+\item{resamZvals}{A boolean, were the resampling null distribution used?}
 \item{cdfValObs}{Cumulative distribution function evaluation
 of observed test statistics}
 \item{p0estimated}{A boolean, was the fraction of true null hypotheses

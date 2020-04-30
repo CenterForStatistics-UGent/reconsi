@@ -4,10 +4,17 @@
 \alias{plotApproxCovar}
 \title{Plot an approximatio of the correlation structure of the test statistics}
 \usage{
-plotApproxCovar(reconsiFit, col = colorRampPalette(c("yellow",
-  "blue"))(12), x = seq(-4.2, 4.2, 0.1), y = seq(-4.2, 4.2, 0.1),
-  xlab = "Z-values", ylab = "Z-values", nBins = 82L,
-  binEdges = c(-4.1, 4.1), ...)
+plotApproxCovar(
+  reconsiFit,
+  col = colorRampPalette(c("yellow", "blue"))(12),
+  x = seq(-4.2, 4.2, 0.1),
+  y = seq(-4.2, 4.2, 0.1),
+  xlab = "Z-values",
+  ylab = "Z-values",
+  nBins = 82L,
+  binEdges = c(-4.1, 4.1),
+  ...
+)
 }
 \arguments{
 \item{reconsiFit}{The reconsi fit}

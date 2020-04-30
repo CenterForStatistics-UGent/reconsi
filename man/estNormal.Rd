@@ -5,7 +5,7 @@
 \title{Fast estimation of mean and standard deviation of a normal distrbution,
 optionally with weights}
 \usage{
-estNormal(y, w = NULL, p)
+estNormal(y, w = NULL, p = length(y))
 }
 \arguments{
 \item{y}{vector of observations}
