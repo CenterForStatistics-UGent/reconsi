@@ -45,5 +45,5 @@ setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y), ...){
     if(min(table(x[idSam]))<2L){
         return(NULL)
         }
-    reconsi(Y[idSam,colSums(Y)>0]/S[idSam], x=x[idSam], ...)
+    reconsi(Y[idSam,colSums(Y)>0]/S[idSam]*FC[idSam], x=x[idSam], ...)
 })
