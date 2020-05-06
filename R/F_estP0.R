@@ -24,6 +24,6 @@ estP0 = function(statObs, nullDensCum, zSeq, z0quantRange, smooth.df){
         statObs >= centralBorders[1])/diff(z0Quant)
     })
     smoothPi0 = smooth.spline(z0quantRange, pi0, df = smooth.df)
-    pi0Smooth = predict(smoothPi0, x = z0quantRange)$y
-    min(pi0Smooth[1], 1)
+    pi0Smooth = predict(smoothPi0, x = 0.5)$y
+    min(pi0Smooth, 1)
 }
