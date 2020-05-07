@@ -2,7 +2,7 @@
 #'    based on a certain null distribution
 #'
 #' @param statObs Vector of observed z-values
-#' @param fitAll The parameters of the estimated random null
+#' @param G0z The null distribution functione evaluated at zSeq
 #' @param fdr local false discovery rate, already estimated
 #' @param zSeq Support of the density estimation
 #' @param p the number of hypotheses
@@ -17,14 +17,13 @@
 #' @return A list with components
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
-getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
+getFdr = function(statObs, G0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
                   ...)
 {
   statObsNotNA = statObs[!is.na(statObs)]
   #Null
-  G0 = pnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])
-  G0[G0>0.5] = pnorm(statObsNotNA[G0>0.5], mean = fitAll["mean"],
-                     sd = fitAll["sd"], lower.tail = FALSE)
+  G0 = approx(x = zSeq, y = G0Z, xout = statObsNotNA)$y
+  G0[G0>0.5] = 1-G0[G0>0.5]+1/p
   #Observed
   zcum = if(smoothObs) {
     approx(y = cumsum(zValsDensObs/sum(zValsDensObs)),

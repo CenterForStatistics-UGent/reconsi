@@ -29,7 +29,7 @@
 #'    of the kernel}
 #' \item{p0}{The estimated fraction of true null hypotheses}
 #' \item{iter}{The number of iterations}
-#' \item{fitAll}{The consensus null fit}
+#' \item{G0Z}{The consensus null fit, evaluated at zSeq}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, testPargs, B, p, warnConvergence,
                  pi0){
@@ -50,22 +50,26 @@ if(length(z0Quant)==1) {
   #Estimate permutation densities
   PermDensFits = apply(statsPerm, 2, bkdeStab, range.x = Range, gridsize = gridsize,
                        truncate = FALSE)
-  LogPermDensEvals = vapply(PermDensFits, FUN.VALUE = statObs, function(fit){
-    log(interpKDE(fit, newData = statObs))
+  PermDensEvals = vapply(PermDensFits, FUN.VALUE = statObs, function(fit){
+    interpKDE(fit, newData = statObs)
   })
+  PermDensEvalsZ = vapply(PermDensFits, FUN.VALUE = numeric(gridsize), function(fit){
+      fit$y
+  })
+  LogPermDensEvals = log(PermDensEvals)
   #Starting values
-  iter = 1L; convergence = FALSE; p0 = 1; fitAll = c("mean" = 0, "sd" = 1)
+  iter = 1L; convergence = FALSE; p0 = 1; weights = rep(1/B, B)
   while(iter <= maxIter && !convergence){
-    fitAllOld = fitAll; p0old = p0
-    g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
+     p0old = p0; weightsOld = weights
+    g0 = rowSums(rowMultiply(PermDensEvals, weights))
+    g0Z = rowSums(rowMultiply(PermDensEvalsZ, weights))
     fdr = g0/zValsDensObsInterp*p0
     fdr[fdr>1] = 1 #Normalize here already!
     weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
-    #Null distribution
-    fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
-    p0 = if(estPi0) do.call(estP0, c(list(statObs = statObs, fitAll = fitAll),
+    p0 = if(estPi0) do.call(estP0, c(list(statObs = statObs, zSeq = zValsDensObs0$x,
+                                          nullDensCum = cumsum(g0Z)/sum(g0Z)),
                    estP0args)) else pi0
-    convergence = all((fitAll-fitAllOld)^2 < tol) && (p0-p0old)^2 < tol
+    convergence = (p0-p0old)^2 < tol && sqrt(sum((weightsOld - weights)^2)) < tol
     iter = iter + 1L
   }
   if(!convergence && warnConvergence){
@@ -73,5 +77,5 @@ if(length(z0Quant)==1) {
   return(list(PermDensFits = PermDensFits, zSeq = zValsDensObs0$x,
               zValsDensObs = zValsDensObs0$y, convergence  = convergence,
               weights = weights, fdr = fdr,
-              p0 = p0, iter = iter, fitAll = fitAll))
+              p0 = p0, iter = iter, fitAll = g0, G0Z = cumsum(g0Z)/sum(g0Z)))
 }

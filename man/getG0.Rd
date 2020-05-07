@@ -59,7 +59,7 @@ A list with following entries
    of the kernel}
 \item{p0}{The estimated fraction of true null hypotheses}
 \item{iter}{The number of iterations}
-\item{fitAll}{The consensus null fit}
+\item{G0Z}{The consensus null fit, evaluated at zSeq}
 }
 \description{
 Obtain the consensus null
