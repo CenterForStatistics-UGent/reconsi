@@ -16,8 +16,7 @@
 #' of the random null does not converge?
 #' @param pi0 A known fraction of true null hypotheses.
 #'
-#' @importFrom KernSmooth bkde
-#' @importFrom stats qnorm dnorm approx quantile
+#' @importFrom stats dnorm approx
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}
@@ -45,19 +44,18 @@ if(length(z0Quant)==1) {
   #The starting values are CRUCIAL!
   Range = range(c(statsPerm, statObs), na.rm = TRUE)
   #Estimate observed densities
-  zValsDensObs0 = bkde(statObs, range.x = Range, gridsize = gridsize,
+  zValsDensObs0 = bkdeStab(statObs, range.x = Range, gridsize = gridsize,
                        truncate = FALSE)
   zValsDensObs = zValsDensObs0$y
   zSeq = zValsDensObs0$x #The support
-  zValsDensObsInterp = approx(y = zValsDensObs, x = zSeq, xout = statObs)$y
-  zValsDensObs[zValsDensObs<=0] =
-      .Machine$double.eps #Remove negative densities
+  zValsDensObsInterp = interpKDE(zValsDensObs0, statObs)
   #Estimate permutation densities
-  PermDensFits = apply(statsPerm, 2, estNormal)
+  PermDensFits = apply(statsPerm, 2, bkdeStab, range.x = Range, gridsize = gridsize,
+                       truncate = FALSE)
   LogPermDensEvals = apply(PermDensFits, 2, function(fit){
-    dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
+    log(interpKDE(fit, newData = statObs))
   })
-  #Indicators for the observed z values in the support of the kernel
+  #Starting values
   iter = 1L; convergence = FALSE; p0 = 1; fitAll = c("mean" = 0, "sd" = 1)
   while(iter <= maxIter && !convergence){
     fitAllOld = fitAll; p0old = p0
