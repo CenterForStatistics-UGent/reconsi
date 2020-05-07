@@ -24,7 +24,7 @@
 #' a list of other arguments. It must return all arguments needed to evaluate
 #' its quantile function if z-values are to be used.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
-                        argList, tieBreakRan = FALSE, replace = FALSE){
+                        argList, tieBreakRan, replace){
   #Sample size
   n = nrow(Y)
   #enumerate B ways to permute/combine

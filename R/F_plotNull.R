@@ -27,15 +27,12 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                     idDA = NULL, nResampleCurves = length(fit$weights),
                     hSize = 0.5){
     with(fit, {
-        zValsDensPerm = apply(PermDensFits, 2, function(Fit){
-            dnorm(zSeq, mean = Fit["mean"], sd = Fit["sd"])
-        })
-    colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
+    colnames(PermDensEvals) = paste0("b", seq_len(ncol(PermDensEvals)))
     idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves]
     #The Curves to plot
     df1 = data.frame(weight = weights,
-                     Curve = colnames(zValsDensPerm))[idCurves,]
-    df2 = data.frame(zValsDensPerm[,idCurves], zSeq = zSeq)
+                     Curve = colnames(PermDensEvals))[idCurves,]
+    df2 = data.frame(PermDensEvals[,idCurves], zSeq = zSeq)
     moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name = "Curve",
                    value.name = "Density")
     dfMerged = merge(moltdf2, df1, by = "Curve")
@@ -54,19 +51,17 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                              inherit.aes = FALSE, bins = 50, alpha = 0.5,
                              fill = "mediumseagreen")
     # Add density functions
-    g0 = dnorm(zSeq,  mean = fitAll["mean"], sd = fitAll["sd"])
-    lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
+    lfdr = g0Z/zValsDensObs*sum(zValsDensObs)/sum(g0Z)*p0
     lfdr[lfdr>1] = 1
     #Only show lfdr for observed z-values
     lfdr[zSeq > (max(statObs)+0.1) | zSeq < (min(statObs)-0.1)] = NA
-    dfDens = data.frame("zSeq" = zSeq, "ResampleNull" = g0,
-                        "StandardNormal" = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
+    dfDens = data.frame("zSeq" = zSeq, "ResampleNull" = g0Z,
+                        "StandardNormal" = dnorm(zSeq)*sum(g0Z)/sum(dnorm(zSeq)),
                         "fdr" = lfdr)
     if(!is.null(idDA)){
       #If null taxa known, add normal density
-      nullZdens = estNormal(y = statObs[idDA])
-      dfDens$NullDensity = dnorm(zSeq, mean = nullZdens["mean.x1"],
-                                 sd = nullZdens["sd"])
+      nullZdens = bkdeStab(statObs[idDA])
+      dfDens$NullDensity = approx(nullZdens$x, nullZdens$y, zSeq)
     }
     if(!dens){dfDens$fdr = NULL}
     dfDensMolt = melt(dfDens, id.vars = "zSeq", value.name = "density",

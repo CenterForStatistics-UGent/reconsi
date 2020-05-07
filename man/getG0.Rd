@@ -60,6 +60,7 @@ A list with following entries
 \item{p0}{The estimated fraction of true null hypotheses}
 \item{iter}{The number of iterations}
 \item{G0Z}{The consensus null fit, evaluated at zSeq}
+\item{PermDensEvals}{The densities of the resampling distribution, evaluated at zSeq}
 }
 \description{
 Obtain the consensus null

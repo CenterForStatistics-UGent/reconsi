@@ -40,10 +40,12 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 #' testMat = testDAA(as(otu_table(VandeputtePruned), "matrix"),
 #' get_variable(VandeputtePruned, "Health.status"),
 #' get_variable(VandeputtePruned,"absCountFrozen"), B = 15)
-setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y), ...){
+setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y),
+                                        tieBreakRan = TRUE,...){
     idSam = S>0
     if(min(table(x[idSam]))<2L){
         return(NULL)
         }
-    reconsi(Y[idSam,colSums(Y)>0]/S[idSam]*FC[idSam], x=x[idSam], ...)
+    reconsi(Y[idSam,colSums(Y)>0]/S[idSam]*FC[idSam], x=x[idSam],
+            tieBreakRan = tieBreakRan, ...)
 })

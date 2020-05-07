@@ -17,13 +17,12 @@
 #' @return A list with components
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
-getFdr = function(statObs, G0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
-                  ...)
+getFdr = function(statObs, g0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs, ...)
 {
   statObsNotNA = statObs[!is.na(statObs)]
   #Null
-  G0 = approx(x = zSeq, y = G0Z, xout = statObsNotNA)$y
-  G0[G0>0.5] = 1-G0[G0>0.5]+1/p
+  G0 = approx(x = zSeq, y = cumsum(g0Z)/sum(g0Z), xout = statObsNotNA)$y
+  G0[G0>0.5] = 1-G0[G0>0.5]
   #Observed
   zcum = if(smoothObs) {
     approx(y = cumsum(zValsDensObs/sum(zValsDensObs)),
@@ -31,7 +30,7 @@ getFdr = function(statObs, G0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
   } else {
        ecdf(statObsNotNA)(statObsNotNA)
       }
-  zcum[zcum>0.5] = 1-zcum[zcum>0.5]+1/p
+  zcum[zcum>0.5] = 1-zcum[zcum>0.5]
   #Fdr
   Fdr = G0/zcum*p0
   Fdr[Fdr>1] = 1

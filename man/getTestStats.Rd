@@ -12,8 +12,8 @@ getTestStats(
   x,
   B,
   argList,
-  tieBreakRan = FALSE,
-  replace = FALSE
+  tieBreakRan,
+  replace
 )
 }
 \arguments{

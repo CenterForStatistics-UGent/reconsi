@@ -5,7 +5,7 @@
 \title{Calculate tail-area (Fdr) and local (fdr) false discovery rates,
    based on a certain null distribution}
 \usage{
-getFdr(statObs, G0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs, ...)
+getFdr(statObs, g0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs, ...)
 }
 \arguments{
 \item{statObs}{Vector of observed z-values}

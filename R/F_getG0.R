@@ -30,6 +30,7 @@
 #' \item{p0}{The estimated fraction of true null hypotheses}
 #' \item{iter}{The number of iterations}
 #' \item{G0Z}{The consensus null fit, evaluated at zSeq}
+#' \item{PermDensEvals}{The densities of the resampling distribution, evaluated at zSeq}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, testPargs, B, p, warnConvergence,
                  pi0){
@@ -76,6 +77,6 @@ if(length(z0Quant)==1) {
       warning("Consensus null estimation did not converge, please investigate cause! \n")}
   return(list(PermDensFits = PermDensFits, zSeq = zValsDensObs0$x,
               zValsDensObs = zValsDensObs0$y, convergence  = convergence,
-              weights = weights, fdr = fdr,
-              p0 = p0, iter = iter, fitAll = g0, G0Z = cumsum(g0Z)/sum(g0Z)))
+              weights = weights, fdr = fdr, PermDensEvals = PermDensEvalsZ,
+              p0 = p0, iter = iter, g0Z = g0Z))
 }

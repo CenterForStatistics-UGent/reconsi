@@ -30,3 +30,9 @@
 -   Renamed "permZvals" argument to "resamZvals", which is more accurate
 -   Allow pi0 to be provided rather than estimated
 -   Actualized return arguments
+
+1.1.2
+=====
+
+-   Revert to nonparametric null estimation
+-   Random tiebreaking is by default off for reconsi(), but on for testDAA()

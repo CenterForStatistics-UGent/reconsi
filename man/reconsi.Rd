@@ -24,7 +24,7 @@ reconsi(
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df = 3),
   resamZvals = FALSE,
   smoothObs = TRUE,
-  tieBreakRan = identical(test, "wilcox.test"),
+  tieBreakRan = FALSE,
   warnConvergence = TRUE,
   pi0 = NULL
 )
