@@ -42,7 +42,6 @@ if(length(z0Quant)==1) {
 }
  estPi0 = is.null(pi0) #Should the fraction of nulls be estimated?
   statObs = statObs[!is.na(statObs)] #ignore NA values
-  centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
   #The starting values are CRUCIAL!
   Range = range(c(statsPerm, statObs), na.rm = TRUE)
   #Estimate observed densities
@@ -60,8 +59,6 @@ if(length(z0Quant)==1) {
   })
   #Indicators for the observed z values in the support of the kernel
   iter = 1L; convergence = FALSE; p0 = 1; fitAll = c("mean" = 0, "sd" = 1)
-  #fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])
-  #fdr[fdr==0] = .Machine$double.eps
   while(iter <= maxIter && !convergence){
     fitAllOld = fitAll; p0old = p0
     g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
