@@ -36,7 +36,7 @@ getFdr = function(statObs, g0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs, ...)
   Fdr[Fdr>1] = 1
   #fdr
   if(is.null(fdr)){
-    fdr  = dnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])/
+    fdr  = approx(y = g0Z, xout = statObsNotNA, x = zSeq)$y/
         approx(y = zValsDensObs, xout = statObsNotNA, x = zSeq)$y*p0
     fdr[fdr>1] = 1
   }

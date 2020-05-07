@@ -42,7 +42,9 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 #' get_variable(VandeputtePruned,"absCountFrozen"), B = 15)
 setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y),
                                         tieBreakRan = TRUE,...){
-    idSam = S>0
+    stopifnot(length(FC)==length(x), length(FC)==length(S),
+              length(FC)==nrow(Y), is.logical(tieBreakRan))
+  idSam = S>0
     if(min(table(x[idSam]))<2L){
         return(NULL)
         }
