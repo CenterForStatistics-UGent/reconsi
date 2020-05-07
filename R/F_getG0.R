@@ -59,22 +59,20 @@ if(length(z0Quant)==1) {
     dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
   })
   #Indicators for the observed z values in the support of the kernel
-  iter = 1L; convergence = FALSE; p0 = 1
-  fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])
-  fdr[fdr==0] = .Machine$double.eps
+  iter = 1L; convergence = FALSE; p0 = 1; fitAll = c("mean" = 0, "sd" = 1)
+  #fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])
+  #fdr[fdr==0] = .Machine$double.eps
   while(iter <= maxIter && !convergence){
-    fdrOld = fdr; p0old = p0
+    fitAllOld = fitAll; p0old = p0
+    g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
+    fdr = g0/zValsDensObsInterp*p0
+    fdr[fdr>1] = 1 #Normalize here already!
     weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
     #Null distribution
     fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
-    g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
-    G0 = pnorm(zSeq, mean = fitAll[1], sd = fitAll[2])
-    fdr = g0/zValsDensObsInterp*p0
-    fdr[fdr>1] = 1 #Normalize here already!
-    p0 = if(estPi0) do.call(estP0,
-                 c(list(statObs = statObs, nullDensCum = G0, zSeq = zSeq),
+    p0 = if(estPi0) do.call(estP0, c(list(statObs = statObs, fitAll = fitAll),
                    estP0args)) else pi0
-    convergence = sqrt(mean((fdrOld-fdr)^2)) < tol && (p0-p0old)^2 < tol
+    convergence = all((fitAll-fitAllOld)^2 < tol) && (p0-p0old)^2 < tol
     iter = iter + 1L
   }
   if(!convergence && warnConvergence){
