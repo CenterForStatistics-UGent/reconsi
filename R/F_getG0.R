@@ -46,13 +46,11 @@ if(length(z0Quant)==1) {
   #Estimate observed densities
   zValsDensObs0 = bkdeStab(statObs, range.x = Range, gridsize = gridsize,
                        truncate = FALSE)
-  zValsDensObs = zValsDensObs0$y
-  zSeq = zValsDensObs0$x #The support
   zValsDensObsInterp = interpKDE(zValsDensObs0, statObs)
   #Estimate permutation densities
   PermDensFits = apply(statsPerm, 2, bkdeStab, range.x = Range, gridsize = gridsize,
                        truncate = FALSE)
-  LogPermDensEvals = apply(PermDensFits, 2, function(fit){
+  LogPermDensEvals = vapply(PermDensFits, FUN.VALUE = statObs, function(fit){
     log(interpKDE(fit, newData = statObs))
   })
   #Starting values
@@ -72,8 +70,8 @@ if(length(z0Quant)==1) {
   }
   if(!convergence && warnConvergence){
       warning("Consensus null estimation did not converge, please investigate cause! \n")}
-  return(list(PermDensFits = PermDensFits, zSeq = zSeq,
-              zValsDensObs = zValsDensObs, convergence  = convergence,
+  return(list(PermDensFits = PermDensFits, zSeq = zValsDensObs0$x,
+              zValsDensObs = zValsDensObs0$y, convergence  = convergence,
               weights = weights, fdr = fdr,
               p0 = p0, iter = iter, fitAll = fitAll))
 }

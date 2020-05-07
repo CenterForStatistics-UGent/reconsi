@@ -4,7 +4,7 @@
 #'
 #' @return the interpolated value vector of the length of newData
 interpKDE = function(kdeObj, newData){
-    app = approx(y = kdeObj$y, x = kdeObj$x, xout = newDatas)$y
+    app = approx(y = kdeObj$y, x = kdeObj$x, xout = newData)$y
     app[app<=0] = .Machine$double.eps
     app
 }
