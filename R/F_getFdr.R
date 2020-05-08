@@ -2,7 +2,7 @@
 #'    based on a certain null distribution
 #'
 #' @param statObs Vector of observed z-values
-#' @param g0z The null density function evaluated at zSeq
+#' @param g0Z The null density function evaluated at zSeq
 #' @param fdr local false discovery rate, already estimated
 #' @param zSeq Support of the density estimation
 #' @param p the number of hypotheses

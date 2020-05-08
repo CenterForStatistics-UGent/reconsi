@@ -38,12 +38,12 @@ test_that("reconsi works smoothly even when some test statistics are NA", {
     expect_silent(reconsi(Y = mat2, x = x, test = "t.test"))
 })
 test_that("reconsi works when bootstrap is requested", {
-              expect_s3_class(reconsi(Y = mat, test = function(y, x, mu){
+              expect_type(reconsi(Y = mat, test = function(y, x, mu){
                   testRes = t.test(y, mu = mu)
                   c(testRes$statistic, testRes$parameter)}, argList = list(mu = 0), center = FALSE,
                   distFun = function(q){pt(q = q[1],
-                                           df = q[2])}), "reconsi")
-    expect_s3_class(reconsi(Y = mat, test = function(y, x){
+                                           df = q[2])}), "list")
+    expect_type(reconsi(Y = mat, test = function(y, x){
         wilcox.test(y, mu = 0, exact = FALSE)$statistic
-    }, distFun = "psignrank", testPargs = list(n = nrow(mat))), "reconsi")
+    }, distFun = "psignrank", testPargs = list(n = nrow(mat))), "list")
           })

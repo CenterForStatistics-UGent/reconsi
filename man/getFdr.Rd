@@ -10,6 +10,8 @@ getFdr(statObs, g0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs, ...)
 \arguments{
 \item{statObs}{Vector of observed z-values}
 
+\item{g0Z}{The null density function evaluated at zSeq}
+
 \item{fdr}{local false discovery rate, already estimated}
 
 \item{zSeq}{Support of the density estimation}
@@ -24,8 +26,6 @@ getFdr(statObs, g0Z, fdr, zSeq, p, p0, zValsDensObs, smoothObs, ...)
 statistics be used in estimating the Fdr}
 
 \item{...}{more arguments, ignored}
-
-\item{g0z}{The null density function evaluated at zSeq}
 }
 \value{
 A list with components
