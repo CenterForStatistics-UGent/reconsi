@@ -25,7 +25,7 @@ statistics be used in estimating the Fdr}
 
 \item{...}{more arguments, ignored}
 
-\item{G0z}{The null distribution functione evaluated at zSeq}
+\item{g0z}{The null density function evaluated at zSeq}
 }
 \value{
 A list with components

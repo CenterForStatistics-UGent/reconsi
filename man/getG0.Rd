@@ -15,7 +15,6 @@ getG0(
   testPargs,
   B,
   p,
-  warnConvergence,
   pi0
 )
 }

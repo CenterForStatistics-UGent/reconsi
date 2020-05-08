@@ -7,7 +7,9 @@
 #'containing the total cell count
 #' @param FC a vector of length n with total flow cytometry cell counts
 #' @param x a grouping factor of length n
-#' @param S a vector of library sizes. Will be calculated f
+#' @param S a vector of library sizes. Will be calculated based on Y if not provided
+#' @param tieBreakRan A boolean, should ties be broken at random.
+#' TRUE by default and recommended for smooth null distributions
 #' @param ... passed on to the reconsi() function
 #'
 #'@return See the reconsi() function

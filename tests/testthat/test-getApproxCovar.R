@@ -6,6 +6,6 @@ test_that("Binned correlation matrix has the right dimensions", {
     x = sample(c(0,1), n , replace = TRUE)
     nBins = 80L
     reconsiObj = reconsi(Y = mat, x = x)
-    expect_equal(dim(reconsi:::getApproxCovar(reconsiObj$statsPerm, nBins = nBins)),
+    expect_equal(dim(reconsi:::getApproxCovar(reconsiObj, nBins = nBins)),
         rep(nBins+2L, 2))
   })

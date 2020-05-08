@@ -65,7 +65,7 @@
 #' \item{PermDensFits}{Mean and standard deviations of resamples}
 #' \item{convergence}{A boolean, did the iterative algorithm converge?}
 #' \item{zSeq}{Basis for the evaluation of the densities}
-#' \item{weights}{weights of the resampling distributions}
+#' \item{Weights}{weights of the resampling distributions}
 #' \item{zValsDensObs}{Estimated overall densities, evaluated in zSeq}
 #' @export
 #' @importFrom stats pnorm qnorm

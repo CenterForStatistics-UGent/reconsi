@@ -28,7 +28,10 @@ containing the total cell count}
 
 \item{x}{a grouping factor of length n}
 
-\item{S}{a vector of library sizes. Will be calculated f}
+\item{S}{a vector of library sizes. Will be calculated based on Y if not provided}
+
+\item{tieBreakRan}{A boolean, should ties be broken at random.
+TRUE by default and recommended for smooth null distributions}
 }
 \value{
 See the reconsi() function

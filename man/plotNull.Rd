@@ -11,7 +11,7 @@ plotNull(
   highColor = "blue",
   dens = TRUE,
   idDA = NULL,
-  nResampleCurves = length(fit$weights),
+  nResampleCurves = length(fit$Weights),
   hSize = 0.5
 )
 }
