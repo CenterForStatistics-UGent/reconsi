@@ -25,7 +25,6 @@ reconsi(
   resamZvals = FALSE,
   smoothObs = TRUE,
   tieBreakRan = FALSE,
-  warnConvergence = TRUE,
   pi0 = NULL
 )
 }
@@ -85,9 +84,6 @@ distribution be used in the Fdr calculation?}
 
 \item{tieBreakRan}{A boolean, should ties of resampling test statistics
 be broken randomly? If not, midranks are used}
-
-\item{warnConvergence}{Should a warning be thrown when the estimation
-of the random null does not converge?}
 
 \item{pi0}{A known fraction of true null hypotheses. If provided,
 the fraction of true null hypotheses will not be estimated.

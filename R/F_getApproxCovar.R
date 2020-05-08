@@ -4,7 +4,7 @@
 #'    data! It is an approximate covariance matrix of binned test statistics for
 #'    visualization purposes.
 #'
-#' @param statsPerm The pxB matrix of permutation z-values in the columns
+#' @param reconsiFit The reconsi object
 #' @param nBins an integer, the number of bins
 #' @param binEdges A vector of length 2 with the outer bin edges
 #'
@@ -19,9 +19,9 @@
 #' )
 #' mat = mat = mat + rnorm(n, sd = 0.3) #Introduce some dependence
 #' fdrRes = reconsi(mat, x, B = B)
-#' corMat = getApproxCovar(fdrRes$statsPerm)
-getApproxCovar = function(statsPerm, nBins = 82L, binEdges = c(-4.1,4.1)){
+#' corMat = getApproxCovar(fdrRes)
+getApproxCovar = function(reconsiFit, nBins = 82L, binEdges = c(-4.1,4.1)){
   Breaks = c(-Inf, seq(binEdges[1], binEdges[2], length.out = nBins+1), Inf)
-  bootYs = apply(statsPerm, 2, function(xx){table(cut(xx, breaks = Breaks))})
-  tcrossprod(bootYs-rowMeans(bootYs))/(ncol(statsPerm)-1)
+  bootYs = apply(reconsiFit$statsPerm, 2, function(xx){table(cut(xx, breaks = Breaks))})
+  tcrossprod(bootYs-rowMeans(bootYs))/(ncol(reconsiFit$statsPerm)-1)
 }

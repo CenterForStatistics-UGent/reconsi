@@ -42,9 +42,6 @@ of the distribution. If a single number is supplied, then
 
 \item{p}{an integer, the number of hypotheses}
 
-\item{warnConvergence}{Should a warning be thrown when the estimation
-of the random null does not converge?}
-
 \item{pi0}{A known fraction of true null hypotheses.}
 }
 \value{

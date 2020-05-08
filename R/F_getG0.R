@@ -12,8 +12,6 @@
 #' @param testPargs A list of arguments passed on to quantileFun
 #' @param B an integer, the number of permutations
 #' @param p an integer, the number of hypotheses
-#' @param warnConvergence Should a warning be thrown when the estimation
-#' of the random null does not converge?
 #' @param pi0 A known fraction of true null hypotheses.
 #'
 #' @importFrom stats dnorm approx
@@ -73,9 +71,9 @@ if(length(z0Quant)==1) {
     convergence = (p0-p0old)^2 < tol && sqrt(sum((weightsOld - weights)^2)) < tol
     iter = iter + 1L
   }
-  if(!convergence && warnConvergence){
+  if(!convergence){
       warning("Consensus null estimation did not converge, please investigate cause! \n")}
-  return(list(PermDensFits = PermDensFits, zSeq = zValsDensObs0$x,
+  return(list(zSeq = zValsDensObs0$x,
               zValsDensObs = zValsDensObs0$y, convergence  = convergence,
               weights = weights, fdr = fdr, PermDensEvals = PermDensEvalsZ,
               p0 = p0, iter = iter, g0Z = g0Z))

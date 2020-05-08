@@ -4,10 +4,10 @@
 \alias{getApproxCovar}
 \title{Obtain a null covariance matrix of binned test statistics}
 \usage{
-getApproxCovar(statsPerm, nBins = 82L, binEdges = c(-4.1, 4.1))
+getApproxCovar(reconsiFit, nBins = 82L, binEdges = c(-4.1, 4.1))
 }
 \arguments{
-\item{statsPerm}{The pxB matrix of permutation z-values in the columns}
+\item{reconsiFit}{The reconsi object}
 
 \item{nBins}{an integer, the number of bins}
 
@@ -33,5 +33,5 @@ matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 )
 mat = mat = mat + rnorm(n, sd = 0.3) #Introduce some dependence
 fdrRes = reconsi(mat, x, B = B)
-corMat = getApproxCovar(fdrRes$statsPerm)
+corMat = getApproxCovar(fdrRes)
 }

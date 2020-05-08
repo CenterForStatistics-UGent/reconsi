@@ -37,8 +37,6 @@
 #' distribution be used in the Fdr calculation?
 #' @param tieBreakRan A boolean, should ties of resampling test statistics
 #'  be broken randomly? If not, midranks are used
-#' @param warnConvergence Should a warning be thrown when the estimation
-#' of the random null does not converge?
 #' @param pi0 A known fraction of true null hypotheses. If provided,
 #' the fraction of true null hypotheses will not be estimated.
 #' Mainly for oracle purposes.
@@ -132,11 +130,10 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), resamZvals = FALSE,
                       smoothObs = TRUE,
-                      tieBreakRan = FALSE,
-                  warnConvergence = TRUE, pi0 = NULL){
+                      tieBreakRan = FALSE, pi0 = NULL){
     #Basic checks
     stopifnot(is.matrix(Y), is.list(argList), is.logical(center),
-              is.logical(smoothObs), is.logical(warnConvergence),
+              is.logical(smoothObs),
               is.logical(resamZvals), is.logical(replace), is.numeric(z0Quant),
               is.numeric(tol), is.numeric(maxIter), is.numeric(gridsize),
               is.numeric(B), is.list(estP0args))
@@ -240,7 +237,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                       z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
                       tol = tol, estP0args = estP0args, testPargs = testPargs,
-                      B = B, p = p, warnConvergence = warnConvergence, pi0 = pi0)
+                      B = B, p = p, pi0 = pi0)
     #False discovery Rates
     FdrList = do.call(getFdr,
                       c(list(statObs = statObs, p = p, smoothObs = smoothObs),

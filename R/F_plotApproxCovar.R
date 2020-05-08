@@ -27,7 +27,7 @@ plotApproxCovar = function(reconsiFit, col = colorRampPalette(
                          y = seq(-4.2, 4.2, 0.1),
                          xlab = "Z-values", ylab = "Z-values",
                          nBins = 82L, binEdges = c(-4.1,4.1), ...){
-    image(z = getApproxCovar(reconsiFit$statsPerm,
+    image(z = getApproxCovar(reconsiFit,
                        nBins = nBins, binEdges = binEdges),
           x = x, y = y, xlab = xlab, ylab = ylab, col = col, ...)
 }

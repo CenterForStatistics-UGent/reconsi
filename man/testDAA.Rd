@@ -10,7 +10,7 @@ testDAA(Y, ...)
 
 \S4method{testDAA}{phyloseq}(Y, groupName, FCname, ...)
 
-\S4method{testDAA}{matrix}(Y, FC, x, S = rowSums(Y), tiebreakRan = TRUE, ...)
+\S4method{testDAA}{matrix}(Y, FC, x, S = rowSums(Y), tieBreakRan = TRUE, ...)
 }
 \arguments{
 \item{Y}{A phyloseq object, or a data matrix with samples in the rows and
