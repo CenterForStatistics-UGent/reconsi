@@ -29,13 +29,13 @@ test_that("reconsi throws warnings where necessary", {
     #Few hypotheses
 })
 test_that("reconsi works smoothly when all is fine", {
-    expect_silent(reconsi(Y = mat, x = x))
+    expect_type(reconsi(Y = mat, x = x), "list")
 })
 mat2 = mat
 mat2[x==0,1] = 0
 mat2[x==1,1] = 1
 test_that("reconsi works smoothly even when some test statistics are NA", {
-    expect_silent(reconsi(Y = mat2, x = x, test = "t.test"))
+    expect_type(reconsi(Y = mat2, x = x, test = "t.test"), "list")
 })
 test_that("reconsi works when bootstrap is requested", {
               expect_type(reconsi(Y = mat, test = function(y, x, mu){
