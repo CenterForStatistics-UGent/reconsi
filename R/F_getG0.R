@@ -12,12 +12,10 @@
 #' @param testPargs A list of arguments passed on to quantileFun
 #' @param B an integer, the number of permutations
 #' @param p an integer, the number of hypotheses
-#' @param warnConvergence Should a warning be thrown when the estimation
-#' of the random null does not converge?
 #' @param pi0 A known fraction of true null hypotheses.
 #'
 #' @importFrom KernSmooth bkde
-#' @importFrom stats qnorm dnorm approx quantile
+#' @importFrom stats qnorm dnorm approx
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}
@@ -32,7 +30,7 @@
 #' \item{iter}{The number of iterations}
 #' \item{fitAll}{The consensus null fit}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
-                 maxIter, tol, estP0args, testPargs, B, p, warnConvergence,
+                 maxIter, tol, estP0args, testPargs, B, p,
                  pi0){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
@@ -75,10 +73,10 @@ if(length(z0Quant)==1) {
     convergence = all((fitAll-fitAllOld)^2 < tol) && (p0-p0old)^2 < tol
     iter = iter + 1L
   }
-  if(!convergence && warnConvergence){
+  if(!convergence){
       warning("Consensus null estimation did not converge, please investigate cause! \n")}
   return(list(PermDensFits = PermDensFits, zSeq = zSeq,
               zValsDensObs = zValsDensObs, convergence  = convergence,
-              weights = weights, fdr = fdr,
+              Weights = weights, fdr = fdr,
               p0 = p0, iter = iter, fitAll = fitAll))
 }

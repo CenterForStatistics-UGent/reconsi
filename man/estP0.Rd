@@ -4,19 +4,19 @@
 \alias{estP0}
 \title{Estimate the fraction of true null hypotheses.}
 \usage{
-estP0(statObs, nullDensCum, zSeq, z0quantRange, smooth.df)
+estP0(statObs, fitAll, z0quantRange, smooth.df)
 }
 \arguments{
 \item{statObs}{A vector of observed z-values}
+
+\item{z0quantRange}{a number of quantiles between 0 and 0.5}
+
+\item{smooth.df}{degrees of freedom for the spline smoother}
 
 \item{nullDensCum}{A smoothed cumulative distribution function
 of the observed z-values}
 
 \item{zSeq}{The support of the kernel smoother}
-
-\item{z0quantRange}{a number of quantiles between 0 and 0.5}
-
-\item{smooth.df}{degrees of freedom for the spline smoother}
 }
 \value{
 The estimated null fraction, the value of the spline evaluated

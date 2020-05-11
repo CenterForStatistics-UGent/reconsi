@@ -10,7 +10,7 @@ testDAA(Y, ...)
 
 \S4method{testDAA}{phyloseq}(Y, groupName, FCname, ...)
 
-\S4method{testDAA}{matrix}(Y, FC, x, S = rowSums(Y), ...)
+\S4method{testDAA}{matrix}(Y, FC, x, S = rowSums(Y), tieBreakRan = TRUE, ...)
 }
 \arguments{
 \item{Y}{A phyloseq object, or a data matrix with samples in the rows and
@@ -28,7 +28,9 @@ containing the total cell count}
 
 \item{x}{a grouping factor of length n}
 
-\item{S}{a vector of library sizes. Will be calculated f}
+\item{S}{a vector of library sizes. Will be calculated if not provided}
+
+\item{tieBreakRan}{A boolean, should ties be broken at random.}
 }
 \value{
 See the reconsi() function

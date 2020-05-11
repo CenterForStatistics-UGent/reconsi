@@ -15,7 +15,6 @@ getG0(
   testPargs,
   B,
   p,
-  warnConvergence,
   pi0
 )
 }
@@ -41,9 +40,6 @@ of the distribution. If a single number is supplied, then
 \item{B}{an integer, the number of permutations}
 
 \item{p}{an integer, the number of hypotheses}
-
-\item{warnConvergence}{Should a warning be thrown when the estimation
-of the random null does not converge?}
 
 \item{pi0}{A known fraction of true null hypotheses.}
 }

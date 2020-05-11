@@ -24,16 +24,16 @@
 #' fdrRes = reconsi(mat, x, B = B)
 #' plotNull(fdrRes)
 plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
-                    idDA = NULL, nResampleCurves = length(fit$weights),
+                    idDA = NULL, nResampleCurves = length(fit$Weights),
                     hSize = 0.5){
     with(fit, {
         zValsDensPerm = apply(PermDensFits, 2, function(Fit){
             dnorm(zSeq, mean = Fit["mean"], sd = Fit["sd"])
         })
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
-    idCurves = weights >= sort(weights, decreasing = TRUE)[nResampleCurves]
+    idCurves = Weights >= sort(Weights, decreasing = TRUE)[nResampleCurves]
     #The Curves to plot
-    df1 = data.frame(weight = weights,
+    df1 = data.frame(weight = Weights,
                      Curve = colnames(zValsDensPerm))[idCurves,]
     df2 = data.frame(zValsDensPerm[,idCurves], zSeq = zSeq)
     moltdf2 = melt(df2, id.vars = c("zSeq"), variable.name = "Curve",

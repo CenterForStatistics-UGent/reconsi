@@ -5,5 +5,5 @@ test_that("testDAA deals with all zero rows", {
     mat = matrix(rnorm(n*p), n, p)
     x = sample(c(0,1), n , replace = TRUE)
     mat[1,] = 0
-    expect_silent(reconsi(Y = mat, x = x))
+    expect_type(reconsi(Y = mat, x = x), "list")
 })

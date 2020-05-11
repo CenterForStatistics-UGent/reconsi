@@ -24,8 +24,7 @@ reconsi(
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df = 3),
   resamZvals = FALSE,
   smoothObs = TRUE,
-  tieBreakRan = identical(test, "wilcox.test"),
-  warnConvergence = TRUE,
+  tieBreakRan = FALSE,
   pi0 = NULL
 )
 }
@@ -85,9 +84,6 @@ distribution be used in the Fdr calculation?}
 
 \item{tieBreakRan}{A boolean, should ties of resampling test statistics
 be broken randomly? If not, midranks are used}
-
-\item{warnConvergence}{Should a warning be thrown when the estimation
-of the random null does not converge?}
 
 \item{pi0}{A known fraction of true null hypotheses. If provided,
 the fraction of true null hypotheses will not be estimated.
