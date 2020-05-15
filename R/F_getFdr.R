@@ -32,7 +32,7 @@ getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
   } else {
        ecdf(statObsNotNA)(statObsNotNA)
       }
-  zcum[zcum>0.5] = 1-zcum[zcum>0.5]+1/p
+  zcum[zcum>0.5] = 1-zcum[zcum>0.5]
   #Fdr
   Fdr = G0/zcum*p0
   Fdr[Fdr>1] = 1

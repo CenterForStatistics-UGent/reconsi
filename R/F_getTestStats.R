@@ -24,7 +24,7 @@
 #' a list of other arguments. It must return all arguments needed to evaluate
 #' its quantile function if z-values are to be used.
 getTestStats = function(Y, center, test = "wilcox.test", x, B,
-                        argList, tieBreakRan, replace){
+                        argList, tieBreakRan, replace, scale){
   #Sample size
   n = nrow(Y)
   #enumerate B ways to permute/combine
@@ -33,15 +33,13 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
       vapply(integer(B), FUN.VALUE = integer(n),function(x) sample.int(n = n))
   if(center){
     if(replace){
-      Ycenter = scale(Y, center = TRUE, scale = FALSE)
-    } else {
-    for (ii in unique(x)){
-      Y[x==ii,] = scale(Y[x==ii,], center = TRUE, scale = FALSE)
-      }
-    }
+      Y = scale(Y, center = TRUE, scale = scale)
   } else {
-      Ycenter = Y
-      }
+  for (ii in unique(x)){
+    Y[x==ii,] = scale(Y[x==ii,], center = TRUE, scale = scale)
+    }
+  }
+  }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
     xLog = x==names(table(x))[1]
     nn = table(x)[2]
@@ -67,7 +65,7 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     statsPerm = vapply(seq_len(B), FUN.VALUE = statObs,
                        function(ii){
       xSam = xLog[permDesign[,ii]]
-      apply(Ycenter, 2, function(dat){
+      apply(Y, 2, function(dat){
         getTstat(y1 = dat[xSam], y2 = dat[!xSam], mm = mm, nn = nn)
       })
     })

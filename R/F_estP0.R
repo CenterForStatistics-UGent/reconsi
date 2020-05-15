@@ -1,9 +1,7 @@
 #'Estimate the fraction of true null hypotheses.
 #'
 #' @param statObs A vector of observed z-values
-#' @param nullDensCum A smoothed cumulative distribution function
-#'  of the observed z-values
-#' @param zSeq The support of the kernel smoother
+#' @param fitAll the estimated normal null
 #' @param z0quantRange a number of quantiles between 0 and 0.5
 #' @param smooth.df degrees of freedom for the spline smoother
 #'

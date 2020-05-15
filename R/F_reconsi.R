@@ -129,7 +129,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       center = FALSE, replace = is.null(x), zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3), resamZvals = FALSE,
-                      smoothObs = TRUE,
+                      smoothObs = TRUE, scale = FALSE,
                       tieBreakRan = FALSE, pi0 = NULL){
     #Basic checks
     stopifnot(is.matrix(Y), is.list(argList), is.logical(center),
@@ -183,7 +183,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     if(is.null(zVals)){
     #Test statistics
     testStats = getTestStats(Y = Y, center = center, test = test,
-                             x = x, B = B, argList = argList,
+                             x = x, B = B, argList = argList, scale = scale,
                              tieBreakRan = tieBreakRan, replace = replace)
     #Observed cdf values
     cdfValObs = apply(matrix(testStats$statObs, ncol = p), 2, function(stats){
