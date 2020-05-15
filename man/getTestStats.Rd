@@ -36,6 +36,8 @@ be broken randomly? If not, midranks are used}
 \item{replace}{A boolean. If FALSE, samples are permuted
 (resampled without replacement), if TRUE the samples are bootstrapped
 (resampled with replacement)}
+
+\item{scale}{a boolean, should data be scaled prior to resampling}
 }
 \value{
 A list with components

@@ -83,6 +83,8 @@ distributions be used?}
 \item{smoothObs}{A boolean, should the fitted rather than estimated observed
 distribution be used in the Fdr calculation?}
 
+\item{scale}{a boolean, should data be scaled prior to resampling}
+
 \item{tieBreakRan}{A boolean, should ties of resampling test statistics
 be broken randomly? If not, midranks are used}
 
