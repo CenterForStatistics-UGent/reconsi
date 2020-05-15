@@ -23,6 +23,7 @@
 #'    in the iterative procedure
 #' @param center A boolean, should observations be centered
 #'    in each group prior to permuations? See details.
+#' @param scale a boolean, should data be scaled prior to resampling
 #' @param replace A boolean. Should resampling occur with replacement (boostrap)
 #' or without replacement (permutation)
 #' @param zVals An optional list of observed (statObs) and

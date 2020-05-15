@@ -13,7 +13,8 @@ getTestStats(
   B,
   argList,
   tieBreakRan,
-  replace
+  replace,
+  scale
 )
 }
 \arguments{

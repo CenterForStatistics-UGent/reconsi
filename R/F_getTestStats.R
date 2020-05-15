@@ -3,6 +3,7 @@
 #'
 #' @param Y The nxp data matrix
 #' @param center a boolean, should data be centered prior to permuation
+#' @param scale a boolean, should data be scaled prior to resampling
 #' @param test A function name, possibly user defined. See details.
 #' @param x A vector defining the groups. Will be coerced to factor.
 #' @param B an integer, the number of permuations
@@ -78,7 +79,7 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
   statsPerm = vapply(seq_len(B),
                      FUN.VALUE = statObs,
                      function(ii){
-    apply(Ycenter[permDesign[,ii],],2, function(y){
+    apply(Y[permDesign[,ii],],2, function(y){
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
     }
