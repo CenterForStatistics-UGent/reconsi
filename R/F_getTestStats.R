@@ -19,6 +19,7 @@
 #' \item{statsPerm}{A p-by-B matrix of permutation test statistics}
 #' \item{resamDesign}{The resampling design}
 #' @importFrom stats runif
+#' @importFrom matrixStats colRanks
 #'
 #' @details For test "wilcox.test" and "t.test",
 #' fast custom implementations are used. Other functions can be supplied
@@ -37,9 +38,9 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     if(replace){
       Y = scale(Y, center = TRUE, scale = scale)
   } else {
-  for (ii in unique(x)){
-    Y[x==ii,] = scale(Y[x==ii,], center = TRUE, scale = scale)
-    }
+        for (ii in unique(x)){
+            Y[x==ii,] = scale(Y[x==ii,], center = TRUE, scale = scale)
+        }
   }
   }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
@@ -48,14 +49,14 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     mm = table(x)[1]
   if(test=="wilcox.test"){ #Shortcuts possbile in case of Wilcoxon test
     nFac = mm*(mm + 1)/2
-    YRanked = apply(Y, 2, rank)
+    YRanked = colRanks(Y, preserveShape = TRUE)
     #Observed test statistic
     statObs = colSums(YRanked[xLog,]) - nFac
     #Permuation test statistics
     mmSeries = seq_len(mm)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
       if(tieBreakRan){
-          YRanked = apply(Y, 2, rank, ties.method = "random")
+          YRanked = colRanks(Y, ties.method = "random", preserveShape = TRUE)
       #Random tiebreaking, important to combat test statistic discreteness
       }
         colSums(YRanked[resamDesign[mmSeries,ii],])
