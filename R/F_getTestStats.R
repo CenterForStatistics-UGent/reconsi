@@ -17,6 +17,7 @@
 #' @return A list with components
 #' \item{statObs}{A vector of length p of observed test statistics}
 #' \item{statsPerm}{A p-by-B matrix of permutation test statistics}
+#' \item{resamDesign}{The resampling design}
 #' @importFrom stats runif
 #'
 #' @details For test "wilcox.test" and "t.test",
@@ -29,7 +30,7 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
   #Sample size
   n = nrow(Y)
   #enumerate B ways to permute/combine
-  permDesign = if(replace) matrix(ceiling(n*runif(n*B)),
+  resamDesign = if(replace) matrix(ceiling(n*runif(n*B)),
                                   nrow = n, ncol = B) else
       vapply(integer(B), FUN.VALUE = integer(n),function(x) sample.int(n = n))
   if(center){
@@ -57,7 +58,7 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
           YRanked = apply(Y, 2, rank, ties.method = "random")
       #Random tiebreaking, important to combat test statistic discreteness
       }
-        colSums(YRanked[permDesign[mmSeries,ii],])
+        colSums(YRanked[resamDesign[mmSeries,ii],])
     }, FUN.VALUE = statObs)
   } else if(test == "t.test"){
     statObs = apply(Y, 2, function(dat){
@@ -65,7 +66,7 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     })
     statsPerm = vapply(seq_len(B), FUN.VALUE = statObs,
                        function(ii){
-      xSam = xLog[permDesign[,ii]]
+      xSam = xLog[resamDesign[,ii]]
       apply(Y, 2, function(dat){
         getTstat(y1 = dat[xSam], y2 = dat[!xSam], mm = mm, nn = nn)
       })
@@ -79,9 +80,9 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
   statsPerm = vapply(seq_len(B),
                      FUN.VALUE = statObs,
                      function(ii){
-    apply(Y[permDesign[,ii],],2, function(y){
+    apply(Y[resamDesign[,ii],],2, function(y){
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
     }
-  return(list(statObs = statObs, statsPerm = statsPerm))
+  return(list(statObs = statObs, statsPerm = statsPerm, resamDesign = resamDesign))
 }
