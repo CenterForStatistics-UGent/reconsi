@@ -2,7 +2,6 @@
 #' statistics
 #' @param fit an object returned by the reconsi() (or testDAA()) function
 #' @param lowColor,highColor The low and high ends of the colour scale
-#' @param dens a boolean, should fdr and Fdr be plotted?
 #' @param idDA indices of known null taxa
 #' @param nResampleCurves The number of resampling null distributions to plot
 #' @param hSize A double, the size of the line of the collapsed null estimate
@@ -23,7 +22,7 @@
 #Provide just the matrix and grouping factor, and test using the random null
 #' fdrRes = reconsi(mat, x, B = B)
 #' plotNull(fdrRes)
-plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
+plotNull = function(fit, lowColor ="yellow", highColor ="blue",
                     idDA = NULL, nResampleCurves = length(fit$Weights),
                     hSize = 0.5){
     with(fit, {
@@ -63,26 +62,23 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue", dens = TRUE,
                         "StandardNormal" = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
                         "fdr" = lfdr)
     if(!is.null(idDA)){
-      #If null taxa known, add normal density
+      #If null taxa known, add true normal density
       nullZdens = estNormal(y = statObs[idDA])
-      dfDens$NullDensity = dnorm(zSeq, mean = nullZdens["mean.x1"],
+      dfDens$OracleNullDensity = dnorm(zSeq, mean = nullZdens["mean"],
                                  sd = nullZdens["sd"])
     }
-    if(!dens){dfDens$fdr = NULL}
     dfDensMolt = melt(dfDens, id.vars = "zSeq", value.name = "density",
                       variable.name = "type")
     plot = plot + geom_line(inherit.aes = FALSE, data = dfDensMolt,
                   aes(x = zSeq, y = density, group = type,
                       linetype = type, size = type)) +
         scale_linetype_manual(name = "",
-                              values = c("solid", "dashed", "dotdash")) +
-        scale_size_manual(values = c(0.2, 0.4, 0.4), guide = FALSE)
-    if(dens){
+                              values = c("solid", "dashed", "dotdash", if(!is.null(idDA)) "twodash")) +
+        scale_size_manual(values = c(0.2, 0.4, 0.4, if(!is.null(idDA)) 0.3), guide = FALSE)
     # Add red dots for Fdr estimates
     dfFdr = data.frame(statObs = statObs, Fdr = Fdr)
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
                    aes(x = statObs, y = Fdr), col = "red", size = hSize)
-    }
     return(plot)
 })
 }

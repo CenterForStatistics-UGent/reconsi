@@ -9,7 +9,6 @@ plotNull(
   fit,
   lowColor = "yellow",
   highColor = "blue",
-  dens = TRUE,
   idDA = NULL,
   nResampleCurves = length(fit$Weights),
   hSize = 0.5
@@ -19,8 +18,6 @@ plotNull(
 \item{fit}{an object returned by the reconsi() (or testDAA()) function}
 
 \item{lowColor, highColor}{The low and high ends of the colour scale}
-
-\item{dens}{a boolean, should fdr and Fdr be plotted?}
 
 \item{idDA}{indices of known null taxa}
 
