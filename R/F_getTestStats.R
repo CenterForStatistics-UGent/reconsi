@@ -49,7 +49,7 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     mm = table(x)[1]
   if(test=="wilcox.test"){ #Shortcuts possbile in case of Wilcoxon test
     nFac = mm*(mm + 1)/2
-    YRanked = colRanks(Y, preserveShape = TRUE)
+    YRanked = colRanks(Y, preserveShape = TRUE, ties.method = "average")
     #Observed test statistic
     statObs = colSums(YRanked[xLog,]) - nFac
     #Permuation test statistics
