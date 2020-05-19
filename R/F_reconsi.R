@@ -78,7 +78,7 @@
 #' @examples
 #' #Important notice: low number of resamples B necessary to keep
 #' # computation time down, but not recommended. Pray set B at 200 or higher.
-#' p = 200; n = 20; B = 5e2
+#' p = 50; n = 20; B = 5e1
 #' x = rep(c(0,1), each = n/2)
 #' mat = cbind(
 #' matrix(rnorm(n*p/10, mean = 5+x), n, p/10), #DA

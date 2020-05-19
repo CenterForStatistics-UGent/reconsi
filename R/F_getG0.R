@@ -15,7 +15,7 @@
 #' @param pi0 A known fraction of true null hypotheses.
 #'
 #' @importFrom KernSmooth bkde
-#' @importFrom stats qnorm dnorm approx
+#' @importFrom stats qnorm dnorm approx quantile
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}
