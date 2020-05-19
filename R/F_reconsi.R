@@ -248,6 +248,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     c(list(statsPerm = statsPerm, statObs = statObs, zValues = zValues,
            resamZvals = resamZvals, cdfValObs = cdfValObs,
            testPargs = testPargs, distFun = distFun,
-           p0estimated = is.null(pi0), resamDesign = testStats$resamDesign),
+           p0estimated = is.null(pi0),
+           resamDesign = if(is.null(zVals)) testStats$resamDesign),
       FdrList, consensus)
 }
