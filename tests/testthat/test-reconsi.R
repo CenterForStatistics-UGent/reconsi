@@ -29,21 +29,21 @@ test_that("reconsi throws warnings where necessary", {
     #Few hypotheses
 })
 test_that("reconsi works smoothly when all is fine", {
-    expect_type(reconsi(Y = mat, x = x), "list")
+    expect_error(reconsi(Y = mat, x = x), NA)
 })
 mat2 = mat
 mat2[x==0,1] = 0
 mat2[x==1,1] = 1
 test_that("reconsi works smoothly even when some test statistics are NA", {
-    expect_type(reconsi(Y = mat2, x = x, test = "t.test"), "list")
+    expect_error(reconsi(Y = mat2, x = x, test = "t.test"), NA)
 })
 test_that("reconsi works when bootstrap is requested", {
-              expect_type(reconsi(Y = mat, test = function(y, x, mu){
+              expect_error(reconsi(Y = mat, test = function(y, x, mu){
                   testRes = t.test(y, mu = mu)
                   c(testRes$statistic, testRes$parameter)}, argList = list(mu = 0), center = FALSE,
                   distFun = function(q){pt(q = q[1],
-                                           df = q[2])}), "list")
-    expect_type(reconsi(Y = mat, test = function(y, x){
+                                           df = q[2])}), NA)
+    expect_error(reconsi(Y = mat, test = function(y, x){
         wilcox.test(y, mu = 0, exact = FALSE)$statistic
-    }, distFun = "psignrank", testPargs = list(n = nrow(mat))), "list")
+    }, distFun = "psignrank", testPargs = list(n = nrow(mat))), NA)
           })
