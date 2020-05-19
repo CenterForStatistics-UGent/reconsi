@@ -22,7 +22,6 @@ expect_error(reconsi(Y = mat, x = sample(x, p, replace = TRUE)))
 expect_error(reconsi(Y = mat[,1], x = sample(x, p, replace = TRUE)))
 #Vector rather than matrix supplied.
 })
-
 test_that("reconsi throws warnings where necessary", {
     expect_error(reconsi(Y = mat[,seq_len(25)],
                             x = sample(x, p, replace = TRUE)))
