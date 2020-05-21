@@ -155,6 +155,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
             stop("With t-tests, the test statistic must be converted to zValues. Please set zValues = TRUE")
         }
         } else if(test=="wilcox.test"){
+            if(center) stop("Only two-sample Wilcoxon test natively implemented. provide custom test function!\n")
         testPargs = list(m = table(x)[1], n = table(x)[2])
         distFun = "pwilcox"
         }

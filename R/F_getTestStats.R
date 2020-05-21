@@ -36,12 +36,15 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
       vapply(integer(B), FUN.VALUE = integer(n),function(x) sample.int(n = n))
   if(center){
     if(replace){
-      Y = scale(Y, center = TRUE, scale = scale)
+      Ycenter = scale(Y, center = TRUE, scale = scale)
   } else {
+      Ycenter = Y
         for (ii in unique(x)){
-            Y[x==ii,] = scale(Y[x==ii,], center = TRUE, scale = scale)
+            Ycenter[x==ii,] = scale(Ycenter[x==ii,], center = TRUE, scale = scale)
         }
   }
+  } else {
+      Ycenter = Y
   }
   if(is.character(test) && (test %in% c("wilcox.test","t.test"))){
     xLog = x==names(table(x))[1]
@@ -68,7 +71,7 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
     statsPerm = vapply(seq_len(B), FUN.VALUE = statObs,
                        function(ii){
       xSam = xLog[resamDesign[,ii]]
-      apply(Y, 2, function(dat){
+      apply(Ycenter, 2, function(dat){
         getTstat(y1 = dat[xSam], y2 = dat[!xSam], mm = mm, nn = nn)
       })
     })
@@ -81,7 +84,7 @@ getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)
   statsPerm = vapply(seq_len(B),
                      FUN.VALUE = statObs,
                      function(ii){
-    apply(Y[resamDesign[,ii],],2, function(y){
+    apply(Ycenter[resamDesign[,ii],],2, function(y){
     do.call(testFun, c(list(y = y, x = x), argList))
   })})
     }
