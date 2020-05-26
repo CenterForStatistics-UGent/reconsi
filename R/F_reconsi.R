@@ -129,7 +129,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       maxIter = 1000L, tol = 1e-8,
                       center = FALSE, replace = is.null(x), zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
-                                       smooth.df = 3), resamZvals = FALSE,
+                                       smooth.df = 3, evalVal = 0.05), resamZvals = FALSE,
                       smoothObs = TRUE, scale = FALSE,
                       tieBreakRan = FALSE, pi0 = NULL){
     #Basic checks

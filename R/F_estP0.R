@@ -13,7 +13,7 @@
 #'Storey and Tibshirani, 2003
 #'
 #'@importFrom stats smooth.spline predict
-estP0 = function(statObs, fitAll, z0quantRange, smooth.df){
+estP0 = function(statObs, fitAll, z0quantRange, smooth.df, evalVal){
     pi0 = vapply(z0quantRange, FUN.VALUE = double(1), function(z0Quant) {
     z0Quant = c(z0Quant, 1-z0Quant)
     centralBorders = qnorm(z0Quant, mean = fitAll["mean"], sd = fitAll["sd"])
@@ -21,6 +21,6 @@ estP0 = function(statObs, fitAll, z0quantRange, smooth.df){
         statObs >= centralBorders[1])/diff(z0Quant)
     })
     smoothPi0 = smooth.spline(z0quantRange, pi0, df = smooth.df)
-    pi0Smooth = predict(smoothPi0, x = z0quantRange[1])$y #Conservative
+    pi0Smooth = predict(smoothPi0, x = evalVal)$y #Conservative
     min(pi0Smooth, 1)
 }
