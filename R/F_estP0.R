@@ -4,6 +4,7 @@
 #' @param fitAll the estimated normal null
 #' @param z0quantRange a number of quantiles between 0 and 0.5
 #' @param smooth.df degrees of freedom for the spline smoother
+#' @param evalVal the value of q at which to evaluate the spline
 #'
 #' @return The estimated null fraction, the value of the spline evaluated
 #'  at the first element of z0quantRange

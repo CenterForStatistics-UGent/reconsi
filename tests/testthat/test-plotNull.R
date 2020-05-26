@@ -8,5 +8,5 @@ mat[x==0, idDA] = mat[x==0, seq_len(10)] + 0.5
 reco  = reconsi(Y = mat, x = x)
 test_that("testDAA deals with all zero rows", {
     expect_s3_class(plotNull(reco), "ggplot")
-    expect_s3_class(plotNull(reco, idDA = idDA), "ggplot")
+    expect_s3_class(plotNull(reco, idNull = !idDA), "ggplot")
 })

@@ -21,7 +21,8 @@ reconsi(
   center = FALSE,
   replace = is.null(x),
   zVals = NULL,
-  estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df = 3),
+  estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df = 3, evalVal =
+    0.05),
   resamZvals = FALSE,
   smoothObs = TRUE,
   scale = FALSE,

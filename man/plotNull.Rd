@@ -9,7 +9,7 @@ plotNull(
   fit,
   lowColor = "yellow",
   highColor = "blue",
-  idDA = NULL,
+  idNull = NULL,
   nResampleCurves = length(fit$Weights),
   hSize = 0.5
 )
@@ -19,7 +19,7 @@ plotNull(
 
 \item{lowColor, highColor}{The low and high ends of the colour scale}
 
-\item{idDA}{indices of known null taxa}
+\item{idNull}{indices of known null taxa}
 
 \item{nResampleCurves}{The number of resampling null distributions to plot}
 

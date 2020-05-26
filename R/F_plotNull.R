@@ -2,7 +2,7 @@
 #' statistics
 #' @param fit an object returned by the reconsi() (or testDAA()) function
 #' @param lowColor,highColor The low and high ends of the colour scale
-#' @param idDA indices of known null taxa
+#' @param idNull indices of known null taxa
 #' @param nResampleCurves The number of resampling null distributions to plot
 #' @param hSize A double, the size of the line of the collapsed null estimate
 #'
@@ -23,7 +23,7 @@
 #' fdrRes = reconsi(mat, x, B = B)
 #' plotNull(fdrRes)
 plotNull = function(fit, lowColor ="yellow", highColor ="blue",
-                    idDA = NULL, nResampleCurves = length(fit$Weights),
+                    idNull = NULL, nResampleCurves = length(fit$Weights),
                     hSize = 0.5){
     with(fit, {
         zValsDensPerm = apply(PermDensFits, 2, function(Fit){
@@ -61,9 +61,9 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue",
     dfDens = data.frame("zSeq" = zSeq, "ResampleNull" = g0,
                         "StandardNormal" = dnorm(zSeq)*sum(g0)/sum(dnorm(zSeq)),
                         "fdr" = lfdr)
-    if(!is.null(idDA)){
+    if(!is.null(idNull)){
       #If null taxa known, add true normal density
-      nullZdens = estNormal(y = statObs[idDA])
+      nullZdens = estNormal(y = statObs[idNull])
       dfDens$OracleNullDensity = dnorm(zSeq, mean = nullZdens["mean"],
                                  sd = nullZdens["sd"])
     }
@@ -73,8 +73,8 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue",
                   aes(x = zSeq, y = density, group = type,
                       linetype = type, size = type)) +
         scale_linetype_manual(name = "",
-                              values = c("solid", "dashed", "dotdash", if(!is.null(idDA)) "twodash")) +
-        scale_size_manual(values = c(0.2, 0.4, 0.4, if(!is.null(idDA)) 0.3), guide = FALSE)
+                              values = c("solid", "dashed", "dotdash", if(!is.null(idNull)) "twodash")) +
+        scale_size_manual(values = c(0.2, 0.4, 0.4, if(!is.null(idNull)) 0.3), guide = FALSE)
     # Add red dots for Fdr estimates
     dfFdr = data.frame(statObs = statObs, Fdr = Fdr)
     plot = plot + geom_point(inherit.aes = FALSE, data = dfFdr,
