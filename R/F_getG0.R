@@ -16,7 +16,7 @@
 #' @param assumeNormal A boolean, should normality be assumed for the null distribution?
 #'
 #' @importFrom KernSmooth bkde
-#' @importFrom stats qnorm dnorm approx quantile
+#' @importFrom stats qnorm dnorm approx quantile bw.nrd0
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}
@@ -55,9 +55,21 @@ if(length(z0Quant)==1) {
     dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
   })
   #Indicators for the observed z values in the support of the kernel
-  iter = 1L; convergence = FALSE; p0 = 1; fitAll = c("mean" = 0, "sd" = 1)
+  iter = 1L; convergence = FALSE; p0 = 1
   fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])
   fdr[fdr==0] = .Machine$double.eps
+  if(!assumeNormal){
+      resamVec = c(t(statsPerm))
+      bw = bw.nrd0(resamVec)
+      prepMatZseq = vapply(zSeq, FUN.VALUE = resamVec, function(b) {
+          exp(-((resamVec - b)/bw)^2/2)
+      })
+      prepMatObs = vapply(statObs, FUN.VALUE = resamVec, function(b) {
+          exp(-((resamVec - b)/bw)^2/2)
+      })
+      Fac = (bw * sqrt(2 * pi))*p
+  }
+
   while(iter <= maxIter && !convergence){
       fdrOld = fdr; p0old = p0
       weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
@@ -66,13 +78,15 @@ if(length(z0Quant)==1) {
         fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
         g0Obs = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
       } else {
-        g0Obs = wkde(x = c(t(statsPerm)), w = weights/p, u = statObs)
+        fitAll = colSums(weights* prepMatZseq)/Fac
+        g0Obs = colSums(weights* prepMatObs)/Fac
       }
     fdr = g0Obs/zValsDensObsInterp*p0
     fdr[fdr>1] = 1 #Normalize here already!
-    p0 = if(estPi0) do.call(estP0, c(list(statObs = statObs, fitAll = fitAll),
+    p0 = if(estPi0) do.call(estP0, c(list(statObs = statObs, fitAll = fitAll,
+                                          assumeNormal = assumeNormal, zSeq = zSeq),
                    estP0args)) else pi0
-    convergence = all((fdr-fdrOld)^2 < tol) && (p0-p0old)^2 < tol
+    convergence = mean((fdr-fdrOld)^2) < tol && (p0-p0old)^2 < tol
     iter = iter + 1L
   }
   if(!convergence){
@@ -81,5 +95,5 @@ if(length(z0Quant)==1) {
               zValsDensObs = zValsDensObs, convergence  = convergence,
               Weights = weights, fdr = fdr,
               p0 = p0, iter = iter, assumeNormal = assumeNormal,
-              fitAll = if(assumeNormal) fitAll else wkde(x = c(t(statsPerm)), w = weights/p, u = zSeq)))
+              fitAll = fitAll))
 }

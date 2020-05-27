@@ -4,7 +4,7 @@
 \alias{estP0}
 \title{Estimate the fraction of true null hypotheses.}
 \usage{
-estP0(statObs, fitAll, z0quantRange, smooth.df, evalVal)
+estP0(statObs, fitAll, z0quantRange, smooth.df, evalVal, assumeNormal, zSeq)
 }
 \arguments{
 \item{statObs}{A vector of observed z-values}
@@ -16,6 +16,10 @@ estP0(statObs, fitAll, z0quantRange, smooth.df, evalVal)
 \item{smooth.df}{degrees of freedom for the spline smoother}
 
 \item{evalVal}{the value of q at which to evaluate the spline}
+
+\item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
+
+\item{zSeq}{the grid points}
 }
 \value{
 The estimated null fraction, the value of the spline evaluated
