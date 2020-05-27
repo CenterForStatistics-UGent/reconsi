@@ -61,15 +61,10 @@ if(length(z0Quant)==1) {
   if(!assumeNormal){
       resamVec = c(t(statsPerm))
       bw = bw.nrd0(resamVec)
-      prepMatZseq = vapply(zSeq, FUN.VALUE = resamVec, function(b) {
-          exp(-((resamVec - b)/bw)^2/2)
-      })
-      prepMatObs = vapply(statObs, FUN.VALUE = resamVec, function(b) {
-          exp(-((resamVec - b)/bw)^2/2)
-      })
+      prepMatZseq = wkdePrep(x = resamVec, bw = bw, u = zSeq)
+      prepMatObs = wkdePrep(x = resamVec, bw = bw, u = statObs)
       Fac = (bw * sqrt(2 * pi))*p
   }
-
   while(iter <= maxIter && !convergence){
       fdrOld = fdr; p0old = p0
       weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
