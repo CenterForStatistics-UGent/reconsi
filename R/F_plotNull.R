@@ -53,7 +53,7 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue",
                              inherit.aes = FALSE, bins = 50, alpha = 0.5,
                              fill = "mediumseagreen")
     # Add density functions
-    g0 = dnorm(zSeq,  mean = fitAll["mean"], sd = fitAll["sd"])
+    g0 = if(assumeNormal) dnorm(zSeq,  mean = fitAll["mean"], sd = fitAll["sd"]) else fitAll
     lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
     lfdr[lfdr>1] = 1
     #Only show lfdr for observed z-values

@@ -18,7 +18,8 @@
 #' @return A list with components
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
-getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs, ...)
+getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
+                  assumeNormal, ...)
 {
   statObsNotNA = statObs[!is.na(statObs)]
   #Null

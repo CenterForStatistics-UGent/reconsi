@@ -66,7 +66,7 @@ if(length(z0Quant)==1) {
         fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
         g0Obs = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
       } else {
-        g0Obs = wkde(x = c(t(statsPerm)), w = weights, u = statObs)
+        g0Obs = wkde(x = c(t(statsPerm)), w = weights/p, u = statObs)
       }
     fdr = g0Obs/zValsDensObsInterp*p0
     fdr[fdr>1] = 1 #Normalize here already!
@@ -81,5 +81,5 @@ if(length(z0Quant)==1) {
               zValsDensObs = zValsDensObs, convergence  = convergence,
               Weights = weights, fdr = fdr,
               p0 = p0, iter = iter, assumeNormal = assumeNormal,
-              fitAll = if(assumeNormal) fitAll else wkde(x = c(statsPerm), w = rep(weights, each = p), u = zSeq)))
+              fitAll = if(assumeNormal) fitAll else wkde(x = c(t(statsPerm)), w = weights/p, u = zSeq)))
 }
