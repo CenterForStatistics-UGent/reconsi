@@ -6,6 +6,7 @@
 #' @param bw the bandwith
 #'
 #' @return densities of the same length as x
+#' @importFrom stats bw.nrd0
 wkde = function (x, u = x, w, bw = bw.nrd0(x))
 {
     vapply(u, FUN.VALUE = double(1), function(b) {
