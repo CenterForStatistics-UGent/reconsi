@@ -55,6 +55,7 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
     YRanked = colRanks(Y, preserveShape = TRUE, ties.method = "average")
     #Observed test statistic
     statObs = colSums(YRanked[xLog,]) - nFac
+    #statObs = statObs - sign(statObs- mm*nn/2) *0.5
     #Permuation test statistics
     mmSeries = seq_len(mm)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
@@ -64,6 +65,8 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
       }
         colSums(YRanked[resamDesign[mmSeries,ii],])
     }, FUN.VALUE = statObs)
+    #statsPerm = statsPerm - sign(statsPerm- mm*nn/2) *0.5
+
   } else if(test == "t.test"){
     statObs = apply(Y, 2, function(dat){
 getTstat(y1 = dat[xLog], y2 = dat[!xLog], mm = mm, nn = nn)

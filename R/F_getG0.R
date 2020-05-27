@@ -40,7 +40,7 @@ if(length(z0Quant)==1) {
 }
  estPi0 = is.null(pi0) #Should the fraction of nulls be estimated?
   statObs = statObs[!is.na(statObs)] #ignore NA values
-  centralBorders = quantile(statObs, probs = c(z0Quant, 1-z0Quant))
+  centralBorders = quantile(statObs, probs = z0Quant)
   #Estimate observed densities
   zValsDensObs0 = bkde(statObs, gridsize = gridsize)
   zValsDensObs = zValsDensObs0$y
