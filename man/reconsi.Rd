@@ -14,12 +14,13 @@ reconsi(
   distFun = "pnorm",
   zValues = TRUE,
   testPargs = list(),
-  z0Quant = pnorm(c(-1, 1)),
+  z0Quant = 0.25,
   gridsize = 801L,
   maxIter = 1000L,
   tol = 1e-08,
   center = FALSE,
   replace = is.null(x),
+  assumeNormal = TRUE,
   zVals = NULL,
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df = 3, evalVal =
     0.05),
@@ -69,6 +70,8 @@ in each group prior to permuations? See details.}
 
 \item{replace}{A boolean. Should resampling occur with replacement (boostrap)
 or without replacement (permutation)}
+
+\item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
 
 \item{zVals}{An optional list of observed (statObs) and
 resampling (statsPerm) z-values. If supplied, the calculation

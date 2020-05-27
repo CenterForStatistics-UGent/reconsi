@@ -15,7 +15,8 @@ getG0(
   testPargs,
   B,
   p,
-  pi0
+  pi0,
+  assumeNormal
 )
 }
 \arguments{
@@ -41,7 +42,9 @@ of the distribution. If a single number is supplied, then
 
 \item{p}{an integer, the number of hypotheses}
 
-\item{pi0}{A known fraction of true null hypotheses.}
+\item{pi0}{A known fraction of true null hypotheses}
+
+\item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
 }
 \value{
 A list with following entries

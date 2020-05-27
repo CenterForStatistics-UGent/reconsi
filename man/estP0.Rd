@@ -14,6 +14,8 @@ estP0(statObs, fitAll, z0quantRange, smooth.df, evalVal)
 \item{z0quantRange}{a number of quantiles between 0 and 0.5}
 
 \item{smooth.df}{degrees of freedom for the spline smoother}
+
+\item{evalVal}{the value of q at which to evaluate the spline}
 }
 \value{
 The estimated null fraction, the value of the spline evaluated

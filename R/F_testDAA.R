@@ -8,6 +8,7 @@
 #' @param FC a vector of length n with total flow cytometry cell counts
 #' @param x a grouping factor of length n
 #' @param S a vector of library sizes. Will be calculated if not provided
+#' @param assumeNormal A boolean, should normality be assumed for the null distribution?
 #' @param tieBreakRan A boolean, should ties be broken at random.
 #' @param ... passed on to the reconsi() function
 #'
@@ -41,12 +42,14 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 #' testMat = testDAA(as(otu_table(VandeputtePruned), "matrix"),
 #' get_variable(VandeputtePruned, "Health.status"),
 #' get_variable(VandeputtePruned,"absCountFrozen"), B = 15)
-setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y), tieBreakRan = TRUE, ...){
+setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y),
+                                        tieBreakRan = TRUE, assumeNormal = FALSE,...){
     stopifnot(length(FC)==length(x), length(FC)==length(S),
               length(FC)==nrow(Y), is.logical(tieBreakRan))
     idSam = S>0
     if(min(table(x[idSam]))<2L){
         return(NULL)
         }
-    reconsi(Y[idSam,colSums(Y)>0]/S[idSam]*FC[idSam], x=x[idSam], tieBreakRan = tieBreakRan, ...)
+    reconsi(Y[idSam,colSums(Y)>0]/S[idSam]*FC[idSam], x=x[idSam],
+            tieBreakRan = tieBreakRan, assumeNormal = assumeNormal,...)
 })
