@@ -1,7 +1,7 @@
 Package: reconsi
 Type: Package
 Title: Resampling Collapsed Null Distributions for Simultaneous Inference
-Version: 1.1.1
+Version: 1.1.3
 Author: Stijn Hawinkel <stijn.hawinkel@ugent.be>
 Maintainer: Joris Meys <joris.meys@ugent.be>
 Description: Improves simultaneous inference under dependence of tests by
