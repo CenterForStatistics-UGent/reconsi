@@ -14,7 +14,7 @@
 #' @param p an integer, the number of hypotheses
 #' @param pi0 A known fraction of true null hypotheses
 #' @param assumeNormal A boolean, should normality be assumed for the null distribution?
-#'
+#' @param assumeNormalResam A boolean, should normality be assumed for resampling dists
 #' @importFrom KernSmooth bkde
 #' @importFrom stats qnorm dnorm approx quantile bw.nrd0
 #'
@@ -32,7 +32,7 @@
 #' \item{fitAll}{The consensus null fit}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, testPargs, B, p,
-                 pi0, assumeNormal){
+                 pi0, assumeNormal, assumeNormalResam){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
   }
@@ -50,10 +50,20 @@ if(length(z0Quant)==1) {
   zValsDensObs[zValsDensObs<=0] =
       .Machine$double.eps #Remove negative densities
   #Estimate permutation densities
-  PermDensFits = apply(statsPerm, 2, estNormal)
-  LogPermDensEvals = apply(PermDensFits, 2, function(fit){
-    dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
-  })
+  if(assumeNormalResam){
+      PermDensFits = apply(statsPerm, 2, estNormal)
+      LogPermDensEvals = apply(PermDensFits, 2, function(fit){
+          dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
+      })
+  } else {
+      Range = range(c(statObs, statsPerm))
+    PermDensFits = apply(statsPerm, 2, bkde, range.x = Range)
+    LogPermDensEvals = vapply(PermDensFits, FUN.VALUE = statObs, function(fit){
+        tmp = approx(x = fit$x, y = fit$y, xout = statObs)$y
+        tmp[tmp<0] = .Machine$double.eps
+         log(tmp)
+    })
+  }
   #Indicators for the observed z values in the support of the kernel
   iter = 1L; convergence = FALSE; p0 = 1
   fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])

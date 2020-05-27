@@ -16,7 +16,8 @@ getG0(
   B,
   p,
   pi0,
-  assumeNormal
+  assumeNormal,
+  assumeNormalResam
 )
 }
 \arguments{
@@ -45,6 +46,8 @@ of the distribution. If a single number is supplied, then
 \item{pi0}{A known fraction of true null hypotheses}
 
 \item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
+
+\item{assumeNormalResam}{A boolean, should normality be assumed for resampling dists}
 }
 \value{
 A list with following entries
