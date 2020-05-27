@@ -12,7 +12,8 @@
 #' @param testPargs A list of arguments passed on to quantileFun
 #' @param B an integer, the number of permutations
 #' @param p an integer, the number of hypotheses
-#' @param pi0 A known fraction of true null hypotheses.
+#' @param pi0 A known fraction of true null hypotheses
+#' @param assumeNormal A boolean, should normality be assumed for the null distribution?
 #'
 #' @importFrom KernSmooth bkde
 #' @importFrom stats qnorm dnorm approx quantile
@@ -31,7 +32,7 @@
 #' \item{fitAll}{The consensus null fit}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, testPargs, B, p,
-                 pi0){
+                 pi0, assumeNormal){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
   }
@@ -61,9 +62,12 @@ if(length(z0Quant)==1) {
       fdrOld = fdr; p0old = p0
       weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
       #Null distribution
-    #   fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
-    # g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
-    g0Obs = wkde(x = c(statsPerm), w = rep(weights, each = p), u = statObs)
+      if(assumeNormal){
+        fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
+        g0Obs = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
+      } else {
+        g0Obs = wkde(x = c(t(statsPerm)), w = weights, u = statObs)
+      }
     fdr = g0Obs/zValsDensObsInterp*p0
     fdr[fdr>1] = 1 #Normalize here already!
     p0 = if(estPi0) do.call(estP0, c(list(statObs = statObs, fitAll = fitAll),
@@ -76,5 +80,6 @@ if(length(z0Quant)==1) {
   return(list(PermDensFits = PermDensFits, zSeq = zSeq,
               zValsDensObs = zValsDensObs, convergence  = convergence,
               Weights = weights, fdr = fdr,
-              p0 = p0, iter = iter, g0 = wkde(x = c(statsPerm), w = rep(weights, each = p), u = zSeq)))
+              p0 = p0, iter = iter, assumeNormal = assumeNormal,
+              fitAll = if(assumeNormal) fitAll else wkde(x = c(statsPerm), w = rep(weights, each = p), u = zSeq)))
 }

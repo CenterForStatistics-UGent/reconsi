@@ -26,6 +26,7 @@
 #' @param scale a boolean, should data be scaled prior to resampling
 #' @param replace A boolean. Should resampling occur with replacement (boostrap)
 #' or without replacement (permutation)
+#' @param assumeNormal A boolean, should normality be assumed for the null distribution?
 #' @param zVals An optional list of observed (statObs) and
 #' resampling (statsPerm) z-values. If supplied, the calculation
 #'    of the observed and resampling test statistics is skipped
@@ -127,7 +128,8 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       zValues = TRUE, testPargs = list(),
                       z0Quant = 0.25, gridsize = 801L,
                       maxIter = 1000L, tol = 1e-8,
-                      center = FALSE, replace = is.null(x), zVals = NULL,
+                      center = FALSE, replace = is.null(x), assumeNormal = TRUE,
+                   zVals = NULL,
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3, evalVal = 0.05), resamZvals = FALSE,
                       smoothObs = TRUE, scale = FALSE,
@@ -239,7 +241,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
     consensus = getG0(statObs = statObs, statsPerm =  statsPerm,
                       z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
                       tol = tol, estP0args = estP0args, testPargs = testPargs,
-                      B = B, p = p, pi0 = pi0)
+                      B = B, p = p, pi0 = pi0, assumeNormal = assumeNormal)
     #False discovery Rates
     FdrList = do.call(getFdr,
                       c(list(statObs = statObs, p = p, smoothObs = smoothObs),
