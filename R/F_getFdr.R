@@ -17,14 +17,18 @@
 #' @return A list with components
 #' \item{Fdr}{Tail are false discovery rate}
 #' \item{fdr}{Local false discovery rate}
-getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
+getFdr = function(statObs, g0, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
                   ...)
 {
   statObsNotNA = statObs[!is.na(statObs)]
-  #Null
-  G0 = pnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])
-  G0[G0>0.5] = pnorm(statObsNotNA[G0>0.5], mean = fitAll["mean"],
-                     sd = fitAll["sd"], lower.tail = FALSE)
+  # #Null
+  # G0 = pnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])
+  # G0[G0>0.5] = pnorm(statObsNotNA[G0>0.5], mean = fitAll["mean"],
+  #                    sd = fitAll["sd"], lower.tail = FALSE)
+  G0 = approx(y = cumsum(g0/sum(g0)),
+              xout = statObsNotNA, x = zSeq)$y
+  G0[G0>0.5] = 1-G0[G0>0.5]
+
   #Observed
   zcum = if(smoothObs) {
     approx(y = cumsum(zValsDensObs/sum(zValsDensObs)),
@@ -38,7 +42,7 @@ getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
   Fdr[Fdr>1] = 1
   #fdr
   if(is.null(fdr)){
-    fdr  = dnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])/
+    fdr  = g0/
         approx(y = zValsDensObs, xout = statObsNotNA, x = zSeq)$y*p0
     fdr[fdr>1] = 1
   }

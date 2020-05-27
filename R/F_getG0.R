@@ -61,9 +61,10 @@ if(length(z0Quant)==1) {
       fdrOld = fdr; p0old = p0
       weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
       #Null distribution
-      fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
-    g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
-    fdr = g0/zValsDensObsInterp*p0
+    #   fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
+    # g0 = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
+    g0Obs = wkde(x = c(statsPerm), w = rep(weights, each = p), u = statObs)
+    fdr = g0Obs/zValsDensObsInterp*p0
     fdr[fdr>1] = 1 #Normalize here already!
     p0 = if(estPi0) do.call(estP0, c(list(statObs = statObs, fitAll = fitAll),
                    estP0args)) else pi0
@@ -75,5 +76,5 @@ if(length(z0Quant)==1) {
   return(list(PermDensFits = PermDensFits, zSeq = zSeq,
               zValsDensObs = zValsDensObs, convergence  = convergence,
               Weights = weights, fdr = fdr,
-              p0 = p0, iter = iter, fitAll = fitAll))
+              p0 = p0, iter = iter, g0 = wkde(x = c(statsPerm), w = rep(weights, each = p), u = zSeq)))
 }
