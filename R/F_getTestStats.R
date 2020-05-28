@@ -53,9 +53,15 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
   if(test=="wilcox.test"){ #Shortcuts possbile in case of Wilcoxon test
     nFac = mm*(mm + 1)/2
     YRanked = colRanks(Y, preserveShape = TRUE, ties.method = "average")
+    # TIES <- apply(Yranked, 2, function(r) length(r) != length(unique(r)))
+    # NTIES <- apply(Yranked[, TIES], 2, table)
+    # SIGMA <- sqrt((mm * nn/12) * ((mm + nn + 1) -
+    #                                   sum(NTIES^3 - NTIES)/((mm + nn) * (mm + nn - 1))))
+    # CORRECTION <-  sign(statObs[TIES]) * 0.5
+    # statObs[TIES] <- (statObs[TIES] - CORRECTION)/SIGMA
+
     #Observed test statistic
     statObs = colSums(YRanked[xLog,]) - nFac
-    #statObs = statObs - sign(statObs- mm*nn/2) *0.5
     #Permuation test statistics
     mmSeries = seq_len(mm)
     statsPerm = - nFac + vapply(seq_len(B), function(ii){
@@ -66,7 +72,7 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
         colSums(YRanked[resamDesign[mmSeries,ii],])
     }, FUN.VALUE = statObs)
 
-    #statsPerm = statsPerm - sign(statsPerm- mm*nn/2) *0.5
+
 
   } else if(test == "t.test"){
     statObs = apply(Y, 2, function(dat){

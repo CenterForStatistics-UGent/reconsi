@@ -43,7 +43,7 @@ testDAA(Y = otuTab, FC = get_variable(Y, FCname),
 #' get_variable(VandeputtePruned, "Health.status"),
 #' get_variable(VandeputtePruned,"absCountFrozen"), B = 15)
 setMethod("testDAA", "matrix", function(Y, FC, x, S = rowSums(Y),
-                                        tieBreakRan = TRUE, assumeNormal = FALSE,...){
+                                        tieBreakRan = TRUE, assumeNormal = TRUE,...){
     stopifnot(length(FC)==length(x), length(FC)==length(S),
               length(FC)==nrow(Y), is.logical(tieBreakRan))
     idSam = S>0
