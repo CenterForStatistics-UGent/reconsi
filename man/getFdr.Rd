@@ -9,12 +9,12 @@ getFdr(
   statObs,
   fitAll,
   fdr,
-  zSeq,
   p,
   p0,
   zValsDensObs,
   smoothObs,
   assumeNormal,
+  fitObs,
   ...
 )
 }
@@ -24,8 +24,6 @@ getFdr(
 \item{fitAll}{The parameters of the estimated random null}
 
 \item{fdr}{local false discovery rate, already estimated}
-
-\item{zSeq}{Support of the density estimation}
 
 \item{p}{the number of hypotheses}
 
@@ -39,6 +37,8 @@ statistics be used in estimating the Fdr}
 \item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
 
 \item{...}{more arguments, ignored}
+
+\item{zSeq}{Support of the density estimation}
 }
 \value{
 A list with components

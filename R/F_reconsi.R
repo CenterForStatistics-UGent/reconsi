@@ -42,7 +42,7 @@
 #' @param pi0 A known fraction of true null hypotheses. If provided,
 #' the fraction of true null hypotheses will not be estimated.
 #' Mainly for oracle purposes.
-#' @param assumeNormalResam A boolean, should normality be assumed for resampling dists
+#' @param resamAssumeNormal A boolean, should normality be assumed for resampling dists
 #'@details Efron (2007) centers the observations in each group prior
 #'  to permutation. As permutations will remove any genuine group differences
 #'   anyway, we skip this step by default. If zValues = FALSE,
@@ -134,7 +134,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3, evalVal = 0.05), resamZvals = FALSE,
                       smoothObs = TRUE, scale = FALSE,
-                      tieBreakRan = FALSE, pi0 = NULL, assumeNormalResam = TRUE){
+                      tieBreakRan = FALSE, pi0 = NULL, resamAssumeNormal = TRUE){
     #Basic checks
     stopifnot(is.matrix(Y), is.list(argList), is.logical(center),
               is.logical(smoothObs),
@@ -243,7 +243,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
                       tol = tol, estP0args = estP0args, testPargs = testPargs,
                       B = B, p = p, pi0 = pi0, assumeNormal = assumeNormal,
-                      assumeNormalResam = assumeNormalResam)
+                      resamAssumeNormal = resamAssumeNormal)
     #False discovery Rates
     FdrList = do.call(getFdr,
                       c(list(statObs = statObs, p = p, smoothObs = smoothObs),

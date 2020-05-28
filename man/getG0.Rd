@@ -17,7 +17,7 @@ getG0(
   p,
   pi0,
   assumeNormal,
-  assumeNormalResam
+  resamAssumeNormal
 )
 }
 \arguments{
@@ -47,7 +47,7 @@ of the distribution. If a single number is supplied, then
 
 \item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
 
-\item{assumeNormalResam}{A boolean, should normality be assumed for resampling dists}
+\item{resamAssumeNormal}{A boolean, should normality be assumed for resampling dists}
 }
 \value{
 A list with following entries

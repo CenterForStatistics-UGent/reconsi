@@ -29,7 +29,7 @@ reconsi(
   scale = FALSE,
   tieBreakRan = FALSE,
   pi0 = NULL,
-  assumeNormalResam = TRUE
+  resamAssumeNormal = TRUE
 )
 }
 \arguments{
@@ -97,7 +97,7 @@ be broken randomly? If not, midranks are used}
 the fraction of true null hypotheses will not be estimated.
 Mainly for oracle purposes.}
 
-\item{assumeNormalResam}{A boolean, should normality be assumed for resampling dists}
+\item{resamAssumeNormal}{A boolean, should normality be assumed for resampling dists}
 }
 \value{
 A list with entries

@@ -10,25 +10,31 @@
 #' @import ggplot2
 #' @importFrom reshape2 melt
 #' @importFrom stats density
+#' @importFrom ks dkde
 #' @export
 #' @examples
-#'  p = 175; n = 50; B = 1e2
+#'  p = 180; n = 50; B = 1e2
 #'  #Low number of resamples keeps computation time down
 #'  x = rep(c(0,1), each = n/2)
 #'  mat = cbind(
 #'  matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
 #'  matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 #'  )
-#Provide just the matrix and grouping factor, and test using the random null
+#' #Provide just the matrix and grouping factor, and test using the random null
 #' fdrRes = reconsi(mat, x, B = B)
 #' plotNull(fdrRes)
 plotNull = function(fit, lowColor ="yellow", highColor ="blue",
                     idNull = NULL, nResampleCurves = length(fit$Weights),
                     hSize = 0.5){
     with(fit, {
-        zValsDensPerm = apply(PermDensFits, 2, function(Fit){
-            dnorm(zSeq, mean = Fit["mean"], sd = Fit["sd"])
-        })
+        zSeq = seq(min(statObs), max(statObs), length.out = 1e3)
+        zValsDensPerm = if(resamAssumeNormal){
+            apply(PermDensFits, 2, function(Fit){
+             dnorm(zSeq, mean = Fit["mean"], sd = Fit["sd"])
+            })
+            } else {
+                vapply(PermDensFits, FUN.VALUE = zSeq, function(Fit){dkde(zSeq, Fit)})
+            }
     colnames(zValsDensPerm) = paste0("b", seq_len(ncol(zValsDensPerm)))
     idCurves = Weights >= sort(Weights, decreasing = TRUE)[nResampleCurves]
     #The Curves to plot
@@ -53,8 +59,8 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue",
                              inherit.aes = FALSE, bins = 50, alpha = 0.5,
                              fill = "mediumseagreen")
     # Add density functions
-    g0 = if(assumeNormal) dnorm(zSeq,  mean = fitAll["mean"], sd = fitAll["sd"]) else fitAll
-    lfdr = g0/zValsDensObs*sum(zValsDensObs)/sum(g0)*p0
+    g0 = if(assumeNormal) dnorm(zSeq,  mean = fitAll["mean"], sd = fitAll["sd"]) else dkde(zSeq, fitAll)
+    lfdr = g0/dkde(zSeq, fitObs)*p0
     lfdr[lfdr>1] = 1
     #Only show lfdr for observed z-values
     lfdr[zSeq > (max(statObs)+0.1) | zSeq < (min(statObs)-0.1)] = NA

@@ -14,10 +14,9 @@
 #' @param p an integer, the number of hypotheses
 #' @param pi0 A known fraction of true null hypotheses
 #' @param assumeNormal A boolean, should normality be assumed for the null distribution?
-#' @param assumeNormalResam A boolean, should normality be assumed for resampling dists
+#' @param resamAssumeNormal A boolean, should normality be assumed for resampling dists
 #' @importFrom stats qnorm dnorm approx quantile
 #' @importFrom ks kde dkde
-#' @importFrom KernSmooth bkde
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}
@@ -33,7 +32,7 @@
 #' \item{fitAll}{The consensus null fit}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, testPargs, B, p,
-                 pi0, assumeNormal, assumeNormalResam){
+                 pi0, assumeNormal, resamAssumeNormal){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
   }
@@ -47,14 +46,8 @@ if(length(z0Quant)==1) {
   fitObs = kde(statObs)
   zValsDensObs = dkde(fitObs, x = statObs)
   zValsDensObs[zValsDensObs<=0] = .Machine$double.eps
-
-  # zValsDensObs0 = bkde(statObs, gridsize = gridsize)
-  # zValsDensObs = zValsDensObs0$y
-  # zSeq = zValsDensObs0$x #The support
-  # zValsDensObsInterp = approx(y = zValsDensObs, x = zSeq, xout = statObs)$y
-  # zValsDensObs[zValsDensObs<=0] =  .Machine$double.eps
   #Estimate permutation densities
-  if(assumeNormalResam){
+  if(resamAssumeNormal){
       PermDensFits = apply(statsPerm, 2, estNormal)
       LogPermDensEvals = apply(PermDensFits, 2, function(fit){
           dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
@@ -71,10 +64,6 @@ if(length(z0Quant)==1) {
   fdr[fdr==0] = .Machine$double.eps
   if(!assumeNormal){
       resamVec = c(t(statsPerm))
-      # bw = bw.nrd0(resamVec)
-      # prepMatZseq = wkdePrep(x = resamVec, bw = bw, u = zSeq)
-      # prepMatObs = wkdePrep(x = resamVec, bw = bw, u = statObs)
-      # Fac = (bw * sqrt(2 * pi))*p
   }
   while(iter <= maxIter && !convergence){
       fdrOld = fdr; p0old = p0
@@ -101,5 +90,5 @@ if(length(z0Quant)==1) {
               zValsDensObs = zValsDensObs, convergence  = convergence,
               Weights = weights, fdr = fdr,
               p0 = p0, iter = iter, assumeNormal = assumeNormal,
-              fitAll = fitAll, fitObs = fitObs))
+              fitAll = fitAll, fitObs = fitObs, resamAssumeNormal = resamAssumeNormal))
 }
