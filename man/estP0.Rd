@@ -18,8 +18,6 @@ estP0(statObs, fitAll, z0quantRange, smooth.df, evalVal, assumeNormal)
 \item{evalVal}{the value of q at which to evaluate the spline}
 
 \item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
-
-\item{zSeq}{the grid points}
 }
 \value{
 The estimated null fraction, the value of the spline evaluated

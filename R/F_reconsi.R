@@ -71,7 +71,7 @@
 #' \item{weights}{weights of the resampling distributions}
 #' \item{zValsDensObs}{Estimated overall densities, evaluated in zSeq}
 #' @export
-#' @importFrom stats pnorm qnorm
+#' @importFrom stats pnorm qnorm pwilcox
 #' @note Ideally, it would be better to only use unique resamples, to avoid
 #' unnecesarry replicated calculations of the same test statistics. Yet this
 #' issue is almost alwyas ignored in practice; as the sample size grows it also

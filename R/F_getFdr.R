@@ -4,8 +4,8 @@
 #' @param statObs Vector of observed z-values
 #' @param fitAll The parameters of the estimated random null
 #' @param fdr local false discovery rate, already estimated
-#' @param zSeq Support of the density estimation
 #' @param p the number of hypotheses
+#' @param fitObs The kernel density estimate object of all test statistics
 #' @param p0 The estimated fraction of null hypotheses
 #' @param zValsDensObs estimated densities of observed test statistics
 #' @param smoothObs A boolean, should estimated observed densities of the test

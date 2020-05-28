@@ -18,10 +18,10 @@ reconsi(
   gridsize = 801L,
   maxIter = 100L,
   tol = 1e-06,
+  zVals = NULL,
   center = FALSE,
   replace = is.null(x),
   assumeNormal = TRUE,
-  zVals = NULL,
   estP0args = list(z0quantRange = seq(0.05, 0.45, 0.0125), smooth.df = 3, evalVal =
     0.05),
   resamZvals = FALSE,
@@ -66,6 +66,12 @@ of the null distribution}
 \item{tol}{The tolerance for the infinity norm of the central borders
 in the iterative procedure}
 
+\item{zVals}{An optional list of observed (statObs) and
+resampling (statsPerm) z-values. If supplied, the calculation
+   of the observed and resampling test statistics is skipped
+   and the algorithm proceeds with calculation
+   of the consensus null distribution}
+
 \item{center}{A boolean, should observations be centered
 in each group prior to permuations? See details.}
 
@@ -73,12 +79,6 @@ in each group prior to permuations? See details.}
 or without replacement (permutation)}
 
 \item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
-
-\item{zVals}{An optional list of observed (statObs) and
-resampling (statsPerm) z-values. If supplied, the calculation
-   of the observed and resampling test statistics is skipped
-   and the algorithm proceeds with calculation
-   of the consensus null distribution}
 
 \item{estP0args}{A list of arguments passed on to the estP0 function}
 

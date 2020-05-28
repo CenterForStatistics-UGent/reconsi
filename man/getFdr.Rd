@@ -36,9 +36,9 @@ statistics be used in estimating the Fdr}
 
 \item{assumeNormal}{A boolean, should normality be assumed for the null distribution?}
 
-\item{...}{more arguments, ignored}
+\item{fitObs}{The kernel density estimate object of all test statistics}
 
-\item{zSeq}{Support of the density estimation}
+\item{...}{more arguments, ignored}
 }
 \value{
 A list with components

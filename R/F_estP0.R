@@ -6,7 +6,6 @@
 #' @param smooth.df degrees of freedom for the spline smoother
 #' @param evalVal the value of q at which to evaluate the spline
 #' @param assumeNormal A boolean, should normality be assumed for the null distribution?
-#' @param zSeq the grid points
 #'
 #' @return The estimated null fraction, the value of the spline evaluated
 #'  at the first element of z0quantRange
