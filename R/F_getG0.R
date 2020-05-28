@@ -17,6 +17,7 @@
 #' @param assumeNormalResam A boolean, should normality be assumed for resampling dists
 #' @importFrom stats qnorm dnorm approx quantile
 #' @importFrom ks kde dkde
+#' @importFrom KernSmooth bkde
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}
@@ -45,6 +46,13 @@ if(length(z0Quant)==1) {
   #Estimate observed densities
   fitObs = kde(statObs)
   zValsDensObs = dkde(fitObs, x = statObs)
+  zValsDensObs[zValsDensObs<=0] = .Machine$double.eps
+
+  # zValsDensObs0 = bkde(statObs, gridsize = gridsize)
+  # zValsDensObs = zValsDensObs0$y
+  # zSeq = zValsDensObs0$x #The support
+  # zValsDensObsInterp = approx(y = zValsDensObs, x = zSeq, xout = statObs)$y
+  # zValsDensObs[zValsDensObs<=0] =  .Machine$double.eps
   #Estimate permutation densities
   if(assumeNormalResam){
       PermDensFits = apply(statsPerm, 2, estNormal)
@@ -93,5 +101,5 @@ if(length(z0Quant)==1) {
               zValsDensObs = zValsDensObs, convergence  = convergence,
               Weights = weights, fdr = fdr,
               p0 = p0, iter = iter, assumeNormal = assumeNormal,
-              fitAll = fitAll))
+              fitAll = fitAll, fitObs = fitObs))
 }
