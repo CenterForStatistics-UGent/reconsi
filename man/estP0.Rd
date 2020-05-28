@@ -4,7 +4,7 @@
 \alias{estP0}
 \title{Estimate the fraction of true null hypotheses.}
 \usage{
-estP0(statObs, fitAll, z0quantRange, smooth.df, evalVal, assumeNormal, zSeq)
+estP0(statObs, fitAll, z0quantRange, smooth.df, evalVal, assumeNormal)
 }
 \arguments{
 \item{statObs}{A vector of observed z-values}

@@ -15,8 +15,8 @@
 #' @param pi0 A known fraction of true null hypotheses
 #' @param assumeNormal A boolean, should normality be assumed for the null distribution?
 #' @param assumeNormalResam A boolean, should normality be assumed for resampling dists
-#' @importFrom KernSmooth bkde
-#' @importFrom stats qnorm dnorm approx quantile bw.nrd0
+#' @importFrom stats qnorm dnorm approx quantile
+#' @importFrom ks kde dkde
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}
@@ -43,12 +43,8 @@ if(length(z0Quant)==1) {
   statObs = statObs[!is.na(statObs)] #ignore NA values
   centralBorders = quantile(statObs, probs = z0Quant)
   #Estimate observed densities
-  zValsDensObs0 = bkde(statObs, gridsize = gridsize)
-  zValsDensObs = zValsDensObs0$y
-  zSeq = zValsDensObs0$x #The support
-  zValsDensObsInterp = approx(y = zValsDensObs, x = zSeq, xout = statObs)$y
-  zValsDensObs[zValsDensObs<=0] =
-      .Machine$double.eps #Remove negative densities
+  fitObs = kde(statObs)
+  zValsDensObs = dkde(fitObs, x = statObs)
   #Estimate permutation densities
   if(assumeNormalResam){
       PermDensFits = apply(statsPerm, 2, estNormal)
@@ -56,12 +52,9 @@ if(length(z0Quant)==1) {
           dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
       })
   } else {
-      Range = range(c(statObs, statsPerm))
-    PermDensFits = apply(statsPerm, 2, bkde, range.x = Range)
+    PermDensFits = apply(statsPerm, 2, kde)
     LogPermDensEvals = vapply(PermDensFits, FUN.VALUE = statObs, function(fit){
-        tmp = approx(x = fit$x, y = fit$y, xout = statObs)$y
-        tmp[tmp<0] = .Machine$double.eps
-         log(tmp)
+        log(dkde(fit, x = statObs))
     })
   }
   #Indicators for the observed z values in the support of the kernel
@@ -70,10 +63,10 @@ if(length(z0Quant)==1) {
   fdr[fdr==0] = .Machine$double.eps
   if(!assumeNormal){
       resamVec = c(t(statsPerm))
-      bw = bw.nrd0(resamVec)
-      prepMatZseq = wkdePrep(x = resamVec, bw = bw, u = zSeq)
-      prepMatObs = wkdePrep(x = resamVec, bw = bw, u = statObs)
-      Fac = (bw * sqrt(2 * pi))*p
+      # bw = bw.nrd0(resamVec)
+      # prepMatZseq = wkdePrep(x = resamVec, bw = bw, u = zSeq)
+      # prepMatObs = wkdePrep(x = resamVec, bw = bw, u = statObs)
+      # Fac = (bw * sqrt(2 * pi))*p
   }
   while(iter <= maxIter && !convergence){
       fdrOld = fdr; p0old = p0
@@ -83,20 +76,20 @@ if(length(z0Quant)==1) {
         fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
         g0Obs = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
       } else {
-        fitAll = colSums(weights* prepMatZseq)/Fac
-        g0Obs = colSums(weights* prepMatObs)/Fac
+        fitAll = kde(resamVec, w = rep(weights*B,p))
+        g0Obs = predict(fitAll, x = statObs)
       }
-    fdr = g0Obs/zValsDensObsInterp*p0
+    fdr = g0Obs/zValsDensObs*p0
     fdr[fdr>1] = 1 #Normalize here already!
     p0 = if(estPi0) do.call(estP0, c(list(statObs = statObs, fitAll = fitAll,
-                                          assumeNormal = assumeNormal, zSeq = zSeq),
+                                          assumeNormal = assumeNormal),
                    estP0args)) else pi0
     convergence = mean((fdr-fdrOld)^2) < tol && (p0-p0old)^2 < tol
     iter = iter + 1L
   }
   if(!convergence){
       warning("Consensus null estimation did not converge, please investigate cause! \n")}
-  return(list(PermDensFits = PermDensFits, zSeq = zSeq,
+  return(list(PermDensFits = PermDensFits,
               zValsDensObs = zValsDensObs, convergence  = convergence,
               Weights = weights, fdr = fdr,
               p0 = p0, iter = iter, assumeNormal = assumeNormal,

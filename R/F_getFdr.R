@@ -28,13 +28,12 @@ getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
       G0[G0>0.5] = pnorm(statObsNotNA[G0>0.5], mean = fitAll["mean"],
                          sd = fitAll["sd"], lower.tail = FALSE)
   } else {
-      G0 = approx(y = cumsum(fitAll/sum(fitAll)), xout = statObsNotNA, x = zSeq)$y
+      G0 = pkde(statObsNotNA, fitAll)
       G0[G0>0.5] = 1-G0[G0>0.5]
   }
   #Observed
   zcum = if(smoothObs) {
-    approx(y = cumsum(zValsDensObs/sum(zValsDensObs)),
-    xout = statObsNotNA, x = zSeq)$y
+      zValsDensObs
   } else {
        ecdf(statObsNotNA)(statObsNotNA)
       }
@@ -47,9 +46,9 @@ getFdr = function(statObs, fitAll, fdr, zSeq, p, p0, zValsDensObs, smoothObs,
       g0 = if(assumeNormal){
           pnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])
       } else {
-          fitAll
+          pkde(statObsNotNA, fitAll)
       }
-    fdr  = g0/approx(y = zValsDensObs, xout = statObsNotNA, x = zSeq)$y*p0
+    fdr  = g0/zValsDensObs*p0
     fdr[fdr>1] = 1
   }
   FdrOut = fdrOut = statObs

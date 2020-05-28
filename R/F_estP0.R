@@ -16,14 +16,17 @@
 #'Storey and Tibshirani, 2003
 #'
 #'@importFrom stats smooth.spline predict
-estP0 = function(statObs, fitAll, z0quantRange, smooth.df, evalVal, assumeNormal, zSeq){
+#'@importFrom ks pkde
+estP0 = function(statObs, fitAll, z0quantRange, smooth.df, evalVal, assumeNormal){
     pi0 = vapply(z0quantRange, FUN.VALUE = double(1), function(z0Quant) {
     z0Quant = c(z0Quant, 1-z0Quant)
     if(assumeNormal) {
         centralBorders = qnorm(z0Quant, mean = fitAll["mean"], sd = fitAll["sd"])
     } else {
-        G0 = cumsum(fitAll)/sum(fitAll)
-        centralBorders = zSeq[vapply(z0Quant, FUN.VALUE = integer(1), function(x) which.min(abs(G0-x)))]
+        cumul.prob <- pkde(q = fitAll$eval.points, fhat = fitAll)
+        Ord = order(cumul.prob)
+        ind <- findInterval(x = z0Quant, vec = cumul.prob[Ord])
+        centralBorders = fitAll$eval.points[Ord][ind]
     }
     mean(statObs <= centralBorders[2] &
         statObs >= centralBorders[1])/diff(z0Quant)
