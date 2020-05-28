@@ -60,7 +60,9 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue",
                              fill = "mediumseagreen")
     # Add density functions
     g0 = if(assumeNormal) dnorm(zSeq,  mean = fitAll["mean"], sd = fitAll["sd"]) else dkde(zSeq, fitAll)
-    lfdr = g0/dkde(zSeq, fitObs)*p0
+    gObs = dkde(zSeq, fitObs)
+    gObs[gObs<0]  =.Machine$double.eps
+    lfdr = g0/gObs*p0
     lfdr[lfdr>1] = 1
     #Only show lfdr for observed z-values
     lfdr[zSeq > (max(statObs)+0.1) | zSeq < (min(statObs)-0.1)] = NA
