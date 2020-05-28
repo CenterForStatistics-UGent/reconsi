@@ -128,10 +128,9 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       distFun ="pnorm",
                       zValues = TRUE, testPargs = list(),
                       z0Quant = 0.25, gridsize = 801L,
-                      maxIter = 100L, tol = 1e-6,
+                      maxIter = 100L, tol = 1e-6, zVals = NULL,
                       center = FALSE, replace = is.null(x), assumeNormal = TRUE,
-                   zVals = NULL,
-                      estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
+                    estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3, evalVal = 0.05), resamZvals = FALSE,
                       smoothObs = TRUE, scale = FALSE,
                       tieBreakRan = FALSE, pi0 = NULL, resamAssumeNormal = TRUE){
@@ -160,7 +159,12 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
         } else if(test=="wilcox.test"){
             if(center) stop("Only two-sample Wilcoxon test natively implemented. provide custom test function!\n")
         testPargs = list(m = table(x)[1], n = table(x)[2])
-        distFun = "pwilcox"
+        distFun = function(q, m, n){
+            if (q > (m*n/2)){
+                pwilcox(q - 1, m, n, lower.tail = FALSE)
+                } else {
+                    pwilcox(q, m, n)
+                    }
         }
     }
     if(!"q" %in% names(formals(distFun))){

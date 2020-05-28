@@ -65,6 +65,7 @@ getTestStats = function(Y, center, test = "wilcox.test", x, B,
       }
         colSums(YRanked[resamDesign[mmSeries,ii],])
     }, FUN.VALUE = statObs)
+
     #statsPerm = statsPerm - sign(statsPerm- mm*nn/2) *0.5
 
   } else if(test == "t.test"){
