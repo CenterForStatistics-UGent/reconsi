@@ -64,6 +64,8 @@ if(length(z0Quant)==1) {
   fdr[fdr==0] = .Machine$double.eps
   if(!assumeNormal){
       resamVec = c(t(statsPerm))
+  } else {
+      prepVec = colSums(PermDensFits^2)
   }
   while(iter <= maxIter && !convergence){
       fdrOld = fdr; p0old = p0
@@ -72,8 +74,7 @@ if(length(z0Quant)==1) {
       if(assumeNormal){
         wMean = sum(PermDensFits["mean",]*weights)
         fitAll = c("mean" = wMean,
-                   "sd" = sqrt(sum(weights*(PermDensFits["sd",]^2+
-                            PermDensFits["mean",]^2-wMean^2))))
+                   "sd" = sqrt(sum(weights*(prepVec-wMean^2))))
         g0Obs = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
       } else {
         fitAll = kde(resamVec, w = rep(weights*B,p))
