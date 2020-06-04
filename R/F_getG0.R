@@ -70,7 +70,10 @@ if(length(z0Quant)==1) {
       weights = calcWeights(logDensPerm = LogPermDensEvals, fdr = fdr)
       #Null distribution
       if(assumeNormal){
-        fitAll = estNormal(y = c(statsPerm), w = rep(weights, each = p), p = p)
+        wMean = sum(PermDensFits["mean",]*weights)
+        fitAll = c("mean" = wMean,
+                   "sd" = sqrt(sum(weights*(PermDensFits["sd",]^2+
+                            PermDensFits["mean",]^2-wMean^2))))
         g0Obs = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
       } else {
         fitAll = kde(resamVec, w = rep(weights*B,p))
