@@ -60,6 +60,7 @@ if(length(z0Quant)==1) {
   }
   #Indicators for the observed z values in the support of the kernel
   iter = 1L; convergence = FALSE; p0 = 1
+  #Start from standard normal, even when not assumed. It's only a starting value
   fitAll = c("mean" = 0, "sd" = 1)
   g0Obs = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
   fdr = g0Obs/zValsDensObs*p0
