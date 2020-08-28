@@ -52,7 +52,7 @@ plotNull = function(fit, lowColor ="yellow", highColor ="blue",
                                 low = lowColor, name = "Weights") +
         scale_alpha_continuous(guide = FALSE, range = c(0.5,1)) +
         xlab(if(zValues) "z-value" else "Test statistic") +
-        ylab("Density/Fdr")  + theme_bw()
+        ylab("Density/Fdr")  + theme_bw() + xlim(range(statObs))
     #Histogram of observed z-values
     plot = plot + geom_histogram(data = data.frame(statObs = statObs),
                              aes(x = statObs, y = ..density..),
