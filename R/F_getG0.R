@@ -60,7 +60,10 @@ if(length(z0Quant)==1) {
   }
   #Indicators for the observed z values in the support of the kernel
   iter = 1L; convergence = FALSE; p0 = 1
-  fdr = as.integer(statObs >= centralBorders[1] & statObs <= centralBorders[2])
+  fitAll = c("mean" = 0, "sd" = 1)
+  g0Obs = dnorm(statObs, mean = fitAll[1], sd = fitAll[2])
+  fdr = g0Obs/zValsDensObs*p0
+  fdr[fdr>1] = 1 #Normalize here already!
   fdr[fdr==0] = .Machine$double.eps
   if(!assumeNormal){
       resamVec = c(t(statsPerm))
