@@ -2,7 +2,7 @@
 % Please edit documentation in R/F_plotApproxCovar.R
 \name{plotApproxCovar}
 \alias{plotApproxCovar}
-\title{Plot an approximatio of the correlation structure of the test statistics}
+\title{Plot an approximation of the correlation structure of the test statistics}
 \usage{
 plotApproxCovar(
   reconsiFit,
@@ -27,7 +27,7 @@ plotApproxCovar(
 invisible()
 }
 \description{
-Plot an approximatio of the correlation structure of the test statistics
+Plot an approximation of the correlation structure of the test statistics
 }
 \details{
 By default, yellow indicates negative correlaton between bin counts,
@@ -36,7 +36,7 @@ blue positive correlation
 \note{
 This is not the covariance matrix of the p test statistic, nor of the
    data! It is an approximate covariance matrix of binned test statistics for
-   visualization purposes.
+   visualization purposes. See \link{plotCovar} for the full covariance matrix.
 }
 \examples{
 p = 200; n = 50; B = 5e1
@@ -48,4 +48,7 @@ matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
 mat = mat = mat + rnorm(n, sd = 0.3) #Introduce some dependence
 fdrRes = reconsi(mat, x, B = B)
 plotApproxCovar(fdrRes)
+}
+\seealso{
+\link{plotCovar}, \link{getApproxCovar}
 }

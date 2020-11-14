@@ -2,6 +2,7 @@
 
 export(getApproxCovar)
 export(plotApproxCovar)
+export(plotCovar)
 export(plotNull)
 export(reconsi)
 export(testDAA)

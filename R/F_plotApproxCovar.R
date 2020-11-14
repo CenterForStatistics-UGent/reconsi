@@ -1,4 +1,4 @@
-#' Plot an approximatio of the correlation structure of the test statistics
+#' Plot an approximation of the correlation structure of the test statistics
 #' @examples
 #' p = 200; n = 50; B = 5e1
 #' x = rep(c(0,1), each = n/2)
@@ -19,8 +19,9 @@
 #' blue positive correlation
 #' @note This is not the covariance matrix of the p test statistic, nor of the
 #'    data! It is an approximate covariance matrix of binned test statistics for
-#'    visualization purposes.
+#'    visualization purposes. See \link{plotCovar} for the full covariance matrix.
 #' @return invisible()
+#' @seealso \link{plotCovar}, \link{getApproxCovar}
 plotApproxCovar = function(reconsiFit, col = colorRampPalette(
                          c("yellow","blue"))(12),
                          x = seq(-4.2, 4.2, 0.1),
