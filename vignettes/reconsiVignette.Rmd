@@ -80,7 +80,7 @@ On the other hand, one can also view the full variance-covariance matrix of the 
 
 ```{r plotCovar}
 matBlock = mat
-matBlock[x==0,] = matBlock[x==0,] + rep(c(0,2), each = n*p/4)
+matBlock[x==0,] = matBlock[x==0,] + rep(c(-1,2), each = n*p/4)
 fdrResBlock = reconsi(matBlock, x)
 plotCovar(fdrResBlock)
 ```
