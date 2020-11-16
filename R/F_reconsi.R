@@ -132,13 +132,13 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                     estP0args = list(z0quantRange = seq(0.05,0.45, 0.0125),
                                        smooth.df = 3, evalVal = 0.05), resamZvals = FALSE,
                       smoothObs = TRUE, scale = FALSE,
-                      tieBreakRan = FALSE, pi0 = NULL, resamAssumeNormal = TRUE){
+                      tieBreakRan = FALSE, pi0 = NULL, resamAssumeNormal = TRUE, mvnorm = FALSE){
     #Basic checks
     stopifnot(is.matrix(Y), is.list(argList), is.logical(center),
               is.logical(smoothObs),
               is.logical(resamZvals), is.logical(replace), is.numeric(z0Quant),
               is.numeric(tol), is.numeric(maxIter), is.numeric(gridsize),
-              is.numeric(B), is.list(estP0args))
+              is.numeric(B), is.list(estP0args), is.logical(mvnorm))
     if(is.function(test)){
 
     }
@@ -246,7 +246,7 @@ reconsi = function(Y, x = NULL, B = 1e3L, test = "wilcox.test",
                       z0Quant = z0Quant, gridsize = gridsize, maxIter = maxIter,
                       tol = tol, estP0args = estP0args, testPargs = testPargs,
                       B = B, p = p, pi0 = pi0, assumeNormal = assumeNormal,
-                      resamAssumeNormal = resamAssumeNormal)
+                      resamAssumeNormal = resamAssumeNormal, mvnorm = mvnorm)
     #False discovery Rates
     FdrList = do.call(getFdr,
                       c(list(statObs = statObs, p = p, smoothObs = smoothObs),

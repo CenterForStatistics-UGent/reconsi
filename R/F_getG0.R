@@ -17,6 +17,7 @@
 #' @param resamAssumeNormal A boolean, should normality be assumed for resampling dists
 #' @importFrom stats qnorm dnorm approx quantile
 #' @importFrom ks kde dkde
+#' @importFrom mclust dmvnorm
 #'
 #' @return A list with following entries
 #' \item{PermDensFits}{The permutation density fits}
@@ -32,7 +33,7 @@
 #' \item{fitAll}{The consensus null fit}
 getG0 = function(statObs, statsPerm, z0Quant, gridsize,
                  maxIter, tol, estP0args, testPargs, B, p,
-                 pi0, assumeNormal, resamAssumeNormal){
+                 pi0, assumeNormal, resamAssumeNormal, mvnorm){
   if(length(statObs)!=nrow(statsPerm)){
     stop("Dimensions of observed and permutation test statistics don't match!")
   }
@@ -50,7 +51,11 @@ if(length(z0Quant)==1) {
   if(resamAssumeNormal){
       PermDensFits = apply(statsPerm, 2, estNormal)
       LogPermDensEvals = apply(PermDensFits, 2, function(fit){
+        if(mvnorm){
+          dmvnorm(statObs, mean = fit[1], sigma = cor(t(statsPerm))*fit[2]^2, log = TRUE)
+        } else {
           dnorm(statObs, mean = fit[1], sd = fit[2], log = TRUE)
+        }
       })
   } else {
     PermDensFits = apply(statsPerm, 2, kde)
@@ -99,4 +104,25 @@ if(length(z0Quant)==1) {
               Weights = weights, fdr = fdr,
               p0 = p0, iter = iter, assumeNormal = assumeNormal,
               fitAll = fitAll, fitObs = fitObs, resamAssumeNormal = resamAssumeNormal))
+}
+
+dmvnormW = function (x, mean = rep(0, p), sigma = diag(p), w)
+{
+  if (is.vector(x))
+    x <- matrix(x, ncol = length(x))
+  p <- ncol(x)
+  dec <- tryCatch(chol(sigma), error = function(e) e)
+  if (inherits(dec, "error")) {
+    x.is.mu <- colSums(t(x) != mean) == 0
+    logretval <- rep.int(-Inf, nrow(x))
+    logretval[x.is.mu] <- Inf
+  }
+  else {
+    tmp <- backsolve(dec, t((x - mean)*sqrt(w)), transpose = TRUE)
+    rss <- colSums(tmp^2)
+    logretval <- -sum(log(diag(dec))) - 0.5 * p * log(2 *
+                                                        pi) - 0.5 * rss
+  }
+  names(logretval) <- rownames(x)
+  logretval
 }
