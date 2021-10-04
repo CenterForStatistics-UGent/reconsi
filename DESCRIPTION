@@ -4,7 +4,7 @@ Title: Resampling Collapsed Null Distributions for Simultaneous Inference
 Version: 1.1.6
 Authors@R: 
     c(person(given = "Stijn", family = "Hawinkel", 
-    email = "stijn.hawinkel@psb-vib.ugent.be", 
+    email = "stijn.hawinkel@psb.ugent.be", 
     role=c("cre", "aut"), comment = c(ORCID = "0000-0002-4501-5180")))
 Description: Improves simultaneous inference under dependence of tests by
     estimating a collapsed null distribution through resampling. Accounting for 
@@ -16,7 +16,7 @@ License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
-Imports: phyloseq, ks, reshape2, ggplot2, stats, methods, graphics, grDevices, matrixStats
+Imports: phyloseq, ks, reshape2, ggplot2, stats, methods, graphics, grDevices, matrixStats, Matrix
 Suggests: 
     knitr,
     rmarkdown,

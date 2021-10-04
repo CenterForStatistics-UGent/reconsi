@@ -6,6 +6,16 @@
 #' @return A proportion indicating the ratio of the first eigenvalues to the sum of all eigenvalues
 #' @export
 #' @importFrom Matrix nearPD
+#' @examples
+#' p = 200; n = 50; B = 5e1
+#' x = rep(c(0,1), each = n/2)
+#' mat = cbind(
+#' matrix(rnorm(n*p/10, mean = 5+x),n,p/10), #DA
+#' matrix(rnorm(n*p*9/10, mean = 5),n,p*9/10) #Non DA
+#' )
+#' mat = mat = mat + rnorm(n, sd = 0.3) #Introduce some dependence
+#' fdrRes = reconsi(mat, x, B = B)
+#' getC1prop(fdrRes$statsPerm)
 getC1prop = function(statsPerm, numEig = 1, ...){
     bootYs = binStats(statsPerm, ...)
     Ctot = tcrossprod(bootYs-rowMeans(bootYs))/(ncol(statsPerm)-1)
