@@ -4,14 +4,12 @@
 \alias{getApproxCovar}
 \title{Obtain a null covariance matrix of binned test statistics}
 \usage{
-getApproxCovar(statsPerm, nBins = 82L, binEdges = c(-4.1, 4.1))
+getApproxCovar(statsPerm, ...)
 }
 \arguments{
 \item{statsPerm}{The pxB matrix of permutation z-values in the columns}
 
-\item{nBins}{an integer, the number of bins}
-
-\item{binEdges}{A vector of length 2 with the outer bin edges}
+\item{...}{passed on to binStats}
 }
 \value{
 The covariance matrix of binned z-values
@@ -22,7 +20,7 @@ Obtain a null covariance matrix of binned test statistics
 \note{
 This is not the covariance matrix of the p test statistic, nor of the
    data! It is an approximate covariance matrix of binned test statistics for
-   visualization purposes.
+   visualization and diagnostic purposes.
 }
 \examples{
 p = 200; n = 50; B = 5e1
