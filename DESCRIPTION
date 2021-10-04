@@ -2,8 +2,10 @@ Package: reconsi
 Type: Package
 Title: Resampling Collapsed Null Distributions for Simultaneous Inference
 Version: 1.1.6
-Author: Stijn Hawinkel <stijn.hawinkel@ugent.be>
-Maintainer: Joris Meys <joris.meys@ugent.be>
+Authors@R: 
+    c(person(given = "Stijn", family = "Hawinkel", 
+    email = "stijn.hawinkel@psb-vib.ugent.be", 
+    role=c("cre", "aut"), comment = c(ORCID = "0000-0002-4501-5180")))
 Description: Improves simultaneous inference under dependence of tests by
     estimating a collapsed null distribution through resampling. Accounting for 
     the dependence between tests increases the power while reducing the
