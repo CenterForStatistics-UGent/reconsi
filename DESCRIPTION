@@ -1,7 +1,7 @@
 Package: reconsi
 Type: Package
 Title: Resampling Collapsed Null Distributions for Simultaneous Inference
-Version: 1.8.0
+Version: 1.9.0
 Authors@R: 
     c(person(given = "Stijn", family = "Hawinkel", 
     email = "stijn.hawinkel@psb.ugent.be", 
