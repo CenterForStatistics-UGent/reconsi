@@ -1,7 +1,7 @@
 Package: reconsi
 Type: Package
 Title: Resampling Collapsed Null Distributions for Simultaneous Inference
-Version: 1.7.0
+Version: 1.7.1
 Authors@R: 
     c(person(given = "Stijn", family = "Hawinkel", 
     email = "stijn.hawinkel@psb.ugent.be", 
@@ -14,8 +14,7 @@ Description: Improves simultaneous inference under dependence of tests by
     microbiome sequence counts. 
 License: GPL-2
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Imports: phyloseq, ks, reshape2, ggplot2, stats, methods, graphics, grDevices, matrixStats, Matrix
 Suggests: 
     knitr,
