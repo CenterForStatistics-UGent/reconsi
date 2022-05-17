@@ -40,3 +40,7 @@
 
   - Use standard normal null as starting value
   - Manual x-axis scaling in plotNull()
+  
+# 1.9.1
+
+ - Explicitly load Vandeputte data

@@ -43,6 +43,7 @@ A function to test for differential absolute abundance on a phyloseq object
 \examples{
 #Test for phyloseq object
 library(phyloseq)
+data("VandeputteData")
 VandeputtePruned = prune_samples(Vandeputte,
 samples = sample_names(Vandeputte)[20:40])
 testVanDePutte = testDAA(VandeputtePruned, "Health.status", "absCountFrozen",
