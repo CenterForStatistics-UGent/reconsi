@@ -164,6 +164,7 @@ in healthy and Crohn's disease patients. The test looks for differences in absol
 
 ```{r Vandeputte}
 #The grouping and flow cytometry variables are present in the phyloseq object, they only need to be called by their name.
+data("VandeputteData")
 testVanDePutte = testDAA(Vandeputte, groupName = "Health.status", FCname = "absCountFrozen", B = 1e2L)
 ```
 
