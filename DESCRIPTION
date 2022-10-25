@@ -14,7 +14,7 @@ Description: Improves simultaneous inference under dependence of tests by
     microbiome sequence counts. 
 License: GPL-2
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Imports: phyloseq, ks, reshape2, ggplot2, stats, methods, graphics, grDevices, matrixStats, Matrix
 Suggests: 
     knitr,
