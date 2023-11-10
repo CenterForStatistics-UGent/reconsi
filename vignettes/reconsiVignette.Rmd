@@ -16,7 +16,7 @@ vignette: >
 
 # Introduction
 
-The aim of this pacakage is to improve simultaneous inference for correlated 
+The aim of this package is to improve simultaneous inference for correlated 
 hypotheses using collapsed null distributions. These collapsed null distributions 
 are estimated in an empirical Bayes framework through resampling. Wilcoxon rank sum test and two sample t-test
 are natively implemented, but any other test can be used.
@@ -89,7 +89,7 @@ It is also possible to provide a custom test function, which must accept at
 least a 'y' response variable and a 'x' grouping factor. Additionally, quantile, distribution and density functions should be supplied for transformation through quantiles to z-values.
 
 ```{r customFunction}
- #With a custom function, here linera regression
+ #With a custom function, here linear regression
 fdrResLm = reconsi(mat, x, B = 5e1,
                       test = function(x, y){
 fit = lm(y~x)
