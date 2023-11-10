@@ -44,9 +44,9 @@ getFdr = function(statObs, fitAll, fdr, p, p0, zValsDensObs, smoothObs,
   #fdr
   if(is.null(fdr)){
       g0 = if(assumeNormal){
-          pnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])
+          dnorm(statObsNotNA, mean = fitAll["mean"], sd = fitAll["sd"])
       } else {
-          pkde(statObsNotNA, fitAll)
+          dkde(statObsNotNA, fitAll)
       }
     fdr  = g0/zValsDensObs*p0
     fdr[fdr>1] = 1
